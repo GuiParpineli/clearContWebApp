@@ -1,32 +1,46 @@
 package com.clearcont.clearcontapp.views.main;
 
-import com.vaadin.flow.component.Key;
-import com.vaadin.flow.component.button.Button;
-import com.vaadin.flow.component.notification.Notification;
-import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
-import com.vaadin.flow.component.textfield.TextField;
+import com.vaadin.flow.component.applayout.AppLayout;
+import com.vaadin.flow.component.html.H1;
+import com.vaadin.flow.component.tabs.Tab;
+import com.vaadin.flow.component.tabs.Tabs;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
+import com.vaadin.flow.router.RouterLink;
 
 @PageTitle("Main")
 @Route(value = "")
-public class MainView extends HorizontalLayout {
-
-    private TextField name;
-    private Button sayHello;
+public class MainView extends AppLayout {
 
     public MainView() {
-        name = new TextField("Your name");
-        sayHello = new Button("Say hello");
-        sayHello.addClickListener(e -> {
-            Notification.show("Hello " + name.getValue());
-        });
-        sayHello.addClickShortcut(Key.ENTER);
+        H1 title = new H1("MyApp");
+        title.getStyle().set("font-size", "var(--lumo-font-size-l)")
+                .set("left", "var(--lumo-space-l)").set("margin", "0")
+                .set("position", "absolute");
 
-        setMargin(true);
-        setVerticalComponentAlignment(Alignment.END, name, sayHello);
+        Tabs tabs = getTabs();
 
-        add(name, sayHello);
+        addToNavbar(title, tabs);
+    }
+
+    private Tabs getTabs() {
+        Tabs tabs = new Tabs();
+        tabs.getStyle().set("margin", "auto");
+        tabs.add(createTab("Dashboard"), createTab("Orders"),
+                createTab("Customers"), createTab("Products"));
+        return tabs;
+    }
+
+    private Tab createTab(String viewName) {
+        RouterLink link = new RouterLink();
+        link.add(viewName);
+        // Demo has no routes
+        // link.setRoute(viewClass.java);
+        link.setTabIndex(-1);
+
+        return new Tab(link);
     }
 
 }
+
+
