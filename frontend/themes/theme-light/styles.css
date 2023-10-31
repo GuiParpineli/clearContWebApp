@@ -1,0 +1,4 @@
+vaadin-app-layout::part(navbar) {
+    background-color: black;
+    color: white;
+}

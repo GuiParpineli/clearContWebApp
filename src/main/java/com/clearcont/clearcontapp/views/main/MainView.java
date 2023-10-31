@@ -1,6 +1,7 @@
 package com.clearcont.clearcontapp.views.main;
 
 import com.vaadin.flow.component.applayout.AppLayout;
+import com.vaadin.flow.component.dependency.CssImport;
 import com.vaadin.flow.component.html.H1;
 import com.vaadin.flow.component.tabs.Tab;
 import com.vaadin.flow.component.tabs.Tabs;
@@ -10,6 +11,7 @@ import com.vaadin.flow.router.RouterLink;
 
 @PageTitle("Main")
 @Route(value = "")
+
 public class MainView extends AppLayout {
 
     public MainView() {
@@ -21,6 +23,7 @@ public class MainView extends AppLayout {
         Tabs tabs = getTabs();
 
         addToNavbar(title, tabs);
+        this.getElement().getClassList().add("my-navbar");
     }
 
     private Tabs getTabs() {
