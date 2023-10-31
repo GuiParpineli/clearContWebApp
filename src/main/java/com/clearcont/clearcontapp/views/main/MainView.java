@@ -18,7 +18,7 @@ public class MainView extends AppLayout {
         H1 title = new H1("MyApp");
         title.getStyle().set("font-size", "var(--lumo-font-size-l)")
                 .set("left", "var(--lumo-space-l)").set("margin", "0")
-                .set("position", "absolute");
+                .set("position", "absolute").set("color", "white");
 
         Tabs tabs = getTabs();
 
@@ -37,6 +37,7 @@ public class MainView extends AppLayout {
     private Tab createTab(String viewName) {
         RouterLink link = new RouterLink();
         link.add(viewName);
+        link.getStyle().set("color", "white");
         // Demo has no routes
         // link.setRoute(viewClass.java);
         link.setTabIndex(-1);
