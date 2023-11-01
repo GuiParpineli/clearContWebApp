@@ -11,7 +11,7 @@ import com.vaadin.flow.router.RouterLink;
 
 @PageTitle("Main")
 @Route(value = "")
-
+@CssImport("../frontend/themes/theme-light/styles.css")
 public class MainView extends AppLayout {
 
     public MainView() {
@@ -31,13 +31,14 @@ public class MainView extends AppLayout {
         tabs.getStyle().set("margin", "auto");
         tabs.add(createTab("Dashboard"), createTab("Orders"),
                 createTab("Customers"), createTab("Products"));
+        tabs.getStyle().set("color", "white !important");
         return tabs;
     }
 
     private Tab createTab(String viewName) {
         RouterLink link = new RouterLink();
         link.add(viewName);
-        link.getStyle().set("color", "white");
+        link.addClassNames("my-custom-tab");
         // Demo has no routes
         // link.setRoute(viewClass.java);
         link.setTabIndex(-1);
