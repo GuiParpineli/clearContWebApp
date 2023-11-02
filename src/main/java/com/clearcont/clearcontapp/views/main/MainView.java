@@ -8,6 +8,9 @@ import com.vaadin.flow.component.tabs.Tabs;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.router.RouterLink;
+import com.vaadin.flow.theme.Theme;
+import com.vaadin.flow.theme.lumo.Lumo;
+import com.vaadin.flow.theme.material.Material;
 
 @PageTitle("Main")
 @Route(value = "")
@@ -31,7 +34,6 @@ public class MainView extends AppLayout {
         tabs.getStyle().set("margin", "auto");
         tabs.add(createTab("Dashboard"), createTab("Orders"),
                 createTab("Customers"), createTab("Products"));
-        tabs.getStyle().set("color", "white !important");
         return tabs;
     }
 
