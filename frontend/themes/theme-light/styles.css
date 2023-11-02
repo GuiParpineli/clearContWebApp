@@ -1,13 +1,13 @@
-/*
 vaadin-app-layout::part(navbar) {
     background-color: black;
 }
 
 html {
     --lumo-primary-text-color: white;
+    --lumo-secondary-text-color: #949494;
     --lumo-link-color: white
 }
-*/
-html{
 
+html {
+    --lumo-primary-color: black;
 }

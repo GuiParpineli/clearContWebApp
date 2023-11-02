@@ -62,7 +62,7 @@
     "@vaadin/upload": "24.1.10",
     "@vaadin/vaadin-development-mode-detector": "2.0.6",
     "@vaadin/vaadin-lumo-styles": "24.1.10",
-    "@vaadin/vaadin-material-styles": "^24.1.10",
+    "@vaadin/vaadin-material-styles": "24.1.10",
     "@vaadin/vaadin-themable-mixin": "24.1.10",
     "@vaadin/vaadin-usage-statistics": "2.1.2",
     "@vaadin/vertical-layout": "24.1.10",
@@ -179,7 +179,7 @@
       "workbox-core": "7.0.0",
       "workbox-precaching": "7.0.0"
     },
-    "hash": "81e6f450d7832e58e62ad801861af5a8f7b8145ff5f97d6296d0871073f03bc7"
+    "hash": "c424a66ebc2ce99cec04bcbb2df16c0c49e42bfe995708b43632310827e4b586"
   },
   "overrides": {
     "@vaadin/bundles": "$@vaadin/bundles",
