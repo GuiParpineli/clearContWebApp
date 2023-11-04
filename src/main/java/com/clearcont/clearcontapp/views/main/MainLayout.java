@@ -30,12 +30,14 @@ public class MainLayout extends AppLayout {
 
         logo.setMaxHeight("30px");
         logo.setMaxWidth("65px");
-        Div container = new Div(new HorizontalLayout(logo, logoName));
 
-        RouterLink routerLink = new RouterLink();
-        routerLink.add(container);
-        routerLink.setRoute(HomeView.class);
+        HorizontalLayout logoLayout = new HorizontalLayout(logo, logoName);
+        logoLayout.setDefaultVerticalComponentAlignment(FlexComponent.Alignment.CENTER);
 
+        RouterLink routerLink = new RouterLink("", HomeView.class);
+        routerLink.add(logoLayout);
+
+        Div container = new Div(routerLink);
         RouterLink perfil = new RouterLink("Perfil", PerfilView.class);
         perfil.getStyle().set("font-size", "var(--lumo-font-size-l)")
                 .set("left", "var(--lumo-space-l)").set("margin", "0")
