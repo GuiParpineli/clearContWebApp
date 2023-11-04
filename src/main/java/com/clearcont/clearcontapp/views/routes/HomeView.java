@@ -9,8 +9,8 @@ import com.vaadin.flow.router.Route;
 
 @Route(value = "", layout = MainLayout.class)
 @PageTitle("Home| Nome do Aplicativo")
-public class HomeRouteView extends Div {
-    public HomeRouteView() {
+public class HomeView extends Div {
+    public HomeView() {
         add(new H1("Welcome to the home page!"));
     }
 }
