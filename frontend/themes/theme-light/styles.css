@@ -1,6 +1,27 @@
 vaadin-app-layout::part(navbar) {
     background-color: black;
+    font-weight: bold;
 }
+
 .text-header-white {
     color: white;
 }
+
+vaadin-app-layout::part(drawer) {
+    background-color: #282828;
+    color: white;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.drawer-link {
+    color: white;
+    text-decoration: none;
+}
+
+vaadin-drawer-toggle {
+    color: white;
+}
+
+
+

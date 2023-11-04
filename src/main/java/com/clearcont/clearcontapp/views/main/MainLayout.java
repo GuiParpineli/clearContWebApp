@@ -1,12 +1,14 @@
 package com.clearcont.clearcontapp.views.main;
 
 import com.clearcont.clearcontapp.views.routes.*;
+import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.applayout.AppLayout;
 import com.vaadin.flow.component.applayout.DrawerToggle;
 import com.vaadin.flow.component.dependency.CssImport;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.H3;
 import com.vaadin.flow.component.html.Image;
+import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
@@ -50,15 +52,19 @@ public class MainLayout extends AppLayout {
     }
 
     private void createDrawer() {
+        addToDrawer(new VerticalLayout(createHorizontalLayout("Home", HomeView.class, "home"),
+                createHorizontalLayout("Balance", BalanceteView.class, "scale-unbalance"),
+                createHorizontalLayout("Controle", ControleView.class, "shield"),
+                createHorizontalLayout("Dashboard", DashboardView.class, "dashboard"),
+                createHorizontalLayout("Clientes", ClientesLink.class, "building")));
+    }
 
-        RouterLink homeLink = new RouterLink("Home", HomeView.class);
-        RouterLink balanceteLink = new RouterLink("Balance", BalanceteView.class);
-        RouterLink controleLink = new RouterLink("Controle", ControleView.class);
-        RouterLink dashboardLink = new RouterLink("Dashboard", DashboardView.class);
-        dashboardLink.setHighlightCondition(HighlightConditions.sameLocation());
-        RouterLink clientesLink = new RouterLink("Clientes", ClientesLink.class);
-
-        addToDrawer(new VerticalLayout(homeLink, balanceteLink, controleLink, dashboardLink, clientesLink));
+    private HorizontalLayout createHorizontalLayout(String linkText, Class<? extends Component> viewClass, String iconName) {
+        RouterLink link = new RouterLink(linkText, viewClass);
+        link.addClassName("drawer-link");
+        Icon icon = new Icon(iconName);
+        icon.setSize(".9em");
+        return new HorizontalLayout(FlexComponent.Alignment.BASELINE, icon, link);
     }
 }
 
