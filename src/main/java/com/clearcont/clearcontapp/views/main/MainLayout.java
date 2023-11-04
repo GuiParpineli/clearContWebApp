@@ -5,6 +5,7 @@ import com.vaadin.flow.component.applayout.AppLayout;
 import com.vaadin.flow.component.applayout.DrawerToggle;
 import com.vaadin.flow.component.dependency.CssImport;
 import com.vaadin.flow.component.html.Div;
+import com.vaadin.flow.component.html.H3;
 import com.vaadin.flow.component.html.Image;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
@@ -21,10 +22,13 @@ public class MainLayout extends AppLayout {
     }
 
     private void createHeader() {
-        Image logo = new Image("./images/logo-white.png", "Logo");
-        Div container = new Div(logo);
-        logo.setMaxHeight("50px");
-        logo.setMaxWidth("85px");
+        Image logo = new Image("./images/logo-white-header.png", "Logo");
+        H3 logoName = new H3("ClearCont");
+        logoName.addClassName("text-header-white");
+
+        logo.setMaxHeight("30px");
+        logo.setMaxWidth("65px");
+        Div container = new Div(new HorizontalLayout(logo, logoName));
 
         RouterLink routerLink = new RouterLink();
         routerLink.add(container);
@@ -33,7 +37,7 @@ public class MainLayout extends AppLayout {
         RouterLink perfil = new RouterLink("Perfil", PerfilView.class);
         perfil.getStyle().set("font-size", "var(--lumo-font-size-l)")
                 .set("left", "var(--lumo-space-l)").set("margin", "0")
-                .set("color", "white");
+                .setColor("white").set("text-weight", "bold");
 
         HorizontalLayout header = new HorizontalLayout(container, perfil);
         header.expand(container);
