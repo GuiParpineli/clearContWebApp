@@ -24,4 +24,8 @@ vaadin-drawer-toggle {
 }
 
 
+vaadin-combo-box::part(label) {
+    align-self: center;
+}
+
 

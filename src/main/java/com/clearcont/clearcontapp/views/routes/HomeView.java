@@ -9,6 +9,7 @@ import com.vaadin.flow.component.html.Image;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.dom.Style;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 
@@ -37,6 +38,7 @@ public class HomeView extends Div {
 
         VerticalLayout verticalLayout = new VerticalLayout(h1, logo, monthPicker);
         verticalLayout.setAlignItems(FlexComponent.Alignment.CENTER);
+        monthPicker.getStyle().setTextAlign(Style.TextAlign.CENTER);
 
         add(new HorizontalLayout(FlexComponent.JustifyContentMode.CENTER, verticalLayout));
     }
