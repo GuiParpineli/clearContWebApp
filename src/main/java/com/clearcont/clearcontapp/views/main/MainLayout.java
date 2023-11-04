@@ -40,6 +40,7 @@ public class MainLayout extends AppLayout {
         perfil.getStyle().set("font-size", "var(--lumo-font-size-l)")
                 .set("left", "var(--lumo-space-l)").set("margin", "0")
                 .setColor("white").set("text-weight", "bold");
+        perfil.getStyle().set("padding-right", "10px");
 
         HorizontalLayout header = new HorizontalLayout(container, perfil);
         header.expand(container);
