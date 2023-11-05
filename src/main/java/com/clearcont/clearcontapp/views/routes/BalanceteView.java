@@ -26,11 +26,9 @@ public class BalanceteView extends Div {
         grid.addColumn(Balancete::getTotalBalancete).setHeader("Total Balancete");
         grid.addColumn(Balancete::getClassificacao).setHeader("CLASSIFICAÇÃO");
         grid.setItems(balanceteData);
-
         grid.addItemClickListener(event -> {
             Balancete balancete = event.getItem();
 
-            // Navigate to detail view, passing the balancete ID as parameter
             UI.getCurrent().navigate("detail/" + balancete.getId());
         });
 
