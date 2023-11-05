@@ -17,4 +17,8 @@ public class BalanceteService {
     public List<Balancete> getAll() {
         return repository.findAll();
     }
+
+    public Balancete getById(Integer balanceteId) {
+        return repository.findById(balanceteId).get();
+    }
 }
