@@ -27,5 +27,11 @@ vaadin-drawer-toggle {
 vaadin-combo-box::part(label) {
     align-self: center;
 }
+vaadin-grid::part(header-cell){
+    background-color: black;
+    color: white;
+}
+
+
 
 
