@@ -20,6 +20,9 @@ public class BalanceteView extends Div {
         List<Balancete> balanceteData = service.getAll();
 
         Grid<Balancete> grid = new Grid<>(Balancete.class, false);
+
+
+
         grid.addColumn(balancete -> balancete.getCliente().getNomeEmpresa()).setHeader("Empresa");
         grid.addColumn(Balancete::getNumeroConta).setHeader("Nº conta");
         grid.addColumn(Balancete::getNomeConta).setHeader("Nome da Conta");

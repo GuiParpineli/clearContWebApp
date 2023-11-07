@@ -26,7 +26,6 @@ public class DetailView extends VerticalLayout implements HasUrlParameter<String
         Integer balanceteId = Integer.parseInt(parameter);
         Balancete balancete = service.getById(balanceteId);
 
-        // Agora você tem seu Balancete e pode exibir suas informações
         add(new Text("Exibindo detalhes para Balancete com conta: " + balancete.getNomeConta()));
     }
 }

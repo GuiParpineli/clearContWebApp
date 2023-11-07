@@ -8,6 +8,8 @@ vaadin-app-layout::part(navbar) {
 }
 
 vaadin-app-layout::part(drawer) {
+    margin: 5px;
+    border-radius: 20px;
     background-color: black;
     color: white;
     text-decoration: none;
@@ -23,16 +25,18 @@ vaadin-drawer-toggle {
     color: white;
 }
 
-
 vaadin-combo-box::part(label) {
     align-self: center;
+}
+
+vaadin-grid {
+    padding: 5px;
+    margin: 10px;
 }
 
 vaadin-grid::part(header-cell) {
     background-color: black;
     color: white;
 }
-
-
 
 
