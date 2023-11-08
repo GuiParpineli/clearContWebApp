@@ -9,6 +9,7 @@ vaadin-app-layout::part(navbar) {
 
 vaadin-app-layout::part(drawer) {
     margin: 5px;
+    font-size: large;
     border-radius: 20px;
     background-color: black;
     color: white;
@@ -16,13 +17,13 @@ vaadin-app-layout::part(drawer) {
     font-weight: bold;
 }
 
+vaadin-drawer-toggle {
+    color: white;
+}
+
 .drawer-link {
     color: white;
     text-decoration: none;
-}
-
-vaadin-drawer-toggle {
-    color: white;
 }
 
 vaadin-combo-box::part(label) {

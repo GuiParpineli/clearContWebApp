@@ -20,21 +20,19 @@ public class BalanceteView extends Div {
         List<Balancete> balanceteData = service.getAll();
 
         Grid<Balancete> grid = new Grid<>(Balancete.class, false);
-
-
+        grid.getStyle().set("border-radius", "10px");
 
         grid.addColumn(balancete -> balancete.getCliente().getNomeEmpresa()).setHeader("Empresa");
         grid.addColumn(Balancete::getNumeroConta).setHeader("Nº conta");
         grid.addColumn(Balancete::getNomeConta).setHeader("Nome da Conta");
         grid.addColumn(Balancete::getTotalBalancete).setHeader("Total Balancete");
         grid.addColumn(Balancete::getClassificacao).setHeader("CLASSIFICAÇÃO");
+
         grid.setItems(balanceteData);
         grid.addItemClickListener(event -> {
             Balancete balancete = event.getItem();
-
             UI.getCurrent().navigate("detail/" + balancete.getId());
         });
-
         add(grid);
     }
 }
