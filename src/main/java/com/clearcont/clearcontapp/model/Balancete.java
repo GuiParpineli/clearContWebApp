@@ -13,7 +13,7 @@ public class Balancete {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-    @OneToOne
+    @ManyToOne
     private Cliente cliente;
     private String nomeConta;
     private int numeroConta;

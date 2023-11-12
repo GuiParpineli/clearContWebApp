@@ -1,8 +1,14 @@
 package com.clearcont.clearcontapp.model;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
+@AllArgsConstructor
+@NoArgsConstructor
 @Entity
+@Getter
 public class Controle {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

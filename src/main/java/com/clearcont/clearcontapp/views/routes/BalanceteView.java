@@ -22,11 +22,20 @@ public class BalanceteView extends Div {
         Grid<Balancete> grid = new Grid<>(Balancete.class, false);
         grid.getStyle().set("border-radius", "10px");
 
-        grid.addColumn(balancete -> balancete.getCliente().getNomeEmpresa()).setHeader("Empresa");
-        grid.addColumn(Balancete::getNumeroConta).setHeader("Nº conta");
-        grid.addColumn(Balancete::getNomeConta).setHeader("Nome da Conta");
-        grid.addColumn(Balancete::getTotalBalancete).setHeader("Total Balancete");
-        grid.addColumn(Balancete::getClassificacao).setHeader("CLASSIFICAÇÃO");
+        Grid.Column<Balancete> empresaColumn = grid.addColumn(balancete -> balancete.getCliente().getNomeEmpresa()).setHeader("Empresa");
+        empresaColumn.setSortable(true);
+
+        Grid.Column<Balancete> numeroContaColumn = grid.addColumn(Balancete::getNumeroConta).setHeader("Nº conta");
+        numeroContaColumn.setSortable(true);
+
+        Grid.Column<Balancete> nomeContaColumn = grid.addColumn(Balancete::getNomeConta).setHeader("Nome da Conta");
+        nomeContaColumn.setSortable(true);
+
+        Grid.Column<Balancete> totalBalanceteColumn = grid.addColumn(Balancete::getTotalBalancete).setHeader("Total Balancete");
+        totalBalanceteColumn.setSortable(true);
+
+        Grid.Column<Balancete> classificacaoColumn = grid.addColumn(Balancete::getClassificacao).setHeader("CLASSIFICAÇÃO");
+        classificacaoColumn.setSortable(true);
 
         grid.setItems(balanceteData);
         grid.addItemClickListener(event -> {
