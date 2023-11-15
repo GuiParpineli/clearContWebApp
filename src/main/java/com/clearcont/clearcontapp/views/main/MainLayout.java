@@ -12,7 +12,6 @@ import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
-import com.vaadin.flow.router.HighlightConditions;
 import com.vaadin.flow.router.RouterLink;
 
 @CssImport("../frontend/themes/theme-light/styles.css")
@@ -24,7 +23,7 @@ public class MainLayout extends AppLayout {
     }
 
     private void createHeader() {
-        Image logo = new Image("./images/logo-white-header.png", "Logo");
+        Image logo = new Image("./images/logo-white.png", "Logo");
         H3 logoName = new H3("ClearCont");
         logoName.addClassName("text-header-white");
 

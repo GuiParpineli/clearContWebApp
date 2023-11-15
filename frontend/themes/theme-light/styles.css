@@ -43,5 +43,3 @@ vaadin-grid::part(header-cell) {
 vaadin-grid-sorter::part(indicators) {
     color: white;
 }
-
-
