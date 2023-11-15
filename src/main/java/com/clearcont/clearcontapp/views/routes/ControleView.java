@@ -6,6 +6,7 @@ import com.clearcont.clearcontapp.views.components.TopBarControleView;
 import com.clearcont.clearcontapp.views.main.MainLayout;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.html.Div;
+import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
@@ -21,6 +22,6 @@ public class ControleView extends Div {
         Grid<Controle> grid = new Grid<>(Controle.class, true);
         grid.setItems(controleList);
 
-        add(new VerticalLayout(new TopBarControleView(service), grid));
+        add(new VerticalLayout(FlexComponent.Alignment.CENTER,new TopBarControleView(service), grid));
     }
 }
