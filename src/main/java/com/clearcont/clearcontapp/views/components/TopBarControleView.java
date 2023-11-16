@@ -3,6 +3,7 @@ package com.clearcont.clearcontapp.views.components;
 import com.clearcont.clearcontapp.model.Cliente;
 import com.clearcont.clearcontapp.model.Controle;
 import com.clearcont.clearcontapp.service.ControleService;
+import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Image;
 import com.vaadin.flow.component.html.Paragraph;
@@ -24,8 +25,9 @@ public class TopBarControleView extends FlexLayout {
 
         Cliente cliente = controleService.getAll().getFirst().getCliente();
         Controle controle = controleService.getAll().getFirst();
-        Image logo = new Image("./images/logo-white-header.png", "Logo");
-        logo.setMaxHeight("100px");
+        Image logo = new Image("./images/logo-white.png", "Logo");
+        logo.setMaxHeight("80px");
+        logo.getStyle().setPadding("50px");
 
         Div b1 = new Div(
                 new Paragraph("Empresa:"),
@@ -54,8 +56,8 @@ public class TopBarControleView extends FlexLayout {
         Div b5 = new Div(
                 new VerticalLayout(
                         Alignment.CENTER,
-                        new Paragraph("Balancete FInal em PDF"),
-                        new Icon("download")
+                        new Paragraph("Baixar Balancete Final em PDF:"),
+                        new Button(new Icon("download"))
                 )
         );
         b2.getStyle().setTextAlign(Style.TextAlign.RIGHT);
