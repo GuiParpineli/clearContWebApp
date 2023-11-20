@@ -10,7 +10,6 @@ import com.vaadin.flow.component.html.Image;
 import com.vaadin.flow.component.html.Paragraph;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.orderedlayout.FlexLayout;
-import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.dom.Style;
 
@@ -30,20 +29,13 @@ public class TopBarControleView extends FlexLayout {
         logo.setMaxHeight("80px");
         logo.getStyle().setPadding("50px");
 
-        Div b1 = TopBarText.make("Empresa:","CNPJ:","Competência:");
-
+        Div b1 = TopBarText.make("Empresa:", "CNPJ:", "Competência:");
         Div b2 = new Div(
                 new Paragraph(cliente.getNomeEmpresa()),
                 new Paragraph(cliente.getCnpj()),
                 new Paragraph("Competência")
         );
-        Div b3 = new Div(
-                new Paragraph("Resumo Balancete:"),
-                new Paragraph("ATIVO:"),
-                new Paragraph("PASSIVO:"),
-                new Paragraph("PL:"),
-                new Paragraph("RESULTADO:")
-        );
+        Div b3 = TopBarText.make("Resumo Balancete:", "ATIVO:", "PASSIVO:", "PL:", "RESULTADO:");
         Div b4 = new Div(
                 new Paragraph("Valor"),
                 new Paragraph(controle.getCirculante()),
@@ -66,19 +58,25 @@ public class TopBarControleView extends FlexLayout {
         companyInfo.getStyle().set("flex", "auto");
         companyInfo.setJustifyContentMode(JustifyContentMode.AROUND);
         companyInfo.getStyle().setColor("white");
+        companyInfo.getStyle().setPadding("10px");
+        companyInfo.setFlexBasis("25%");
 
         FlexLayout companyBalanceteResume = new FlexLayout(createSeparator(), b3, b4);
         companyBalanceteResume.getStyle().set("flex", "auto");
         companyBalanceteResume.setJustifyContentMode(JustifyContentMode.AROUND);
         companyBalanceteResume.getStyle().setColor("white");
+        companyBalanceteResume.getStyle().setPadding("10px");
+        companyBalanceteResume.setFlexBasis("25%");
 
         FlexLayout downloadBalancete = new FlexLayout(createSeparator(), b5);
         downloadBalancete.getStyle().set("flex", "auto");
         downloadBalancete.setJustifyContentMode(JustifyContentMode.AROUND);
-        companyBalanceteResume.getStyle().setColor("white");
+        downloadBalancete.getStyle().setColor("white");
+        downloadBalancete.getStyle().setPadding("10px");
+        downloadBalancete.setFlexBasis("25%");
 
         FlexLayout items = new FlexLayout(
-                 logo, companyInfo, companyBalanceteResume, downloadBalancete
+                logo, companyInfo, companyBalanceteResume, downloadBalancete
         );
         items.setAlignItems(Alignment.CENTER);
         items.setFlexWrap(FlexWrap.WRAP);
