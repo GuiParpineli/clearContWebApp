@@ -3,6 +3,7 @@ package com.clearcont.clearcontapp.views.components;
 import com.clearcont.clearcontapp.model.Cliente;
 import com.clearcont.clearcontapp.model.Controle;
 import com.clearcont.clearcontapp.service.ControleService;
+import com.clearcont.clearcontapp.views.components.controle.TopBarText;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Image;
@@ -29,11 +30,8 @@ public class TopBarControleView extends FlexLayout {
         logo.setMaxHeight("80px");
         logo.getStyle().setPadding("50px");
 
-        Div b1 = new Div(
-                new Paragraph("Empresa:"),
-                new Paragraph("CNPJ:"),
-                new Paragraph("Competência:")
-        );
+        Div b1 = TopBarText.make("Empresa:","CNPJ:","Competência:");
+
         Div b2 = new Div(
                 new Paragraph(cliente.getNomeEmpresa()),
                 new Paragraph(cliente.getCnpj()),
@@ -79,16 +77,19 @@ public class TopBarControleView extends FlexLayout {
         downloadBalancete.setJustifyContentMode(JustifyContentMode.AROUND);
         companyBalanceteResume.getStyle().setColor("white");
 
-        HorizontalLayout items = new HorizontalLayout(
-                JustifyContentMode.BETWEEN, logo, companyInfo, companyBalanceteResume, downloadBalancete
+        FlexLayout items = new FlexLayout(
+                 logo, companyInfo, companyBalanceteResume, downloadBalancete
         );
         items.setAlignItems(Alignment.CENTER);
+        items.setFlexWrap(FlexWrap.WRAP);
+        items.setAlignContent(ContentAlignment.SPACE_BETWEEN);
+        items.setWidth("70vw");
 
-        Div div = new Div(items);
+        FlexLayout div = new FlexLayout(items);
         div.getStyle().setBackground("black");
         div.getStyle().setPadding("10px");
         div.getStyle().set("border-radius", "12px");
-        div.setWidth("calc(100vw - 360px)");
+        div.setFlexWrap(FlexWrap.WRAP);
 
         this.setFlexDirection(FlexDirection.COLUMN);
         add(div);
