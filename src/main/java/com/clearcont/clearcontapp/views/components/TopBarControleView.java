@@ -23,8 +23,8 @@ public class TopBarControleView extends FlexLayout {
 
     public TopBarControleView(ControleService controleService) {
 
-        Cliente cliente = controleService.getAll().getFirst().getCliente();
-        Controle controle = controleService.getAll().getFirst();
+        Cliente cliente = controleService.getAll().get(0).getCliente();
+        Controle controle = controleService.getAll().get(0);
         Image logo = new Image("./images/logo-white.png", "Logo");
         logo.setMaxHeight("80px");
         logo.getStyle().setPadding("50px");
@@ -50,29 +50,32 @@ public class TopBarControleView extends FlexLayout {
                         new Button(new Icon("download"))
                 )
         );
+        b1.getStyle().setPadding("20px");
         b2.getStyle().setTextAlign(Style.TextAlign.RIGHT);
+        b2.getStyle().setPadding("20px");
         b4.getStyle().setTextAlign(Style.TextAlign.RIGHT);
+        b4.getStyle().setPadding("20px");
+        b3.getStyle().setPadding("20px");
         b5.getStyle().setColor("white");
 
         FlexLayout companyInfo = new FlexLayout(createSeparator(), b1, b2);
         companyInfo.getStyle().set("flex", "auto");
         companyInfo.setJustifyContentMode(JustifyContentMode.AROUND);
         companyInfo.getStyle().setColor("white");
-        companyInfo.getStyle().setPadding("10px");
         companyInfo.setFlexBasis("25%");
 
         FlexLayout companyBalanceteResume = new FlexLayout(createSeparator(), b3, b4);
         companyBalanceteResume.getStyle().set("flex", "auto");
         companyBalanceteResume.setJustifyContentMode(JustifyContentMode.AROUND);
         companyBalanceteResume.getStyle().setColor("white");
-        companyBalanceteResume.getStyle().setPadding("10px");
+        companyBalanceteResume.getStyle().setPadding("20px");
         companyBalanceteResume.setFlexBasis("25%");
 
         FlexLayout downloadBalancete = new FlexLayout(createSeparator(), b5);
         downloadBalancete.getStyle().set("flex", "auto");
         downloadBalancete.setJustifyContentMode(JustifyContentMode.AROUND);
         downloadBalancete.getStyle().setColor("white");
-        downloadBalancete.getStyle().setPadding("10px");
+        downloadBalancete.getStyle().setPadding("20px");
         downloadBalancete.setFlexBasis("25%");
 
         FlexLayout items = new FlexLayout(
@@ -81,11 +84,11 @@ public class TopBarControleView extends FlexLayout {
         items.setAlignItems(Alignment.CENTER);
         items.setFlexWrap(FlexWrap.WRAP);
         items.setAlignContent(ContentAlignment.SPACE_BETWEEN);
-        items.setWidth("70vw");
+        items.getStyle().setPadding("10px");
+        items.setMaxWidth("80vw");
 
         FlexLayout div = new FlexLayout(items);
         div.getStyle().setBackground("black");
-        div.getStyle().setPadding("10px");
         div.getStyle().set("border-radius", "12px");
         div.setFlexWrap(FlexWrap.WRAP);
 

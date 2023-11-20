@@ -37,7 +37,9 @@ public class MainLayout extends AppLayout {
         routerLink.add(logoLayout);
 
         Div container = new Div(routerLink);
-        RouterLink perfil = new RouterLink("Perfil", PerfilView.class);
+        boolean log = false;
+        String perfilText = (log) ? "Perfil" : "Login";
+        RouterLink perfil = new RouterLink(perfilText, PerfilView.class);
         perfil.getStyle().set("font-size", "var(--lumo-font-size-l)")
                 .set("left", "var(--lumo-space-l)").set("margin", "0")
                 .setColor("white").set("text-weight", "bold");

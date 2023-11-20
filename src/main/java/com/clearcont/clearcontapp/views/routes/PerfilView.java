@@ -2,7 +2,9 @@ package com.clearcont.clearcontapp.views.routes;
 
 import com.clearcont.clearcontapp.views.main.MainLayout;
 import com.vaadin.flow.component.html.Div;
-import com.vaadin.flow.component.html.H1;
+import com.vaadin.flow.component.login.LoginForm;
+import com.vaadin.flow.component.orderedlayout.FlexComponent;
+import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 
@@ -10,6 +12,10 @@ import com.vaadin.flow.router.Route;
 @PageTitle("Perfil | ClearCont App")
 public class PerfilView extends Div {
     public PerfilView() {
-        add(new H1("Perfil"));
+        Div div = new Div(new LoginForm());
+        HorizontalLayout horizontalLayout = new HorizontalLayout(div);
+        horizontalLayout.setAlignItems(FlexComponent.Alignment.CENTER);
+        horizontalLayout.setJustifyContentMode(FlexComponent.JustifyContentMode.CENTER);
+        add(horizontalLayout);
     }
 }

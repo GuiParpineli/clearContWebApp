@@ -69,6 +69,7 @@
     "@vaadin/virtual-list": "24.1.10",
     "construct-style-sheets-polyfill": "3.1.0",
     "date-fns": "2.29.3",
+    "echarts": "5.4.2",
     "lit": "2.7.6",
     "mobile-drag-drop": "2.3.0-rc.2"
   },
@@ -158,6 +159,7 @@
       "@vaadin/virtual-list": "24.1.10",
       "construct-style-sheets-polyfill": "3.1.0",
       "date-fns": "2.29.3",
+      "echarts": "5.4.2",
       "lit": "2.7.6",
       "mobile-drag-drop": "2.3.0-rc.2"
     },
@@ -179,7 +181,7 @@
       "workbox-core": "7.0.0",
       "workbox-precaching": "7.0.0"
     },
-    "hash": "c424a66ebc2ce99cec04bcbb2df16c0c49e42bfe995708b43632310827e4b586"
+    "hash": "080305589f0f2d6e70712400fabb1a4c941c7ca813243abc10232f71779ccf58"
   },
   "overrides": {
     "@vaadin/bundles": "$@vaadin/bundles",
@@ -249,6 +251,7 @@
     "@polymer/polymer": "$@polymer/polymer",
     "@vaadin/vaadin-themable-mixin": "$@vaadin/vaadin-themable-mixin",
     "date-fns": "$date-fns",
-    "mobile-drag-drop": "$mobile-drag-drop"
+    "mobile-drag-drop": "$mobile-drag-drop",
+    "echarts": "$echarts"
   }
 }
