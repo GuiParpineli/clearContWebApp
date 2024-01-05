@@ -17,11 +17,16 @@ import java.util.List;
 @PageTitle("controle | ClearCont App")
 public class ControleView extends Div {
     public ControleView(ControleService service) {
-
+        
         List<Controle> controleList = service.getAll();
-        Grid<Controle> grid = new Grid<>(Controle.class, true);
+        Grid<Controle> grid = new Grid<>(Controle.class, false);
+        grid.addColumn(controle -> controle.getCliente().getNomeEmpresa()).setHeader("Cliente").setSortable(true);
+        grid.addColumn(Controle::getAgingListadaPendencia).setHeader("Aging");
+        grid.addColumn(Controle::getResponsavel).setHeader("Responsavel");
+        grid.addColumn(Controle::getSaldoAnalise).setHeader("Saldo Analise");
+        grid.addColumn(Controle::getSaldoBalancete).setHeader("Saldo Balancete");
         grid.setItems(controleList);
-
-        add(new VerticalLayout(FlexComponent.Alignment.CENTER,new TopBarControleView(service), grid));
+        
+        add(new VerticalLayout(FlexComponent.Alignment.CENTER, new TopBarControleView(service), grid));
     }
 }

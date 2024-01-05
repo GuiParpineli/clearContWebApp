@@ -12,14 +12,14 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @PWA(
         name = "ClearCont",
         shortName = "CC",
-        offlinePath="offline.html",
-        offlineResources = { "images/offline.png" }
+        offlinePath = "offline.html",
+        offlineResources = {"images/offline.png"}
 )
 @SpringBootApplication
-public class ClearContAppApplication  implements AppShellConfigurator {
-
+public class ClearContAppApplication implements AppShellConfigurator {
+    
     public static void main(String[] args) {
-        SpringApplication.run(ClearContAppApplication.class, args);
+        SpringApplication.run(ClearContAppApplication.class);
     }
-
+    
 }
