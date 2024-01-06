@@ -3,6 +3,8 @@ package com.clearcont.clearcontapp.model;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDate;
+
 @Entity
 @Getter
 @Setter
@@ -14,9 +16,11 @@ public class Balancete {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
     @ManyToOne
-    private Cliente cliente;
+    private Empresa empresa;
     private String nomeConta;
     private int numeroConta;
     private Double totalBalancete;
     private String classificacao;
+    private String mes;
+    private Integer ano;
 }

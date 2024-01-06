@@ -6,7 +6,7 @@ plugins {
 }
 
 group = "com.clearcont"
-version = "0.0.1-SNAPSHOT"
+version = "0.0.1"
 
 java {
     sourceCompatibility = JavaVersion.VERSION_21
@@ -38,7 +38,7 @@ dependencies {
     compileOnly("org.projectlombok:lombok:1.18.26")
     developmentOnly("org.springframework.boot:spring-boot-devtools:3.0.4")
     developmentOnly("org.springframework.boot:spring-boot-docker-compose")
-    runtimeOnly("com.mysql:mysql-connector-j:8.0.32")
+    runtimeOnly("com.mysql:mysql-connector-j:8.2.0")
     annotationProcessor("org.projectlombok:lombok")
     testImplementation("org.springframework.boot:spring-boot-starter-test:3.1.0")
     testImplementation("org.springframework.security:spring-security-test:6.0.2")

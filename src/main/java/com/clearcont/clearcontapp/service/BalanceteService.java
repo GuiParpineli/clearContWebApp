@@ -9,16 +9,20 @@ import java.util.List;
 @Service
 public class BalanceteService {
     private final BalanceteRepository repository;
-
+    
     public BalanceteService(BalanceteRepository repository) {
         this.repository = repository;
     }
-
+    
     public List<Balancete> getAll() {
         return repository.findAll();
     }
-
+    
     public Balancete getById(Integer balanceteId) {
         return repository.findById(balanceteId).get();
+    }
+    
+    public List<Balancete> getByCompanyAndPeriod(Integer id, String mes, Integer ano) {
+        return repository.findBalanceteByEmpresa_IdAndMesAndAno(id, mes, ano);
     }
 }

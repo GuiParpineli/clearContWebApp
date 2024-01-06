@@ -43,3 +43,16 @@ vaadin-grid::part(header-cell) {
 vaadin-grid-sorter::part(indicators) {
     color: white;
 }
+
+.card {
+    background-color: azure;
+    border: solid black 1px;
+    border-radius: 10px;
+    padding: 10px;
+}
+
+.button {
+    background-color: black;
+    color: white;
+    font-weight: bold;
+}

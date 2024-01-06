@@ -24,17 +24,10 @@ public class MainLayout extends AppLayout {
 
     private void createHeader() {
         Image logo = new Image("./images/logo-white.png", "Logo");
-        H3 logoName = new H3("ClearCont");
-        logoName.addClassName("text-header-white");
-
-        logo.setMaxHeight("30px");
-        logo.setMaxWidth("65px");
-
-        HorizontalLayout logoLayout = new HorizontalLayout(logo, logoName);
-        logoLayout.setDefaultVerticalComponentAlignment(FlexComponent.Alignment.CENTER);
+        logo.setMaxHeight("35px");
 
         RouterLink routerLink = new RouterLink("", HomeView.class);
-        routerLink.add(logoLayout);
+        routerLink.add(logo);
 
         Div container = new Div(routerLink);
         boolean log = false;
@@ -49,7 +42,6 @@ public class MainLayout extends AppLayout {
         header.expand(container);
         header.setDefaultVerticalComponentAlignment(FlexComponent.Alignment.CENTER);
         header.setWidth("100%");
-        header.setPadding(true);
         header.setSpacing(true);
 
         addToNavbar(new DrawerToggle(), header);

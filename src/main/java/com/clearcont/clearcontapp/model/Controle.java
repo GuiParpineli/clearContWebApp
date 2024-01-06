@@ -5,6 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
+
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
@@ -23,8 +25,9 @@ public class Controle {
     private String observacoes;
     private Boolean composicaoPreenchida;
     private Boolean agingListadaPendencia;
+    private LocalDate dataCompetencia;
     @ManyToOne
     private Responsavel responsavel;
     @ManyToOne
-    private Cliente cliente;
+    private Empresa empresa;
 }

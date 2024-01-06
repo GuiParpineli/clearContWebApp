@@ -20,11 +20,12 @@ public class ControleView extends Div {
         
         List<Controle> controleList = service.getAll();
         Grid<Controle> grid = new Grid<>(Controle.class, false);
-        grid.addColumn(controle -> controle.getCliente().getNomeEmpresa()).setHeader("Cliente").setSortable(true);
-        grid.addColumn(Controle::getAgingListadaPendencia).setHeader("Aging");
-        grid.addColumn(Controle::getResponsavel).setHeader("Responsavel");
-        grid.addColumn(Controle::getSaldoAnalise).setHeader("Saldo Analise");
+        grid.addColumn(Controle::getNomeConta).setHeader("Nome da conta").setSortable(true);
         grid.addColumn(Controle::getSaldoBalancete).setHeader("Saldo Balancete");
+        grid.addColumn(Controle::getSaldoAnalise).setHeader("Saldo Analise");
+        grid.addColumn(Controle::getValorDiferenca).setHeader("Valor da Diferença");
+        grid.addColumn(Controle::getResponsavel).setHeader("Responsável");
+        grid.addColumn(controle -> !controle.getAgingListadaPendencia() ? "Não" : "Sim").setHeader("Aging List da Pendência");
         grid.setItems(controleList);
         
         add(new VerticalLayout(FlexComponent.Alignment.CENTER, new TopBarControleView(service), grid));
