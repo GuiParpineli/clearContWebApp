@@ -37,4 +37,8 @@ public class BalanceteService {
     public Balancete save(Balancete balancete) {
         return repository.save(balancete);
     }
+    
+    public List<Balancete> saveAll(List<Balancete> balancetes) {
+        return repository.saveAll(balancetes);
+    }
 }

@@ -5,6 +5,7 @@ import com.clearcont.clearcontapp.helpers.Log;
 import com.clearcont.clearcontapp.helpers.Periodo;
 import com.clearcont.clearcontapp.model.Balancete;
 import com.clearcont.clearcontapp.model.Empresa;
+import com.clearcont.clearcontapp.repository.EmpresaRepository;
 import com.clearcont.clearcontapp.service.BalanceteService;
 import com.clearcont.clearcontapp.views.main.MainLayout;
 import com.vaadin.flow.component.UI;
@@ -32,6 +33,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 
 @Route(value = "balancete", layout = MainLayout.class)
 @PageTitle("Balancete | ClearCont App")
@@ -39,7 +41,7 @@ public class BalanceteView extends Div {
     Integer id = 0;
     private final String CLAS_NAME = BalanceteView.class.getSimpleName();
     
-    public BalanceteView(BalanceteService service) throws IOException {
+    public BalanceteView(BalanceteService service, EmpresaRepository empresaRepository) {
         // Adicionar um novo cookie ao response atual
         Cookie novoCookie = new Cookie("company-id", "1");
         // Definir o tempo de expiração do cookie em segundos
@@ -104,21 +106,22 @@ public class BalanceteView extends Div {
                 Iterator<Row> rowIterator = sheet.iterator();
                 if (rowIterator.hasNext()) rowIterator.next();
                 List<Balancete> balancetes = new ArrayList<>();
+                Empresa empresa = empresaRepository.findById(id).orElseThrow();
                 while (rowIterator.hasNext()) {
                     Row row = rowIterator.next();
                     Log.log("CELL", row.getCell(0).toString());
                     balancetes.add(new Balancete(
                             0,
-                            null,
+                            empresa,
                             row.getCell(1).getStringCellValue(),
                             (int) row.getCell(0).getNumericCellValue(),
                             row.getCell(2).getNumericCellValue(),
                             row.getCell(3).getStringCellValue(),
-                            "JANEIRO",
-                            2024
+                            Periodo.periodo,
+                            Periodo.year
                     ));
-                    Empresa empresa = new Empresa();
-                    
+                    service.saveAll(balancetes);
+                    UI.getCurrent().getPage().reload();
                     Log.log("BALANCETE VIEW: ", "TAMANHO BALANTE INSERIDO : " + balancetes.size());
                     
                 }

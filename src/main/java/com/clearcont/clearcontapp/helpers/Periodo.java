@@ -1,6 +1,7 @@
 package com.clearcont.clearcontapp.helpers;
 
 import java.time.LocalDate;
+import java.time.Month;
 import java.time.format.TextStyle;
 import java.util.Locale;
 
@@ -8,6 +9,7 @@ public class Periodo {
     static LocalDate localDate = LocalDate.now();
     static Locale locale = new Locale.Builder().setLanguage("pt").setRegion("BR").build();
     static String month = localDate.getMonth().getDisplayName(TextStyle.FULL, locale).toUpperCase();
+    public static Integer year = localDate.getYear();
     public static String periodo = month;
     
     public static int getMonthByPeriodoString() {
@@ -26,5 +28,9 @@ public class Periodo {
             case "DEZEMBRO" -> 12;
             default -> throw new IllegalStateException("Unexpected value: " + periodo);
         };
+    }
+    
+    public static String getMonthByInt(Integer i) {
+        return Month.of(i).getDisplayName(TextStyle.FULL, locale);
     }
 }
