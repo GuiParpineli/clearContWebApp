@@ -2,6 +2,10 @@ package com.clearcont.clearcontapp.views.routes;
 
 import com.clearcont.clearcontapp.helpers.Log;
 import com.clearcont.clearcontapp.helpers.Periodo;
+import com.clearcont.clearcontapp.model.Empresa;
+import com.clearcont.clearcontapp.model.EmpresaGroup;
+import com.clearcont.clearcontapp.repository.EmpresaGroupRepository;
+import com.clearcont.clearcontapp.service.EmpresaGroupService;
 import com.clearcont.clearcontapp.views.main.MainLayout;
 import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.html.Div;
@@ -16,7 +20,9 @@ import com.vaadin.flow.router.Route;
 
 import java.time.Month;
 import java.time.format.TextStyle;
+import java.util.List;
 import java.util.Locale;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -24,7 +30,12 @@ import java.util.stream.Stream;
 @Route(value = "", layout = MainLayout.class)
 @PageTitle("Home| Nome do Aplicativo")
 public class HomeView extends Div {
-    public HomeView() {
+    
+    public HomeView(EmpresaGroupService empresaGroupService) {
+        EmpresaGroup companyList = empresaGroupService.getByID(1);
+        String CLASS_NAME = HomeView.class.getSimpleName();
+        Log.log(CLASS_NAME, "ID COMPANY GROUP RETORNADA: " + companyList.getId());
+        Log.log(CLASS_NAME, "QUANTIDADE DE EMPRESAS NO GRUPO RETORNADA: " + companyList.getEmpresas().size());
         
         H1 h1 = new H1("Sistema de Conciliação Contabil");
         Image logo = new Image("./images/logo-clear-black.png", "Logo cont");
@@ -38,7 +49,10 @@ public class HomeView extends Div {
                 .collect(Collectors.toList()));
         monthPicker.getStyle().setPadding("30px");
         
-        companyPicker.setItems();
+        companyPicker.setItems(
+                companyList.empresas.stream().map(Empresa::getNomeEmpresa).toList()
+        );
+        
         HorizontalLayout horizontalLayout = new HorizontalLayout(companyPicker, monthPicker);
         horizontalLayout.setAlignItems(FlexComponent.Alignment.BASELINE);
         

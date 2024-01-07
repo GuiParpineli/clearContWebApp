@@ -1,14 +1,17 @@
 package com.clearcont.clearcontapp.helpers;
 
-import lombok.Getter;
-import lombok.Setter;
-import org.springframework.boot.web.server.Cookie;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.web.bind.annotation.CookieValue;
 
 public class PerfilData {
+    HttpServletResponse response;
     
-    public void setPerfilData() {
-        Cookie cookie = new Cookie();
+    public void setCookieCompanyID(String value) {
+        Cookie cookie = new Cookie("company-id", value);
+        cookie.setMaxAge(60 * 60 * 24); // 24 horas
+        response.addCookie(cookie);
     }
     
-    public static Integer companyId = 1;
+    public Integer companyId = 1;
 }

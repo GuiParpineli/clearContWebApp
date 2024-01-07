@@ -3,9 +3,11 @@ package com.clearcont.clearcontapp;
 import com.clearcont.clearcontapp.model.Balancete;
 import com.clearcont.clearcontapp.model.Empresa;
 import com.clearcont.clearcontapp.model.Controle;
+import com.clearcont.clearcontapp.model.EmpresaGroup;
 import com.clearcont.clearcontapp.repository.BalanceteRepository;
-import com.clearcont.clearcontapp.repository.ClienteRepository;
+import com.clearcont.clearcontapp.repository.EmpresaRepository;
 import com.clearcont.clearcontapp.repository.ControleRepository;
+import com.clearcont.clearcontapp.repository.EmpresaGroupRepository;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.stereotype.Component;
@@ -15,20 +17,23 @@ import java.time.LocalDate;
 @Component
 public class DataLoader implements ApplicationRunner {
     private final BalanceteRepository balanceteRepository;
-    private final ClienteRepository clienteRepository;
+    private final EmpresaRepository empresaRepository;
     private final ControleRepository controleRepository;
+    private final EmpresaGroupRepository empresaGroupRepository;
     
     public DataLoader(BalanceteRepository balanceteRepository,
-                      ClienteRepository clienteRepository, ControleRepository controleRepository) {
+                      EmpresaRepository empresaRepository, ControleRepository controleRepository,
+                      EmpresaGroupRepository empresaGroupRepository) {
         this.balanceteRepository = balanceteRepository;
-        this.clienteRepository = clienteRepository;
+        this.empresaRepository = empresaRepository;
         this.controleRepository = controleRepository;
+        this.empresaGroupRepository = empresaGroupRepository;
     }
     
     @Override
     public void run(ApplicationArguments args) throws Exception {
         
-        Empresa empresa = clienteRepository.save(
+        Empresa empresa = empresaRepository.save(
                 new Empresa(
                         null,
                         "Empresa A ",
@@ -36,7 +41,7 @@ public class DataLoader implements ApplicationRunner {
                         "cientea@gmail.com"
                 ));
         
-        Empresa empresa2 = clienteRepository.save(
+        Empresa empresa2 = empresaRepository.save(
                 new Empresa(
                         null,
                         "Empresa b ",
@@ -90,5 +95,13 @@ public class DataLoader implements ApplicationRunner {
                 )
         );
         
+        empresaGroupRepository.save(
+                new EmpresaGroup(
+                        0,
+                        "EmpresaGrande",
+                        "12345",
+                        "empresaGrande@email.com",
+                        empresaRepository.findAll())
+        );
     }
 }
