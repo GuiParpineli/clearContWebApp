@@ -27,7 +27,6 @@ import org.vaadin.crudui.form.impl.form.factory.DefaultCrudFormFactory;
 
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 @Route(value = "detail", layout = MainLayout.class)
@@ -144,6 +143,14 @@ public class DetailView extends VerticalLayout implements HasUrlParameter<String
         formFactory.setVisibleProperties("data", "debito", "credito", "historico");
         crud.setCrudFormFactory(formFactory);
         crud.getGrid().setColumns("data", "debito", "credito", "saldoContabil", "historico");
+        crud.getGrid().getColumnByKey("saldoContabil")
+                .setFooter(
+                        "TOTAL SALDO: " +
+                        String.valueOf(
+                                contabeisRepository.findComposicaoLancamentosContabeisByBalancete_Id(balanceteId)
+                                        .stream().mapToDouble(ComposicaoLancamentosContabeis::getSaldoContabil).sum())
+                );
+        ;
         crud.getGrid().setColumnReorderingAllowed(true);
         setSizeFull();
         crud.getCrudFormFactory().setUseBeanValidation(true);
@@ -153,9 +160,15 @@ public class DetailView extends VerticalLayout implements HasUrlParameter<String
         crud.setAddOperation(contabeisRepository::save);
         crud.setDeleteOperation(contabeisRepository::delete);
         crud.setUpdateOperation(contabeisRepository::saveAndFlush);
+        
         VerticalLayout conciliacaoContabil = new VerticalLayout(new H1("Conciliação Contábil"), infosCards, crud);
         conciliacaoContabil.setAlignItems(Alignment.CENTER);
+        
         add(conciliacaoContabil);
+    }
+    
+    private String createFooterSaldo(List<ComposicaoLancamentosContabeis> contabeis) {
+        return String.valueOf(contabeis.stream().mapToDouble(ComposicaoLancamentosContabeis::getSaldoContabil).sum());
     }
     
 }

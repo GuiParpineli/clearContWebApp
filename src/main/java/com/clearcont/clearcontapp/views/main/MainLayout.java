@@ -49,7 +49,7 @@ public class MainLayout extends AppLayout {
 
     private void createDrawer() {
         addToDrawer(new VerticalLayout(createHorizontalLayout("Home", HomeView.class, "home"),
-                createHorizontalLayout("Balance", BalanceteView.class, "scale-unbalance"),
+                createHorizontalLayout("Balancete", BalanceteView.class, "scale-unbalance"),
                 createHorizontalLayout("Controle", ControleView.class, "shield"),
                 createHorizontalLayout("Dashboard", DashboardView.class, "dashboard"),
                 createHorizontalLayout("Clientes", ClientesLink.class, "building")));

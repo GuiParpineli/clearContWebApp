@@ -29,19 +29,19 @@ public class ComposicaoLancamentosContabeis {
     private Double debito = 0.0;
     @NotNull
     private Double credito = 0.0;
-    private Double saldoContabil = credito - debito;
+    private Double saldoContabil = debito - credito;
     private String status;
     @ManyToOne
     private Balancete balancete;
     
     public void setDebito(Double debito) {
         this.debito = debito;
-        this.saldoContabil = credito - debito;
+        this.saldoContabil = debito - credito;
     }
     
     public void setCredito(Double credito) {
         this.credito = credito;
-        this.saldoContabil = credito - debito;
+        this.saldoContabil = debito - credito;
     }
     
 }
