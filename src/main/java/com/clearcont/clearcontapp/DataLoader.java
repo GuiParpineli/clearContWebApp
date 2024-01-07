@@ -1,18 +1,13 @@
 package com.clearcont.clearcontapp;
 
-import com.clearcont.clearcontapp.model.Balancete;
-import com.clearcont.clearcontapp.model.Empresa;
-import com.clearcont.clearcontapp.model.Controle;
-import com.clearcont.clearcontapp.model.EmpresaGroup;
-import com.clearcont.clearcontapp.repository.BalanceteRepository;
-import com.clearcont.clearcontapp.repository.EmpresaRepository;
-import com.clearcont.clearcontapp.repository.ControleRepository;
-import com.clearcont.clearcontapp.repository.EmpresaGroupRepository;
+import com.clearcont.clearcontapp.model.*;
+import com.clearcont.clearcontapp.repository.*;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Component
 public class DataLoader implements ApplicationRunner {
@@ -20,14 +15,17 @@ public class DataLoader implements ApplicationRunner {
     private final EmpresaRepository empresaRepository;
     private final ControleRepository controleRepository;
     private final EmpresaGroupRepository empresaGroupRepository;
+    private final ComposicaoLancamentosContabeisRepository composicaoLancamentosContabeisRepository;
     
     public DataLoader(BalanceteRepository balanceteRepository,
                       EmpresaRepository empresaRepository, ControleRepository controleRepository,
-                      EmpresaGroupRepository empresaGroupRepository) {
+                      EmpresaGroupRepository empresaGroupRepository,
+                      ComposicaoLancamentosContabeisRepository composicaoLancamentosContabeisRepository) {
         this.balanceteRepository = balanceteRepository;
         this.empresaRepository = empresaRepository;
         this.controleRepository = controleRepository;
         this.empresaGroupRepository = empresaGroupRepository;
+        this.composicaoLancamentosContabeisRepository = composicaoLancamentosContabeisRepository;
     }
     
     @Override
@@ -102,6 +100,19 @@ public class DataLoader implements ApplicationRunner {
                         "12345",
                         "empresaGrande@email.com",
                         empresaRepository.findAll())
+        );
+        
+        composicaoLancamentosContabeisRepository.save(
+                new ComposicaoLancamentosContabeis(
+                        0,
+                        LocalDateTime.now(),
+                        "loreash",
+                        100.0,
+                        200.0,
+                        (100.0 - 200.0),
+                        "EM ABERTO",
+                        balanceteRepository.findAll().getFirst()
+                )
         );
     }
 }

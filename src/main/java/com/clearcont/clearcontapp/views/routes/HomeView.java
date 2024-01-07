@@ -7,6 +7,8 @@ import com.clearcont.clearcontapp.model.EmpresaGroup;
 import com.clearcont.clearcontapp.repository.EmpresaGroupRepository;
 import com.clearcont.clearcontapp.service.EmpresaGroupService;
 import com.clearcont.clearcontapp.views.main.MainLayout;
+import com.vaadin.flow.component.UI;
+import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.H1;
@@ -56,15 +58,22 @@ public class HomeView extends Div {
         HorizontalLayout horizontalLayout = new HorizontalLayout(companyPicker, monthPicker);
         horizontalLayout.setAlignItems(FlexComponent.Alignment.BASELINE);
         
-        VerticalLayout verticalLayout = new VerticalLayout(h1, logo, horizontalLayout);
+        Button confirmButton = new Button("Confirmar");
+        confirmButton.getStyle().setBackground("green");
+        confirmButton.getStyle().set("color", "white");
+        
+        VerticalLayout verticalLayout = new VerticalLayout(h1, logo, horizontalLayout, confirmButton);
         verticalLayout.setAlignItems(FlexComponent.Alignment.CENTER);
-        monthPicker.getStyle().setTextAlign(Style.TextAlign.CENTER);
         verticalLayout.getStyle().setMargin("20px");
+        monthPicker.getStyle().setTextAlign(Style.TextAlign.CENTER);
         
         monthPicker.addValueChangeListener(event -> {
             Periodo.periodo = event.getValue();
             Log.log(HomeView.class.getSimpleName(), "PERIODO SELECIONADO: " + Periodo.periodo);
         });
+        
+        confirmButton.addClickListener(click -> UI.getCurrent().navigate("/balancete"));
+        
         
         add(new HorizontalLayout(FlexComponent.JustifyContentMode.CENTER, verticalLayout));
     }
