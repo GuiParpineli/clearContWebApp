@@ -4,19 +4,33 @@ package com.clearcont.clearcontapp.views.routes;
 import com.clearcont.clearcontapp.helpers.Log;
 import com.clearcont.clearcontapp.helpers.Periodo;
 import com.clearcont.clearcontapp.model.Balancete;
+import com.clearcont.clearcontapp.model.Empresa;
 import com.clearcont.clearcontapp.service.BalanceteService;
 import com.clearcont.clearcontapp.views.main.MainLayout;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.html.Div;
+import com.vaadin.flow.component.notification.Notification;
+import com.vaadin.flow.component.upload.Upload;
+import com.vaadin.flow.component.upload.UploadI18N;
+import com.vaadin.flow.component.upload.receivers.MemoryBuffer;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.server.VaadinService;
 import jakarta.servlet.http.Cookie;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.vaadin.crudui.crud.impl.GridCrud;
 import org.vaadin.crudui.form.impl.form.factory.DefaultCrudFormFactory;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 @Route(value = "balancete", layout = MainLayout.class)
@@ -25,7 +39,7 @@ public class BalanceteView extends Div {
     Integer id = 0;
     private final String CLAS_NAME = BalanceteView.class.getSimpleName();
     
-    public BalanceteView(BalanceteService service) {
+    public BalanceteView(BalanceteService service) throws IOException {
         // Adicionar um novo cookie ao response atual
         Cookie novoCookie = new Cookie("company-id", "1");
         // Definir o tempo de expiração do cookie em segundos
@@ -77,6 +91,44 @@ public class BalanceteView extends Div {
             Balancete balancete = event.getItem();
             UI.getCurrent().navigate("detail/" + balancete.getId());
         });
-        add(grid);
+        
+        Button btnUploadFile = new Button("Enviar Arquivo");
+        
+        MemoryBuffer memoryBuffer = new MemoryBuffer();
+        Upload singleFileUpload = new Upload(memoryBuffer);
+        
+        singleFileUpload.addSucceededListener(event -> {
+            try {
+                Workbook workbook = new XSSFWorkbook(memoryBuffer.getInputStream());
+                Sheet sheet = workbook.getSheetAt(0);
+                Iterator<Row> rowIterator = sheet.iterator();
+                if (rowIterator.hasNext()) rowIterator.next();
+                List<Balancete> balancetes = new ArrayList<>();
+                while (rowIterator.hasNext()) {
+                    Row row = rowIterator.next();
+                    Log.log("CELL", row.getCell(0).toString());
+                    balancetes.add(new Balancete(
+                            0,
+                            null,
+                            row.getCell(1).getStringCellValue(),
+                            (int) row.getCell(0).getNumericCellValue(),
+                            row.getCell(2).getNumericCellValue(),
+                            row.getCell(3).getStringCellValue(),
+                            "JANEIRO",
+                            2024
+                    ));
+                    Empresa empresa = new Empresa();
+                    
+                    Log.log("BALANCETE VIEW: ", "TAMANHO BALANTE INSERIDO : " + balancetes.size());
+                    
+                }
+                workbook.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
+        
+        
+        add(grid, singleFileUpload);
     }
 }

@@ -18,9 +18,23 @@ public class Balancete {
     @ManyToOne
     private Empresa empresa;
     private String nomeConta;
-    private int numeroConta;
+    private Integer numeroConta;
     private Double totalBalancete;
     private String classificacao;
     private String mes;
     private Integer ano;
+    
+    @Override
+    public String toString() {
+        return "Balancete{" +
+               "id=" + id +
+               ", empresa=" + empresa +
+               ", nomeConta='" + nomeConta + '\'' +
+               ", numeroConta=" + numeroConta +
+               ", totalBalancete=" + totalBalancete +
+               ", classificacao='" + classificacao + '\'' +
+               ", mes='" + mes + '\'' +
+               ", ano=" + ano +
+               '}';
+    }
 }

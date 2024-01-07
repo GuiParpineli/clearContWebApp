@@ -42,6 +42,7 @@ dependencies {
     implementation("com.vaadin:vaadin-spring-boot-starter:24.0.0")
     implementation("org.vaadin.crudui:crudui:7.1.0")
     implementation("com.storedobject.chart:so-charts:3.2.4")
+    implementation("org.apache.poi:poi-ooxml:5.2.5")
     compileOnly("org.projectlombok:lombok:1.18.26")
     developmentOnly("org.springframework.boot:spring-boot-devtools:3.0.4")
     developmentOnly("org.springframework.boot:spring-boot-docker-compose")
