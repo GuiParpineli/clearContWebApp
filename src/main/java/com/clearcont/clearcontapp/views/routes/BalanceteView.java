@@ -7,12 +7,15 @@ import com.clearcont.clearcontapp.model.Balancete;
 import com.clearcont.clearcontapp.service.BalanceteService;
 import com.clearcont.clearcontapp.views.main.MainLayout;
 import com.vaadin.flow.component.UI;
+import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.server.VaadinService;
 import jakarta.servlet.http.Cookie;
+import org.vaadin.crudui.crud.impl.GridCrud;
+import org.vaadin.crudui.form.impl.form.factory.DefaultCrudFormFactory;
 
 import java.util.List;
 
@@ -39,7 +42,6 @@ public class BalanceteView extends Div {
             }
         }
         
-        
         Log.log(BalanceteView.class.getSimpleName(),
                 "MES DO BALANCETE: " + Periodo.periodo + ", " +
                 " PERFIL ID: " + id
@@ -52,17 +54,26 @@ public class BalanceteView extends Div {
         Log.log(BalanceteView.class.getSimpleName(),
                 "TAMANHO TOTAL DA LISTA BALANCETE: " + balanceteData.size());
         
-        Grid<Balancete> grid = new Grid<>(Balancete.class, false);
+        GridCrud<Balancete> grid = new GridCrud<>(Balancete.class);
+        DefaultCrudFormFactory<Balancete> formFactory = new DefaultCrudFormFactory<>(Balancete.class);
+        formFactory.setVisibleProperties("nomeConta", "numeroConta", "totalBalancete", "classificacao");
+        grid.setCrudFormFactory(formFactory);
+        grid.getGrid().setColumns("nomeConta", "numeroConta", "totalBalancete", "classificacao");
+        grid.getGrid().setColumnReorderingAllowed(true);
         grid.getStyle().set("border-radius", "10px");
+        grid.setAddOperation(service::save);
+        grid.setUpdateOperation(service::update);
+        grid.setDeleteOperation(service::delete);
+        grid.setFindAllOperation(() -> balanceteData);
+        grid.getGrid().addComponentColumn(balanceteComp -> {
+            Button editButton = new Button("Conciliar");
+            editButton.addClickListener(
+                    e -> UI.getCurrent().navigate("detail/" + balanceteComp.getId())
+            );
+            return editButton;
+        }).setWidth("150px").setFlexGrow(0);
         
-        grid.addColumn(balancete -> balancete.getEmpresa().getNomeEmpresa()).setHeader("Empresa").setSortable(true);
-        grid.addColumn(Balancete::getNumeroConta).setHeader("Nº conta").setSortable(true);
-        grid.addColumn(Balancete::getNomeConta).setHeader("Nome da Conta").setSortable(true);
-        grid.addColumn(Balancete::getTotalBalancete).setHeader("Total Balancete").setSortable(true);
-        grid.addColumn(Balancete::getClassificacao).setHeader("Classificação").setSortable(true);
-        
-        grid.setItems(balanceteData);
-        grid.addItemClickListener(event -> {
+        grid.getGrid().addItemDoubleClickListener(event -> {
             Balancete balancete = event.getItem();
             UI.getCurrent().navigate("detail/" + balancete.getId());
         });

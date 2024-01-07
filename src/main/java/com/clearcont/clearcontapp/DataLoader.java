@@ -105,7 +105,7 @@ public class DataLoader implements ApplicationRunner {
         composicaoLancamentosContabeisRepository.save(
                 new ComposicaoLancamentosContabeis(
                         0,
-                        LocalDateTime.now(),
+                        LocalDate.now(),
                         "loreash",
                         100.0,
                         200.0,

@@ -6,7 +6,9 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.format.annotation.DateTimeFormat;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
@@ -18,7 +20,9 @@ public class ComposicaoLancamentosContabeis {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-    private LocalDateTime data = LocalDateTime.now();
+    @Setter
+    @DateTimeFormat(pattern = "dd-MM-yyyy")
+    private LocalDate data;
     @Setter
     private String historico;
     @NotNull
@@ -30,10 +34,6 @@ public class ComposicaoLancamentosContabeis {
     @ManyToOne
     private Balancete balancete;
     
-    public String getData() {
-        return data.format(DateTimeFormatter.ofPattern("dd-MM-yyyy"));
-    }
-    
     public void setDebito(Double debito) {
         this.debito = debito;
         this.saldoContabil = credito - debito;
@@ -43,4 +43,5 @@ public class ComposicaoLancamentosContabeis {
         this.credito = credito;
         this.saldoContabil = credito - debito;
     }
+    
 }

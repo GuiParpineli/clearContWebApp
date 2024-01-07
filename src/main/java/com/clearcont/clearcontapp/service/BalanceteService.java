@@ -25,4 +25,16 @@ public class BalanceteService {
     public List<Balancete> getByCompanyAndPeriod(Integer id, String mes, Integer ano) {
         return repository.findBalanceteByEmpresa_IdAndMesAndAno(id, mes, ano);
     }
+    
+    public void delete(Balancete balancete) {
+        repository.delete(balancete);
+    }
+    
+    public Balancete update(Balancete balancete) {
+        return repository.saveAndFlush(balancete);
+    }
+    
+    public Balancete save(Balancete balancete) {
+        return repository.save(balancete);
+    }
 }
