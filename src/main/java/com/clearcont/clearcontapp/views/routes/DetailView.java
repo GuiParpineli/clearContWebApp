@@ -8,7 +8,9 @@ import com.clearcont.clearcontapp.repository.ComposicaoLancamentosContabeisRepos
 import com.clearcont.clearcontapp.service.BalanceteService;
 import com.clearcont.clearcontapp.views.main.MainLayout;
 import com.vaadin.flow.component.Text;
+import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.html.H1;
 import com.vaadin.flow.component.html.H3;
 import com.vaadin.flow.component.icon.Icon;
@@ -111,14 +113,16 @@ public class DetailView extends VerticalLayout implements HasUrlParameter<String
                 status
         );
         
-        Text saldo = new Text(conciliacao.getSaldoContabil().toString());
+        double saldoContabil = getSaldoContabil(balanceteId);
+        Text saldo = new Text(String.valueOf(saldoContabil));
         FlexLayout composicaoContabilFlex = new FlexLayout(
                 new Text("Composição do Saldo Contabil: "),
                 saldo
         );
         
         FlexLayout diferencaLayout = new FlexLayout(
-                new Text("Diferença: ")
+                new Text("Diferença: "),
+                new Text(String.valueOf(balancete.getTotalBalancete() - saldoContabil))
         );
         
         FlexLayout infos = new FlexLayout(
@@ -146,9 +150,7 @@ public class DetailView extends VerticalLayout implements HasUrlParameter<String
         crud.getGrid().getColumnByKey("saldoContabil")
                 .setFooter(
                         "TOTAL SALDO: " +
-                        String.valueOf(
-                                contabeisRepository.findComposicaoLancamentosContabeisByBalancete_Id(balanceteId)
-                                        .stream().mapToDouble(ComposicaoLancamentosContabeis::getSaldoContabil).sum())
+                        saldoContabil
                 );
         ;
         crud.getGrid().setColumnReorderingAllowed(true);
@@ -157,7 +159,12 @@ public class DetailView extends VerticalLayout implements HasUrlParameter<String
         crud.setFindAllOperation(() ->
                 contabeisRepository.findComposicaoLancamentosContabeisByBalancete_Id(balanceteId)
         );
-        crud.setAddOperation(contabeisRepository::save);
+        crud.setAddOperation(a -> {
+                    a.setBalancete(balancete);
+                    contabeisRepository.save(a);
+                    return a;
+                }
+        );
         crud.setDeleteOperation(contabeisRepository::delete);
         crud.setUpdateOperation(contabeisRepository::saveAndFlush);
         
@@ -167,8 +174,9 @@ public class DetailView extends VerticalLayout implements HasUrlParameter<String
         add(conciliacaoContabil);
     }
     
-    private String createFooterSaldo(List<ComposicaoLancamentosContabeis> contabeis) {
-        return String.valueOf(contabeis.stream().mapToDouble(ComposicaoLancamentosContabeis::getSaldoContabil).sum());
+    private double getSaldoContabil(Integer balanceteId) {
+        return contabeisRepository.findComposicaoLancamentosContabeisByBalancete_Id(balanceteId)
+                .stream().mapToDouble(ComposicaoLancamentosContabeis::getSaldoContabil).sum();
     }
     
 }

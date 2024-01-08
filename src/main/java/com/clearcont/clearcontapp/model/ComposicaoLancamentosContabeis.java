@@ -30,8 +30,9 @@ public class ComposicaoLancamentosContabeis {
     @NotNull
     private Double credito = 0.0;
     private Double saldoContabil = debito - credito;
-    private String status;
+    private String status = "EM ABERTO";
     @ManyToOne
+    @Setter
     private Balancete balancete;
     
     public void setDebito(Double debito) {
