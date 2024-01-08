@@ -1,0 +1,16 @@
+{
+  "productionMode": false,
+  "eagerServerLoad": false,
+  "npmFolder": "C:\\Users\\guilh.GUIPC\\JavaProjects\\clearContWebApp",
+  "node.version": "v18.17.1",
+  "node.download.root": "https://nodejs.org/dist/",
+  "frontendFolder": "C:\\Users\\guilh.GUIPC\\JavaProjects\\clearContWebApp\\frontend",
+  "connect.javaSourceFolder": "C:\\Users\\guilh.GUIPC\\JavaProjects\\clearContWebApp\\src\\main\\java",
+  "javaResourceFolder": "C:\\Users\\guilh.GUIPC\\JavaProjects\\clearContWebApp\\src\\main\\resources",
+  "connect.applicationProperties": "C:\\Users\\guilh.GUIPC\\JavaProjects\\clearContWebApp\\src\\main\\resources\\application.properties",
+  "connect.openApiFile": "C:\\Users\\guilh.GUIPC\\JavaProjects\\clearContWebApp\\build\\generated-resources\\openapi.json",
+  "project.frontend.generated": "C:\\Users\\guilh.GUIPC\\JavaProjects\\clearContWebApp\\frontend\\generated",
+  "pnpm.enable": false,
+  "require.home.node": false,
+  "build.folder": "build"
+}
