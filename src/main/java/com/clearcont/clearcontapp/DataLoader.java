@@ -7,7 +7,6 @@ import org.springframework.boot.ApplicationRunner;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 @Component
 public class DataLoader implements ApplicationRunner {

@@ -8,9 +8,7 @@ import com.clearcont.clearcontapp.repository.ComposicaoLancamentosContabeisRepos
 import com.clearcont.clearcontapp.service.BalanceteService;
 import com.clearcont.clearcontapp.views.main.MainLayout;
 import com.vaadin.flow.component.Text;
-import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
-import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.html.H1;
 import com.vaadin.flow.component.html.H3;
 import com.vaadin.flow.component.icon.Icon;
@@ -42,6 +40,17 @@ public class DetailView extends VerticalLayout implements HasUrlParameter<String
     public DetailView(BalanceteService service, ComposicaoLancamentosContabeisRepository contabeisRepository) {
         this.service = service;
         this.contabeisRepository = contabeisRepository;
+    }
+    
+    private double getSaldoContabil(Integer balanceteId) {
+        return contabeisRepository.findComposicaoLancamentosContabeisByBalancete_Id(balanceteId)
+                .stream().mapToDouble(ComposicaoLancamentosContabeis::getSaldoContabil).sum();
+    }
+    
+    private void atualizarSaldoContabil(Integer balanceteId, GridCrud crud) {
+        double saldoContabil = getSaldoContabil(balanceteId);
+        crud.getGrid().getColumnByKey("saldoContabil")
+                .setFooter("TOTAL SALDO: " + saldoContabil);
     }
     
     @Override
@@ -147,36 +156,33 @@ public class DetailView extends VerticalLayout implements HasUrlParameter<String
         formFactory.setVisibleProperties("data", "debito", "credito", "historico");
         crud.setCrudFormFactory(formFactory);
         crud.getGrid().setColumns("data", "debito", "credito", "saldoContabil", "historico");
-        crud.getGrid().getColumnByKey("saldoContabil")
-                .setFooter(
-                        "TOTAL SALDO: " +
-                        saldoContabil
-                );
-        ;
-        crud.getGrid().setColumnReorderingAllowed(true);
-        setSizeFull();
-        crud.getCrudFormFactory().setUseBeanValidation(true);
-        crud.setFindAllOperation(() ->
-                contabeisRepository.findComposicaoLancamentosContabeisByBalancete_Id(balanceteId)
-        );
         crud.setAddOperation(a -> {
-                    a.setBalancete(balancete);
-                    contabeisRepository.save(a);
-                    return a;
+            a.setBalancete(balancete);
+            contabeisRepository.save(a);
+            atualizarSaldoContabil(balanceteId, crud);
+            return a;
+        });
+        crud.setFindAllOperation(() -> {
+                    var all = contabeisRepository.findComposicaoLancamentosContabeisByBalancete_Id(balanceteId);
+                    atualizarSaldoContabil(balanceteId, crud);
+                    return all;
                 }
         );
-        crud.setDeleteOperation(contabeisRepository::delete);
-        crud.setUpdateOperation(contabeisRepository::saveAndFlush);
+        crud.setDeleteOperation(a -> {
+            contabeisRepository.delete(a);
+            atualizarSaldoContabil(balanceteId, crud);
+        });
+        crud.setUpdateOperation(a -> {
+            contabeisRepository.saveAndFlush(a);
+            atualizarSaldoContabil(balanceteId, crud);
+            return a;
+        });
+        
         
         VerticalLayout conciliacaoContabil = new VerticalLayout(new H1("Conciliação Contábil"), infosCards, crud);
         conciliacaoContabil.setAlignItems(Alignment.CENTER);
         
         add(conciliacaoContabil);
-    }
-    
-    private double getSaldoContabil(Integer balanceteId) {
-        return contabeisRepository.findComposicaoLancamentosContabeisByBalancete_Id(balanceteId)
-                .stream().mapToDouble(ComposicaoLancamentosContabeis::getSaldoContabil).sum();
     }
     
 }

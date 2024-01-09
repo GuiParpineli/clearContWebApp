@@ -2,7 +2,6 @@ package com.clearcont.clearcontapp.helpers;
 
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
-import org.springframework.web.bind.annotation.CookieValue;
 
 public class PerfilData {
     HttpServletResponse response;

@@ -11,9 +11,6 @@ version = "0.0.1-ALPHA"
 java {
     sourceCompatibility = JavaVersion.VERSION_21
 }
-vaadin {
-    productionMode = true
-}
 
 configurations {
     compileOnly {
