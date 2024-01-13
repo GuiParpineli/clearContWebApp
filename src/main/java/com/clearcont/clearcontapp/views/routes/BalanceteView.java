@@ -118,7 +118,8 @@ public class BalanceteView extends Div {
                             row.getCell(2).getNumericCellValue(),
                             row.getCell(3).getStringCellValue(),
                             Periodo.periodo,
-                            Periodo.year
+                            Periodo.year,
+                            null
                     ));
                     service.saveAll(balancetes);
                     UI.getCurrent().getPage().reload();

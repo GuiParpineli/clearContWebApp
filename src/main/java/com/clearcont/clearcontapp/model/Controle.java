@@ -18,8 +18,6 @@ public class Controle {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @OneToMany
-    private List<ComposicaoLancamentosContabeis> lancamentosContabeis;
     private String subGrupo;
     private String circulante;
     private String nomeConta;

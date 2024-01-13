@@ -109,7 +109,6 @@ public class DataLoader implements ApplicationRunner {
             controleRepository.save(
                     new Controle(
                             null,
-                            List.of(composicaoLancamentosContabeisRepository.findAll().getFirst()),
                             "ATIVO",
                             "Sim",
                             "BRADESCO",

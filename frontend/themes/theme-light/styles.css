@@ -1,3 +1,10 @@
+html {
+    font-family: 'Montserrat', sans-serif;
+    --lumo-font-family: 'Montserrat';
+    --lumo-primary-color: green;
+}
+
+
 vaadin-app-layout::part(navbar) {
     background-color: black;
     font-weight: bold;
@@ -58,6 +65,6 @@ vaadin-grid-sorter::part(indicators) {
     font-weight: bold;
 }
 
-.bold-text{
+.bold-text {
     font-weight: bold;
 }

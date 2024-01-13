@@ -8,12 +8,12 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 
-@Theme(themeClass = Lumo.class)
+@Theme(variant = Lumo.LIGHT, themeClass = Lumo.class)
 @PWA(
         name = "ClearCont",
         shortName = "CC",
         offlinePath = "offline.html",
-        offlineResources = {"images/offline.png"}
+        offlineResources = {"images/logo-clear-black.png"}
 )
 @SpringBootApplication
 public class ClearContAppApplication implements AppShellConfigurator {

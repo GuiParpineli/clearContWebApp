@@ -1,5 +1,6 @@
 package com.clearcont.clearcontapp.views.components;
 
+import com.clearcont.clearcontapp.helpers.Periodo;
 import com.clearcont.clearcontapp.model.Empresa;
 import com.clearcont.clearcontapp.model.Controle;
 import com.clearcont.clearcontapp.service.ControleService;
@@ -26,8 +27,8 @@ public class TopBarControleView extends FlexLayout {
     
     public TopBarControleView(ControleService controleService) {
         
-        Empresa empresa = controleService.getAll().getFirst().getEmpresa();
-        Controle controle = controleService.getAll().getFirst();
+        Empresa empresa = controleService.getAllByMonthAndCompanyID(1, Periodo.getMonthByInt(1), Periodo.year).getLast().getEmpresa();
+        Controle controle = controleService.getAllByMonthAndCompanyID(1, Periodo.getMonthByInt(1), Periodo.year).getFirst();
         Image logo = new Image("./images/logo-white.png", "Logo");
         logo.setMaxHeight("80px");
         logo.getStyle().setPadding("50px");

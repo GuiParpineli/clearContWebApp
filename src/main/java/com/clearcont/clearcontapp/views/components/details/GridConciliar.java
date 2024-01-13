@@ -3,24 +3,13 @@ package com.clearcont.clearcontapp.views.components.details;
 import com.clearcont.clearcontapp.model.Balancete;
 import com.clearcont.clearcontapp.model.ComposicaoLancamentosContabeis;
 import com.clearcont.clearcontapp.service.ComposicaoLanContabeisService;
-import com.vaadin.flow.component.HasValueAndElement;
 import com.vaadin.flow.component.datepicker.DatePicker;
-import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
-import com.vaadin.flow.data.binder.Result;
-import com.vaadin.flow.data.binder.ValueContext;
-import com.vaadin.flow.data.converter.Converter;
-import com.vaadin.flow.data.renderer.LocalDateRenderer;
 import org.vaadin.crudui.crud.impl.GridCrud;
-import org.vaadin.crudui.form.FieldProvider;
-import org.vaadin.crudui.form.impl.field.provider.CheckBoxGroupProvider;
-import org.vaadin.crudui.form.impl.field.provider.DefaultFieldProvider;
 import org.vaadin.crudui.form.impl.form.factory.DefaultCrudFormFactory;
 
-import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.time.temporal.TemporalAccessor;
 import java.util.Locale;
 
 public class GridConciliar extends VerticalLayout {
@@ -34,10 +23,9 @@ public class GridConciliar extends VerticalLayout {
         
         formFactory.setVisibleProperties("data", "debito", "credito", "historico");
         
-        // Configure o listener de criação do campo
         formFactory.setFieldCreationListener("data", field -> {
             DatePicker datePicker = (DatePicker) field;
-            datePicker.setLocale(Locale.of("pt", "BR")); // Defina o locale do DatePicker
+            datePicker.setLocale(Locale.of("pt", "BR"));
             datePicker.addValueChangeListener(event -> {
                 LocalDate selectedDate = event.getValue();
                 String dataFormatada = selectedDate.format(formatador);
@@ -78,12 +66,5 @@ public class GridConciliar extends VerticalLayout {
         });
         
         add(crud);
-    }
-}
-
-class ConversaoData {
-    public static LocalDate converterParaLocalDate(String dataBrasileira) {
-        DateTimeFormatter formatador = DateTimeFormatter.ofPattern("dd/MM/yyyy").withLocale(new Locale("pt", "BR"));
-        return LocalDate.parse(dataBrasileira, formatador);
     }
 }

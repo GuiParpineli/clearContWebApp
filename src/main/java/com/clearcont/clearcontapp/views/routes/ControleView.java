@@ -1,5 +1,7 @@
 package com.clearcont.clearcontapp.views.routes;
 
+import com.clearcont.clearcontapp.helpers.PerfilData;
+import com.clearcont.clearcontapp.helpers.Periodo;
 import com.clearcont.clearcontapp.model.Controle;
 import com.clearcont.clearcontapp.service.ControleService;
 import com.clearcont.clearcontapp.views.components.TopBarControleView;
@@ -18,7 +20,7 @@ import java.util.List;
 public class ControleView extends Div {
     public ControleView(ControleService service) {
         
-        List<Controle> controleList = service.getAll();
+        List<Controle> controleList = service.getAllByMonthAndCompanyID(1, Periodo.getMonthByInt(1), Periodo.year);
         Grid<Controle> grid = new Grid<>(Controle.class, false);
         grid.addColumn(Controle::getNomeConta).setHeader("Nome da conta").setSortable(true);
         grid.addColumn(Controle::getSaldoBalancete).setHeader("Saldo Balancete");

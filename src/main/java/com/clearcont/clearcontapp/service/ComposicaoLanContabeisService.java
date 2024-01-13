@@ -6,7 +6,6 @@ import org.springframework.stereotype.Service;
 import org.vaadin.crudui.crud.impl.GridCrud;
 
 import java.text.DecimalFormat;
-import java.text.DecimalFormatSymbols;
 import java.util.List;
 
 import static com.clearcont.clearcontapp.helpers.DecimalFormatBR.getDecimalFormat;
@@ -38,6 +37,10 @@ public class ComposicaoLanContabeisService {
     
     public List<ComposicaoLancamentosContabeis> getByBalanceteID(Integer id) {
         return contabeisRepository.findComposicaoLancamentosContabeisByBalancete_Id(id);
+    }
+    
+    public List<ComposicaoLancamentosContabeis> getByYearMonthAndCnpj(String cnpj, Integer year, String month) {
+        return contabeisRepository.findComposicaoLancamentosContabeisByBalancete_Empresa_CnpjAndBalancete_AnoAndBalancete_Mes(cnpj, year, month);
     }
     
     public void update(ComposicaoLancamentosContabeis entity) {

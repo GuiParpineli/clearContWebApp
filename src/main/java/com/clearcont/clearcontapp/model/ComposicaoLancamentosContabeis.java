@@ -1,6 +1,7 @@
 package com.clearcont.clearcontapp.model;
 
 import com.clearcont.clearcontapp.helpers.DecimalFormatBR;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
@@ -34,8 +35,11 @@ public class ComposicaoLancamentosContabeis {
     private Double credito = 0.0;
     private Double saldoContabil = debito - credito;
     private String status = "EM ABERTO";
-    @ManyToOne
+    
     @Setter
+    @JsonIgnore
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "balancete_id")
     private Balancete balancete;
     
     public int contarPontos(String texto) {
