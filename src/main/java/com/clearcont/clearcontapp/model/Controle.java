@@ -29,8 +29,7 @@ public class Controle {
     private Boolean composicaoPreenchida;
     private Boolean agingListadaPendencia;
     private LocalDate dataCompetencia;
-    @ManyToOne
-    private Responsavel responsavel;
+    private String nomeResponsavel;
     @ManyToOne
     private Empresa empresa;
 }

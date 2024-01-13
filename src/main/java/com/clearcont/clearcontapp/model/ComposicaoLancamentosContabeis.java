@@ -42,6 +42,9 @@ public class ComposicaoLancamentosContabeis {
     @JoinColumn(name = "balancete_id")
     private Balancete balancete;
     
+    @ManyToOne
+    private Responsavel responsavel;
+    
     public int contarPontos(String texto) {
         int contador = 0;
         for (int i = 0; i < texto.length(); i++) {

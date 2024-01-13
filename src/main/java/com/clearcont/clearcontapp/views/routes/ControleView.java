@@ -26,7 +26,7 @@ public class ControleView extends Div {
         grid.addColumn(Controle::getSaldoBalancete).setHeader("Saldo Balancete");
         grid.addColumn(Controle::getSaldoAnalise).setHeader("Saldo Analise");
         grid.addColumn(Controle::getValorDiferenca).setHeader("Valor da Diferença");
-        grid.addColumn(Controle::getResponsavel).setHeader("Responsável");
+        grid.addColumn(Controle::getNomeResponsavel).setHeader("Responsável");
         grid.setItems(controleList);
         
         add(new VerticalLayout(FlexComponent.Alignment.CENTER, new TopBarControleView(service), grid));

@@ -16,16 +16,19 @@ public class DataLoader implements ApplicationRunner {
     private final ControleRepository controleRepository;
     private final EmpresaGroupRepository empresaGroupRepository;
     private final ComposicaoLancamentosContabeisRepository composicaoLancamentosContabeisRepository;
+    private final ResponsavelRepository responsavelRepository;
     
     public DataLoader(BalanceteRepository balanceteRepository,
                       EmpresaRepository empresaRepository, ControleRepository controleRepository,
                       EmpresaGroupRepository empresaGroupRepository,
-                      ComposicaoLancamentosContabeisRepository composicaoLancamentosContabeisRepository) {
+                      ComposicaoLancamentosContabeisRepository composicaoLancamentosContabeisRepository,
+                      ResponsavelRepository responsavelRepository) {
         this.balanceteRepository = balanceteRepository;
         this.empresaRepository = empresaRepository;
         this.controleRepository = controleRepository;
         this.empresaGroupRepository = empresaGroupRepository;
         this.composicaoLancamentosContabeisRepository = composicaoLancamentosContabeisRepository;
+        this.responsavelRepository = responsavelRepository;
     }
     
     @Override
@@ -89,7 +92,13 @@ public class DataLoader implements ApplicationRunner {
                             empresaRepository.findAll())
             );
         }
-        
+        Responsavel responsavel = new Responsavel();
+        if (responsavelRepository.findAll().isEmpty()) {
+            responsavel = responsavelRepository.save(
+                    new Responsavel(null, "Carlos", "carlos@gmail.com")
+            );
+            
+        }
         if (composicaoLancamentosContabeisRepository.findAll().isEmpty()) {
             composicaoLancamentosContabeisRepository.save(
                     new ComposicaoLancamentosContabeis(
@@ -100,30 +109,11 @@ public class DataLoader implements ApplicationRunner {
                             200.0,
                             (100.0 - 200.0),
                             "EM ABERTO",
-                            balanceteRepository.findAll().getFirst()
+                            balanceteRepository.findAll().getFirst(),
+                            responsavel
                     )
             );
         }
         
-        if (controleRepository.findAll().isEmpty()) {
-            controleRepository.save(
-                    new Controle(
-                            null,
-                            "ATIVO",
-                            "Sim",
-                            "BRADESCO",
-                            10.219,
-                            100.0,
-                            99.00,
-                            "STATUS",
-                            "Obervacoes ",
-                            true,
-                            false,
-                            LocalDate.now(),
-                            null,
-                            empresa
-                    )
-            );
-        }
     }
 }

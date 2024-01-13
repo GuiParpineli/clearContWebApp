@@ -30,27 +30,26 @@ public class ControleService {
         List<Controle> controles = new ArrayList<>();
         byCompanyAndPeriod.forEach(
                 balancete -> {
-                    controles.add(
-                            new Controle(
-                                    null,
-                                    null,
-                                    balancete.getClassificacao(),
-                                    balancete.getNomeConta(),
-                                    balancete.getTotalBalancete(),
-                                    balancete.getComposicaoLancamentosContabeisList().stream().mapToDouble(
-                                            ComposicaoLancamentosContabeis::getDoubleSaldoContabil
-                                    ).sum(),
-                                    balancete.getComposicaoLancamentosContabeisList().stream().mapToDouble(
-                                            ComposicaoLancamentosContabeis::getDoubleSaldoContabil
-                                    ).sum() - balancete.getTotalBalancete(),
-                                    "ABERTO",
-                                    "",
-                                    false,
-                                    false,
-                                    LocalDate.now(),
-                                    new Responsavel(),
-                                    balancete.getEmpresa()
-                            ));
+                    if (!balancete.getComposicaoLancamentosContabeisList().isEmpty())
+                        controles.add(
+                                new Controle(
+                                        null,
+                                        null,
+                                        balancete.getClassificacao(),
+                                        balancete.getNomeConta(),
+                                        balancete.getTotalBalancete(),
+                                        balancete.getComposicaoLancamentosContabeisList().stream().mapToDouble(
+                                                ComposicaoLancamentosContabeis::getDoubleSaldoContabil).sum(),
+                                        balancete.getComposicaoLancamentosContabeisList()
+                                                .stream().mapToDouble(ComposicaoLancamentosContabeis::getDoubleSaldoContabil).sum() - balancete.getTotalBalancete(),
+                                        "ABERTO",
+                                        "",
+                                        false,
+                                        false,
+                                        LocalDate.now(),
+                                        balancete.getComposicaoLancamentosContabeisList().getFirst().getResponsavel().getNome(),
+                                        balancete.getEmpresa()
+                                ));
                 }
         );
         return controles;
