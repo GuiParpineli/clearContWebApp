@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -17,6 +18,8 @@ public class Controle {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    @OneToMany
+    private List<ComposicaoLancamentosContabeis> lancamentosContabeis;
     private String subGrupo;
     private String circulante;
     private String nomeConta;

@@ -6,6 +6,9 @@ import com.clearcont.clearcontapp.model.ComposicaoLancamentosContabeis;
 import com.clearcont.clearcontapp.model.DocumentosAnexados;
 import com.clearcont.clearcontapp.repository.ComposicaoLancamentosContabeisRepository;
 import com.clearcont.clearcontapp.service.BalanceteService;
+import com.clearcont.clearcontapp.service.ComposicaoLanContabeisService;
+import com.clearcont.clearcontapp.views.components.details.GridConciliar;
+import com.clearcont.clearcontapp.views.components.details.InfoCardsConciliacao;
 import com.clearcont.clearcontapp.views.main.MainLayout;
 import com.vaadin.flow.component.Text;
 import com.vaadin.flow.component.button.Button;
@@ -26,6 +29,8 @@ import org.vaadin.crudui.crud.impl.GridCrud;
 import org.vaadin.crudui.form.impl.form.factory.DefaultCrudFormFactory;
 
 import java.io.InputStream;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -34,23 +39,12 @@ public class DetailView extends VerticalLayout implements HasUrlParameter<String
     
     private final String CLASS_NAME = DetailView.class.getSimpleName();
     private final BalanceteService service;
-    private final ComposicaoLancamentosContabeisRepository contabeisRepository;
+    private final ComposicaoLanContabeisService contabeisService;
     
     @Autowired
-    public DetailView(BalanceteService service, ComposicaoLancamentosContabeisRepository contabeisRepository) {
+    public DetailView(BalanceteService service, ComposicaoLanContabeisService contabeisService) {
         this.service = service;
-        this.contabeisRepository = contabeisRepository;
-    }
-    
-    private double getSaldoContabil(Integer balanceteId) {
-        return contabeisRepository.findComposicaoLancamentosContabeisByBalancete_Id(balanceteId)
-                .stream().mapToDouble(ComposicaoLancamentosContabeis::getSaldoContabil).sum();
-    }
-    
-    private void atualizarSaldoContabil(Integer balanceteId, GridCrud crud) {
-        double saldoContabil = getSaldoContabil(balanceteId);
-        crud.getGrid().getColumnByKey("saldoContabil")
-                .setFooter("TOTAL SALDO: " + saldoContabil);
+        this.contabeisService = contabeisService;
     }
     
     @Override
@@ -59,130 +53,18 @@ public class DetailView extends VerticalLayout implements HasUrlParameter<String
         Balancete balancete = service.getById(balanceteId);
         List<DocumentosAnexados> documentosAnexadosList = new ArrayList<>();
         
-        List<Button> buttonsDownload = null;
-        Button button = new Button("Baixar");
-        button.addClassName("button");
-        Icon iconExcel = new Icon("file-table");
-        iconExcel.setColor("black");
-        VerticalLayout buttonIcon = new VerticalLayout(iconExcel, button);
-        buttonIcon.setAlignItems(Alignment.CENTER);
+        GridConciliar crud = new GridConciliar(balancete, contabeisService, balanceteId);
+        ComposicaoLancamentosContabeis conciliacao = contabeisService.getByID(balanceteId);
+        double saldoContabil = contabeisService.getSaldoContabil(balanceteId);
         
-        MemoryBuffer memoryBuffer = new MemoryBuffer();
-        Upload singleFileUpload = new Upload(memoryBuffer);
-        
-        singleFileUpload.addSucceededListener(click -> {
-            // Get information about the uploaded file
-            InputStream fileData = memoryBuffer.getInputStream();
-            String fileName = click.getFileName();
-            long contentLength = click.getContentLength();
-            String mimeType = click.getMIMEType();
-            // Do something with the file data
-            // processFile (fileData, fileName, contentLength, mimeType);
-            Notification.show("Arquivo Anexado");
-        });
-        
-        HorizontalLayout dowloadButtons = new HorizontalLayout(
-                buttonIcon,
-                new VerticalLayout(
-                        new H3("Anexar novo documento:"),
-                        singleFileUpload
-                )
-        );
-        
-        dowloadButtons.setPadding(true);
-        
-        HorizontalLayout flexLayout = new HorizontalLayout(
-                new H3("Documentos Anexados"),
-                dowloadButtons
-        );
-        flexLayout.setAlignItems(Alignment.CENTER);
-        flexLayout.addClassName("card");
-        
-        ComposicaoLancamentosContabeis conciliacao = contabeisRepository.findById(balanceteId).orElse(
-                new ComposicaoLancamentosContabeis()
-        );
+        InfoCardsConciliacao infoCards = new InfoCardsConciliacao(balancete, conciliacao, saldoContabil);
         Log.log(CLASS_NAME, "TAMANHO COMPOSICAO LANCAMENTOS CONTABEIS: " + conciliacao.getId());
         
-        Text nomeConta = new Text(balancete.getNomeConta());
-        
-        FlexLayout laynomeConta = new FlexLayout(
-                new Text("Nome da conta: "),
-                nomeConta
-        );
-        
-        Text numeroConta = new Text(String.valueOf(balancete.getNumeroConta()));
-        FlexLayout numConta = new FlexLayout(
-                new Text("Numero da conta: "),
-                numeroConta
-        );
-        
-        Text status = new Text(conciliacao.getStatus());
-        FlexLayout conciliacaoStatus = new FlexLayout(
-                new Text("Status conciliação: "),
-                status
-        );
-        
-        double saldoContabil = getSaldoContabil(balanceteId);
-        Text saldo = new Text(String.valueOf(saldoContabil));
-        FlexLayout composicaoContabilFlex = new FlexLayout(
-                new Text("Composição do Saldo Contabil: "),
-                saldo
-        );
-        
-        FlexLayout diferencaLayout = new FlexLayout(
-                new Text("Diferença: "),
-                new Text(String.valueOf(balancete.getTotalBalancete() - saldoContabil))
-        );
-        
-        FlexLayout infos = new FlexLayout(
-                laynomeConta,
-                numConta,
-                conciliacaoStatus,
-                composicaoContabilFlex,
-                diferencaLayout
-        );
-        infos.addClassName("card");
-        infos.setAlignItems(Alignment.START);
-        infos.setFlexDirection(FlexLayout.FlexDirection.COLUMN);
-        
-        FlexLayout infosCards = new FlexLayout(flexLayout, infos);
-        infosCards.getStyle().setPadding("10px");
-        infosCards.setFlexWrap(FlexLayout.FlexWrap.WRAP);
-        infosCards.setFlexShrink(20);
-        infosCards.setJustifyContentMode(JustifyContentMode.EVENLY);
-        
-        GridCrud<ComposicaoLancamentosContabeis> crud = new GridCrud<>(ComposicaoLancamentosContabeis.class);
-        DefaultCrudFormFactory<ComposicaoLancamentosContabeis> formFactory = new DefaultCrudFormFactory<>(ComposicaoLancamentosContabeis.class);
-        formFactory.setVisibleProperties("data", "debito", "credito", "historico");
-        crud.setCrudFormFactory(formFactory);
-        crud.getGrid().setColumns("data", "debito", "credito", "saldoContabil", "historico");
-        crud.setAddOperation(a -> {
-            a.setBalancete(balancete);
-            contabeisRepository.save(a);
-            atualizarSaldoContabil(balanceteId, crud);
-            return a;
-        });
-        crud.setFindAllOperation(() -> {
-                    var all = contabeisRepository.findComposicaoLancamentosContabeisByBalancete_Id(balanceteId);
-                    atualizarSaldoContabil(balanceteId, crud);
-                    return all;
-                }
-        );
-        crud.setDeleteOperation(a -> {
-            contabeisRepository.delete(a);
-            atualizarSaldoContabil(balanceteId, crud);
-        });
-        crud.setUpdateOperation(a -> {
-            contabeisRepository.saveAndFlush(a);
-            atualizarSaldoContabil(balanceteId, crud);
-            return a;
-        });
-        
-        
-        VerticalLayout conciliacaoContabil = new VerticalLayout(new H1("Conciliação Contábil"), infosCards, crud);
+        VerticalLayout conciliacaoContabil = new VerticalLayout(new H1("Conciliação Contábil"), infoCards, crud);
         conciliacaoContabil.setAlignItems(Alignment.CENTER);
         
         add(conciliacaoContabil);
     }
+    
     
 }

@@ -48,7 +48,6 @@ dependencies {
     implementation("org.apache.poi:poi-ooxml:5.2.5")
     compileOnly("org.projectlombok:lombok:1.18.26")
     developmentOnly("org.springframework.boot:spring-boot-devtools:3.0.4")
-    developmentOnly("org.springframework.boot:spring-boot-docker-compose")
     runtimeOnly("com.mysql:mysql-connector-j:8.2.0")
     annotationProcessor("org.projectlombok:lombok")
     testImplementation("org.springframework.boot:spring-boot-starter-test:3.1.0")

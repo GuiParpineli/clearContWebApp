@@ -7,6 +7,7 @@ import org.springframework.boot.ApplicationRunner;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Component
 public class DataLoader implements ApplicationRunner {
@@ -77,26 +78,7 @@ public class DataLoader implements ApplicationRunner {
                     .mes("DEZEMBRO")
                     .totalBalancete(9948.36334).build());
         }
-        if (controleRepository.findAll().isEmpty()) {
-            controleRepository.save(
-                    new Controle(
-                            null,
-                            "ATIVO",
-                            "Sim",
-                            "BRADESCO",
-                            10.219,
-                            100.0,
-                            99.00,
-                            "STATUS",
-                            "Obervacoes ",
-                            true,
-                            false,
-                            LocalDate.now(),
-                            null,
-                            empresa
-                    )
-            );
-        }
+        
         if (empresaGroupRepository.findAll().isEmpty()) {
             empresaGroupRepository.save(
                     new EmpresaGroup(
@@ -119,6 +101,28 @@ public class DataLoader implements ApplicationRunner {
                             (100.0 - 200.0),
                             "EM ABERTO",
                             balanceteRepository.findAll().getFirst()
+                    )
+            );
+        }
+        
+        if (controleRepository.findAll().isEmpty()) {
+            controleRepository.save(
+                    new Controle(
+                            null,
+                            List.of(composicaoLancamentosContabeisRepository.findAll().getFirst()),
+                            "ATIVO",
+                            "Sim",
+                            "BRADESCO",
+                            10.219,
+                            100.0,
+                            99.00,
+                            "STATUS",
+                            "Obervacoes ",
+                            true,
+                            false,
+                            LocalDate.now(),
+                            null,
+                            empresa
                     )
             );
         }
