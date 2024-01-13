@@ -32,10 +32,10 @@ public class InfoCardsConciliacao extends HorizontalLayout {
                 status
         );
         
-        Text saldo = new Text(String.valueOf(saldoContabil));
+        Text saldo = new Text(getDecimalFormat().format( saldoContabil));
         FlexLayout composicaoContabilFlex = new FlexLayout(
                 new Text("Composição do Saldo Contabil: "),
-                saldo
+                 saldo
         );
         FlexLayout diferencaLayout = new FlexLayout(
                 new Text("Diferença: "),

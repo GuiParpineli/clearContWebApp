@@ -32,8 +32,8 @@ public class ComposicaoLanContabeisService {
         contabeisRepository.save(entity);
     }
     
-    public void delete(ComposicaoLancamentosContabeis entity) {
-        contabeisRepository.delete(entity);
+    public void deleteByID(Integer id) {
+        contabeisRepository.deleteById(id);
     }
     
     public List<ComposicaoLancamentosContabeis> getByBalanceteID(Integer id) {
@@ -47,7 +47,7 @@ public class ComposicaoLanContabeisService {
     
     public double getSaldoContabil(Integer balanceteId) {
         return contabeisRepository.findComposicaoLancamentosContabeisByBalancete_Id(balanceteId)
-                .stream().mapToDouble(ComposicaoLancamentosContabeis::getSaldoContabil).sum();
+                .stream().mapToDouble((ComposicaoLancamentosContabeis::getDoubleSaldoContabil)).sum();
     }
     
     public void atualizarSaldoContabil(Integer balanceteId, GridCrud crud) {
