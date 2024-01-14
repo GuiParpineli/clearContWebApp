@@ -1,12 +1,13 @@
 package com.clearcont.clearcontapp.views.components.details;
 
-import com.clearcont.clearcontapp.helpers.PerfilData;
+import com.clearcont.clearcontapp.helpers.CookieFactory;
 import com.clearcont.clearcontapp.model.Balancete;
 import com.clearcont.clearcontapp.model.ComposicaoLancamentosContabeis;
 import com.clearcont.clearcontapp.repository.ResponsavelRepository;
 import com.clearcont.clearcontapp.service.ComposicaoLanContabeisService;
 import com.vaadin.flow.component.datepicker.DatePicker;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.server.VaadinService;
 import org.vaadin.crudui.crud.impl.GridCrud;
 import org.vaadin.crudui.form.impl.form.factory.DefaultCrudFormFactory;
 
@@ -18,6 +19,7 @@ public class GridConciliar extends VerticalLayout {
     
     public GridConciliar(Balancete balancete, ComposicaoLanContabeisService contabeisService, Integer balanceteId, ResponsavelRepository responsavelRepository) {
         
+        CookieFactory cookieFactory = new CookieFactory(VaadinService.getCurrentResponse());
         GridCrud<ComposicaoLancamentosContabeis> crud = new GridCrud<>(ComposicaoLancamentosContabeis.class);
         DefaultCrudFormFactory<ComposicaoLancamentosContabeis> formFactory =
                 new DefaultCrudFormFactory<>(ComposicaoLancamentosContabeis.class);
@@ -47,7 +49,7 @@ public class GridConciliar extends VerticalLayout {
         
         crud.setAddOperation(a -> {
             a.setBalancete(balancete);
-            a.setResponsavel(responsavelRepository.findById(PerfilData.responsavelID).orElseThrow());
+            a.setResponsavel(responsavelRepository.findById(cookieFactory.getCookieInteger("responsavel-id")).orElseThrow());
             contabeisService.save(a);
             contabeisService.atualizarSaldoContabil(balanceteId, crud);
             return a;

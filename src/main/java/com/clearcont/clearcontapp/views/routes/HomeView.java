@@ -1,5 +1,6 @@
 package com.clearcont.clearcontapp.views.routes;
 
+import com.clearcont.clearcontapp.helpers.CookieFactory;
 import com.clearcont.clearcontapp.helpers.Log;
 import com.clearcont.clearcontapp.helpers.Periodo;
 import com.clearcont.clearcontapp.model.Empresa;
@@ -19,7 +20,7 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.dom.Style;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
-import org.springframework.beans.factory.annotation.Value;
+import com.vaadin.flow.server.VaadinService;
 
 import java.time.Month;
 import java.time.format.TextStyle;
@@ -35,6 +36,8 @@ public class HomeView extends Div {
     
     public HomeView(EmpresaGroupService empresaGroupService) {
         EmpresaGroup companyList = empresaGroupService.getByID(1);
+        CookieFactory cookieFactory = new CookieFactory(VaadinService.getCurrentResponse());
+        
         String CLASS_NAME = HomeView.class.getSimpleName();
         Log.log(CLASS_NAME, "ID COMPANY GROUP RETORNADA: " + companyList.getId());
         Log.log(CLASS_NAME, "QUANTIDADE DE EMPRESAS NO GRUPO RETORNADA: " + companyList.getEmpresas().size());
@@ -63,15 +66,16 @@ public class HomeView extends Div {
         confirmButton.getStyle().set("color", "white");
         Span versionFooter = new Span("Versão " + version);
         versionFooter.getStyle().setTextAlign(Style.TextAlign.CENTER).setPadding("30px");
-        VerticalLayout verticalLayout = new VerticalLayout(h1, logo, horizontalLayout, confirmButton,versionFooter);
+        VerticalLayout verticalLayout = new VerticalLayout(h1, logo, horizontalLayout, confirmButton, versionFooter);
         verticalLayout.setAlignItems(FlexComponent.Alignment.CENTER);
         verticalLayout.getStyle().setMargin("20px");
         monthPicker.getStyle().setTextAlign(Style.TextAlign.CENTER);
         
         monthPicker.addValueChangeListener(event -> {
-            Periodo.periodo = event.getValue();
-            Log.log(HomeView.class.getSimpleName(), "PERIODO SELECIONADO: " + Periodo.periodo);
+            cookieFactory.setCookie("month", event.getValue());
+            Log.log(HomeView.class.getSimpleName(), "PERIODO SELECIONADO: " + cookieFactory.getCookieString("month"));
         });
+        monthPicker.setValue(cookieFactory.getCookieString("month"));
         
         confirmButton.addClickListener(click -> UI.getCurrent().navigate("/balancete"));
         

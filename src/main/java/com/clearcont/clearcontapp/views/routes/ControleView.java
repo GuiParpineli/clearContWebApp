@@ -1,6 +1,5 @@
 package com.clearcont.clearcontapp.views.routes;
 
-import com.clearcont.clearcontapp.helpers.PerfilData;
 import com.clearcont.clearcontapp.helpers.Periodo;
 import com.clearcont.clearcontapp.model.Controle;
 import com.clearcont.clearcontapp.service.ControleService;

@@ -6,13 +6,9 @@ import java.time.format.TextStyle;
 import java.util.Locale;
 
 public class Periodo {
-    static LocalDate localDate = LocalDate.now();
     static Locale locale = new Locale.Builder().setLanguage("pt").setRegion("BR").build();
-    static String month = localDate.getMonth().getDisplayName(TextStyle.FULL, locale).toUpperCase();
-    public static Integer year = localDate.getYear();
-    public static String periodo = month;
     
-    public static int getMonthByPeriodoString() {
+    public static int getMonthByPeriodoString(String periodo) {
         return switch (periodo) {
             case "JANEIRO" -> 1;
             case "FEVEREIRO" -> 2;

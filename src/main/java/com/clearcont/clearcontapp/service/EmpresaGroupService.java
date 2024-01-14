@@ -15,4 +15,5 @@ public class EmpresaGroupService {
     public EmpresaGroup getByID(Integer id) {
         return repository.findById(id).orElseThrow();
     }
+    
 }

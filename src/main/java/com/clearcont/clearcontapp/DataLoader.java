@@ -86,12 +86,14 @@ public class DataLoader implements ApplicationRunner {
             empresaGroupRepository.save(
                     new EmpresaGroup(
                             0,
-                            "EmpresaGrande",
+                            "empresagrande",
                             "12345",
                             "empresaGrande@email.com",
+                            null,
                             empresaRepository.findAll())
             );
         }
+        
         Responsavel responsavel = new Responsavel();
         if (responsavelRepository.findAll().isEmpty()) {
             responsavel = responsavelRepository.save(
