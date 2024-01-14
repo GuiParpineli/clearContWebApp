@@ -37,11 +37,11 @@ public class ControleService {
                                         null,
                                         balancete.getClassificacao(),
                                         balancete.getNomeConta(),
-                                        balancete.getTotalBalancete(),
+                                        balancete.getDoubleTotalBalancete(),
                                         balancete.getComposicaoLancamentosContabeisList().stream().mapToDouble(
                                                 ComposicaoLancamentosContabeis::getDoubleSaldoContabil).sum(),
-                                        balancete.getComposicaoLancamentosContabeisList()
-                                                .stream().mapToDouble(ComposicaoLancamentosContabeis::getDoubleSaldoContabil).sum() - balancete.getTotalBalancete(),
+                                         balancete.getComposicaoLancamentosContabeisList()
+                                                .stream().mapToDouble(ComposicaoLancamentosContabeis::getDoubleSaldoContabil).sum() - balancete.getDoubleTotalBalancete(),
                                         "ABERTO",
                                         "",
                                         false,

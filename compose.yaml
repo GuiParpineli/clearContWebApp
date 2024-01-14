@@ -8,3 +8,10 @@ services:
       - 'MYSQL_USER=myuser'
     ports:
       - '3306:3306'
+  appclear:
+    image: guiparpineli/clearapp
+    ports:
+      - '8080:8080'
+    depends_on:
+      - mysql
+    restart: on-failure

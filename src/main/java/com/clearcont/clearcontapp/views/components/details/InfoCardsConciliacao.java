@@ -39,7 +39,7 @@ public class InfoCardsConciliacao extends HorizontalLayout {
         );
         FlexLayout diferencaLayout = new FlexLayout(
                 new Text("Diferença: "),
-                new Text("R$ " + (getDecimalFormat().format(balancete.getTotalBalancete() - saldoContabil)))
+                new Text("R$ " + (getDecimalFormat().format(balancete.getDoubleTotalBalancete() - saldoContabil)))
         );
         
         FlexLayout infos = new FlexLayout(

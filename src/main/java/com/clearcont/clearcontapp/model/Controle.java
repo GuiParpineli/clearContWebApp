@@ -1,5 +1,6 @@
 package com.clearcont.clearcontapp.model;
 
+import com.clearcont.clearcontapp.helpers.DecimalFormatBR;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -7,7 +8,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDate;
-import java.util.List;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -32,4 +32,28 @@ public class Controle {
     private String nomeResponsavel;
     @ManyToOne
     private Empresa empresa;
+    
+    public Double getDoubleSaldoBalancete() {
+        return saldoBalancete;
+    }
+    
+    public Double getDoubleSaldoAnalise() {
+        return saldoAnalise;
+    }
+    
+    public Double getDoubleValorDiferenca() {
+        return valorDiferenca;
+    }
+    
+    public String getSaldoBalancete() {
+        return DecimalFormatBR.getDecimalFormat().format(saldoBalancete);
+    }
+    
+    public String getSaldoAnalise() {
+        return DecimalFormatBR.getDecimalFormat().format(saldoAnalise);
+    }
+    
+    public String getValorDiferenca() {
+        return DecimalFormatBR.getDecimalFormat().format(valorDiferenca);
+    }
 }

@@ -4,6 +4,7 @@ package com.clearcont.clearcontapp.views.routes;
 import com.clearcont.clearcontapp.helpers.Log;
 import com.clearcont.clearcontapp.helpers.Periodo;
 import com.clearcont.clearcontapp.model.Balancete;
+import com.clearcont.clearcontapp.model.ComposicaoLancamentosContabeis;
 import com.clearcont.clearcontapp.model.Empresa;
 import com.clearcont.clearcontapp.repository.EmpresaRepository;
 import com.clearcont.clearcontapp.service.BalanceteService;
@@ -119,7 +120,7 @@ public class BalanceteView extends Div {
                             row.getCell(3).getStringCellValue(),
                             Periodo.periodo,
                             Periodo.year,
-                            null
+                            List.of(new ComposicaoLancamentosContabeis())
                     ));
                     service.saveAll(balancetes);
                     UI.getCurrent().getPage().reload();
@@ -128,6 +129,7 @@ public class BalanceteView extends Div {
                 }
                 workbook.close();
             } catch (IOException e) {
+                Log.log("BALANCETEVIEW", "ERRO: " + e.getMessage());
                 e.printStackTrace();
             }
         });

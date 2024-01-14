@@ -1,5 +1,6 @@
 package com.clearcont.clearcontapp.views.components;
 
+import com.clearcont.clearcontapp.helpers.DecimalFormatBR;
 import com.clearcont.clearcontapp.helpers.Periodo;
 import com.clearcont.clearcontapp.model.Empresa;
 import com.clearcont.clearcontapp.model.Controle;
@@ -46,7 +47,7 @@ public class TopBarControleView extends FlexLayout {
                 new Paragraph(controle.getCirculante()),
                 new Paragraph(controle.getSaldoAnalise().toString()),
                 new Paragraph(controle.getSaldoBalancete().toString()),
-                new Paragraph(String.valueOf(controle.getSaldoBalancete() - controle.getSaldoAnalise()))
+                new Paragraph(DecimalFormatBR.getDecimalFormat().format(controle.getDoubleSaldoBalancete() - controle.getDoubleSaldoAnalise()))
         );
         Div b5 = new Div(
                 new VerticalLayout(
@@ -55,7 +56,7 @@ public class TopBarControleView extends FlexLayout {
                         new Button(new Icon("download"))
                 )
         );
-   
+
 //        button.addClickListener (event -> {
 //            Notification.show ("Arquivo baixado");
 //        });
