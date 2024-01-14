@@ -1,7 +1,9 @@
 package com.clearcont.clearcontapp.views.components.details;
 
+import com.clearcont.clearcontapp.helpers.PerfilData;
 import com.clearcont.clearcontapp.model.Balancete;
 import com.clearcont.clearcontapp.model.ComposicaoLancamentosContabeis;
+import com.clearcont.clearcontapp.repository.ResponsavelRepository;
 import com.clearcont.clearcontapp.service.ComposicaoLanContabeisService;
 import com.vaadin.flow.component.datepicker.DatePicker;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
@@ -14,7 +16,7 @@ import java.util.Locale;
 
 public class GridConciliar extends VerticalLayout {
     
-    public GridConciliar(Balancete balancete, ComposicaoLanContabeisService contabeisService, Integer balanceteId) {
+    public GridConciliar(Balancete balancete, ComposicaoLanContabeisService contabeisService, Integer balanceteId, ResponsavelRepository responsavelRepository) {
         
         GridCrud<ComposicaoLancamentosContabeis> crud = new GridCrud<>(ComposicaoLancamentosContabeis.class);
         DefaultCrudFormFactory<ComposicaoLancamentosContabeis> formFactory =
@@ -45,6 +47,7 @@ public class GridConciliar extends VerticalLayout {
         
         crud.setAddOperation(a -> {
             a.setBalancete(balancete);
+            a.setResponsavel(responsavelRepository.findById(PerfilData.responsavelID).orElseThrow());
             contabeisService.save(a);
             contabeisService.atualizarSaldoContabil(balanceteId, crud);
             return a;

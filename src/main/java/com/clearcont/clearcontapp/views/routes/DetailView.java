@@ -4,7 +4,9 @@ import com.clearcont.clearcontapp.helpers.Log;
 import com.clearcont.clearcontapp.model.Balancete;
 import com.clearcont.clearcontapp.model.ComposicaoLancamentosContabeis;
 import com.clearcont.clearcontapp.model.DocumentosAnexados;
+import com.clearcont.clearcontapp.model.Responsavel;
 import com.clearcont.clearcontapp.repository.ComposicaoLancamentosContabeisRepository;
+import com.clearcont.clearcontapp.repository.ResponsavelRepository;
 import com.clearcont.clearcontapp.service.BalanceteService;
 import com.clearcont.clearcontapp.service.ComposicaoLanContabeisService;
 import com.clearcont.clearcontapp.views.components.details.GridConciliar;
@@ -12,6 +14,7 @@ import com.clearcont.clearcontapp.views.components.details.InfoCardsConciliacao;
 import com.clearcont.clearcontapp.views.main.MainLayout;
 import com.vaadin.flow.component.Text;
 import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.html.H1;
 import com.vaadin.flow.component.html.H3;
 import com.vaadin.flow.component.icon.Icon;
@@ -40,11 +43,13 @@ public class DetailView extends VerticalLayout implements HasUrlParameter<String
     private final String CLASS_NAME = DetailView.class.getSimpleName();
     private final BalanceteService service;
     private final ComposicaoLanContabeisService contabeisService;
+    private final ResponsavelRepository responsavelRepository;
     
     @Autowired
-    public DetailView(BalanceteService service, ComposicaoLanContabeisService contabeisService) {
+    public DetailView(BalanceteService service, ComposicaoLanContabeisService contabeisService, ResponsavelRepository responsavelRepository) {
         this.service = service;
         this.contabeisService = contabeisService;
+        this.responsavelRepository = responsavelRepository;
     }
     
     @Override
@@ -53,7 +58,7 @@ public class DetailView extends VerticalLayout implements HasUrlParameter<String
         Balancete balancete = service.getById(balanceteId);
         List<DocumentosAnexados> documentosAnexadosList = new ArrayList<>();
         
-        GridConciliar crud = new GridConciliar(balancete, contabeisService, balanceteId);
+        GridConciliar crud = new GridConciliar(balancete, contabeisService, balanceteId, responsavelRepository);
         ComposicaoLancamentosContabeis conciliacao = contabeisService.getByID(balanceteId);
         double saldoContabil = contabeisService.getSaldoContabil(balanceteId);
         

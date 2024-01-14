@@ -4,7 +4,6 @@ import com.clearcont.clearcontapp.helpers.Log;
 import com.clearcont.clearcontapp.helpers.Periodo;
 import com.clearcont.clearcontapp.model.Empresa;
 import com.clearcont.clearcontapp.model.EmpresaGroup;
-import com.clearcont.clearcontapp.repository.EmpresaGroupRepository;
 import com.clearcont.clearcontapp.service.EmpresaGroupService;
 import com.clearcont.clearcontapp.views.main.MainLayout;
 import com.vaadin.flow.component.UI;
@@ -13,18 +12,18 @@ import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.H1;
 import com.vaadin.flow.component.html.Image;
+import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.dom.Style;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
+import org.springframework.beans.factory.annotation.Value;
 
 import java.time.Month;
 import java.time.format.TextStyle;
-import java.util.List;
 import java.util.Locale;
-import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -32,6 +31,7 @@ import java.util.stream.Stream;
 @Route(value = "", layout = MainLayout.class)
 @PageTitle("Home| Nome do Aplicativo")
 public class HomeView extends Div {
+    String version = "0.0.2-ALPHA";
     
     public HomeView(EmpresaGroupService empresaGroupService) {
         EmpresaGroup companyList = empresaGroupService.getByID(1);
@@ -61,8 +61,9 @@ public class HomeView extends Div {
         Button confirmButton = new Button("Confirmar");
         confirmButton.getStyle().setBackground("green");
         confirmButton.getStyle().set("color", "white");
-        
-        VerticalLayout verticalLayout = new VerticalLayout(h1, logo, horizontalLayout, confirmButton);
+        Span versionFooter = new Span("Versão " + version);
+        versionFooter.getStyle().setTextAlign(Style.TextAlign.CENTER).setPadding("30px");
+        VerticalLayout verticalLayout = new VerticalLayout(h1, logo, horizontalLayout, confirmButton,versionFooter);
         verticalLayout.setAlignItems(FlexComponent.Alignment.CENTER);
         verticalLayout.getStyle().setMargin("20px");
         monthPicker.getStyle().setTextAlign(Style.TextAlign.CENTER);

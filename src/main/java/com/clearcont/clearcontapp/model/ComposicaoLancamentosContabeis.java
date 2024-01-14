@@ -42,6 +42,7 @@ public class ComposicaoLancamentosContabeis {
     @JoinColumn(name = "balancete_id")
     private Balancete balancete;
     
+    @Setter
     @ManyToOne
     private Responsavel responsavel;
     

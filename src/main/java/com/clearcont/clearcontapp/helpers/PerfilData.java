@@ -13,4 +13,5 @@ public class PerfilData {
     }
     
     public Integer companyId = 1;
+    public static Integer responsavelID = 1;
 }

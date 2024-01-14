@@ -8,17 +8,3 @@ services:
       - 'MYSQL_USER=myuser'
     ports:
       - '3306:3306'
-    volumes:
-      - db:/var/lib/mysql
-  clearapp:
-    depends_on:
-      - mysql
-    build:
-      dockerfile: Dockerfile
-    ports:
-      - '8080:8080'
-    volumes:
-      - .m2:/root/.m2
-
-volumes:
-  db:
