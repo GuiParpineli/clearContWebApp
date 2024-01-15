@@ -27,6 +27,7 @@ import com.vaadin.flow.component.upload.receivers.MemoryBuffer;
 import com.vaadin.flow.router.BeforeEvent;
 import com.vaadin.flow.router.HasUrlParameter;
 import com.vaadin.flow.router.Route;
+import jakarta.annotation.security.PermitAll;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.vaadin.crudui.crud.impl.GridCrud;
 import org.vaadin.crudui.form.impl.form.factory.DefaultCrudFormFactory;
@@ -38,6 +39,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Route(value = "detail", layout = MainLayout.class)
+@PermitAll
 public class DetailView extends VerticalLayout implements HasUrlParameter<String> {
     
     private final String CLASS_NAME = DetailView.class.getSimpleName();

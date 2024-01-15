@@ -8,9 +8,11 @@ import com.vaadin.flow.component.orderedlayout.FlexLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
+import jakarta.annotation.security.RolesAllowed;
 
 @Route(value = "dashboard", layout = MainLayout.class)
 @PageTitle("Dashboard | Nome do Aplicativo")
+@RolesAllowed("admin")
 public class DashboardView extends FlexLayout {
 
     public DashboardView() {

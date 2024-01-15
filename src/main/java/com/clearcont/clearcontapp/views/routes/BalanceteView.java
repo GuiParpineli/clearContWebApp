@@ -17,6 +17,7 @@ import com.vaadin.flow.component.upload.receivers.MemoryBuffer;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.server.VaadinService;
+import jakarta.annotation.security.PermitAll;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -32,6 +33,7 @@ import java.util.List;
 
 @Route(value = "balancete", layout = MainLayout.class)
 @PageTitle("Balancete | ClearCont App")
+@PermitAll
 public class BalanceteView extends Div {
     private final String CLAS_NAME = BalanceteView.class.getSimpleName();
     

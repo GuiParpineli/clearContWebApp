@@ -1,5 +1,6 @@
 package com.clearcont.clearcontapp.views.components;
 
+import com.clearcont.clearcontapp.helpers.CookieFactory;
 import com.clearcont.clearcontapp.helpers.DecimalFormatBR;
 import com.clearcont.clearcontapp.helpers.Periodo;
 import com.clearcont.clearcontapp.model.Empresa;
@@ -14,7 +15,9 @@ import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.orderedlayout.FlexLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.dom.Style;
+import com.vaadin.flow.server.VaadinService;
 
+import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
 
@@ -27,9 +30,13 @@ public class TopBarControleView extends FlexLayout {
     }
     
     public TopBarControleView(ControleService controleService) {
+        CookieFactory cookieFactory = new CookieFactory(VaadinService.getCurrentResponse());
+        String month = cookieFactory.getCookieString("month");
+        int year = LocalDate.now().getYear();
+        Integer id = cookieFactory.getCookieInteger("company-id");
         
-        Empresa empresa = controleService.getAllByMonthAndCompanyID(1, Periodo.getMonthByInt(1), Periodo.year).getLast().getEmpresa();
-        Controle controle = controleService.getAllByMonthAndCompanyID(1, Periodo.getMonthByInt(1), Periodo.year).getFirst();
+        Empresa empresa = controleService.getAllByMonthAndCompanyID(id, month, year).getLast().getEmpresa();
+        Controle controle = controleService.getAllByMonthAndCompanyID(id, month, year).getFirst();
         Image logo = new Image("./images/logo-white.png", "Logo");
         logo.setMaxHeight("80px");
         logo.getStyle().setPadding("50px");

@@ -4,9 +4,9 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 
-@Configuration
-//@EnableWebSecurity
-public class SecurityConfiguration implements WebMvcConfigurer {
+//@Configuration
+////@EnableWebSecurity
+//public class SecurityConfiguration implements WebMvcConfigurer {
 
 /*    private final LoggerMiddleware loggerMiddleware;
 
@@ -87,4 +87,4 @@ public class SecurityConfiguration implements WebMvcConfigurer {
         registry.addInterceptor(loggerMiddleware);
     }*/
 
-}
+//}

@@ -1,34 +1,43 @@
 package com.clearcont.clearcontapp.views.routes;
 
 import com.clearcont.clearcontapp.helpers.CookieFactory;
-import com.clearcont.clearcontapp.model.EmpresaGroup;
-import com.clearcont.clearcontapp.model.UserApp;
-import com.clearcont.clearcontapp.service.LoginService;
+import com.clearcont.clearcontapp.model.User;
+import com.clearcont.clearcontapp.service.UserAppService;
 import com.clearcont.clearcontapp.views.main.MainLayout;
-import com.vaadin.flow.component.html.Div;
-import com.vaadin.flow.component.login.LoginForm;
+import com.vaadin.flow.component.login.LoginI18n;
+import com.vaadin.flow.component.login.LoginOverlay;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.server.VaadinService;
+import org.springframework.security.core.userdetails.UserDetails;
 
 
 @Route(value = "login", layout = MainLayout.class)
-@PageTitle("Home| Nome do Aplicativo")
-public class LoginView extends Div {
+@PageTitle("Login")
+public class LoginView extends LoginOverlay {
     
-    public LoginView(LoginService service) {
+    public LoginView(UserAppService service) {
+        setAction("login");
         
-        CookieFactory cookieFactory = new CookieFactory(VaadinService.getCurrentResponse());
-        LoginForm loginForm = new LoginForm();
-        loginForm.addLoginListener(
-                login -> {
-                    UserApp user = service.Login(login.getUsername());
-                    
-                    cookieFactory.setCookie("company-id", user.getEmpresaGroup().getId().toString());
-                    cookieFactory.setCookie("jwt", user.getJwt());
-                    cookieFactory.setCookie("responsavel-id", user.getId().toString());
-                }
-        );
-        add(loginForm);
+        LoginI18n i18n = LoginI18n.createDefault();
+        i18n.setHeader(new LoginI18n.Header());
+        i18n.getHeader().setTitle("Faça Login para acessar a aplicação");
+        i18n.getHeader().setDescription("Login utilizando usuario e senha");
+        i18n.setAdditionalInformation(null);
+        setI18n(i18n);
+        
+        setForgotPasswordButtonVisible(false);
+        setOpened(true);
+        
+        // Adicione um listener para o evento de login
+        addLoginListener(e -> {
+            User user = service.getUserByUserName(e.getUsername());
+            if (user != null) {
+                // Agora você pode definir os cookies com segurança
+                CookieFactory cookieFactory = new CookieFactory(VaadinService.getCurrentResponse());
+                cookieFactory.setCookie("company-group-id", user.getEmpresaGroup().getId().toString());
+                cookieFactory.setCookie("username", e.getUsername());
+            }
+        });
     }
 }
