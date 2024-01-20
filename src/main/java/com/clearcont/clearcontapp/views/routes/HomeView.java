@@ -22,6 +22,7 @@ import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.server.VaadinService;
 import jakarta.annotation.security.PermitAll;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.server.session.InMemoryWebSessionStore;
 
@@ -35,8 +36,10 @@ import java.util.stream.Stream;
 @Route(value = "", layout = MainLayout.class)
 @PageTitle("Home| Nome do Aplicativo")
 @PermitAll
+@Slf4j
 public class HomeView extends Div {
     String version = "0.1.2-ALPHA";
+    
     private void setComboBoxValues(ComboBox<String> companyPicker, ComboBox<String> monthPicker) {
         // Recupera os valores salvos no localStorage
         UI.getCurrent().getPage().executeJs("return localStorage.getItem('month')")
@@ -52,16 +55,19 @@ public class HomeView extends Div {
                     }
                 });
     }
+    
     public HomeView(EmpresaGroupService empresaGroupService) {
+        
         CookieFactory cookieFactory = new CookieFactory(VaadinService.getCurrentResponse());
         int id = cookieFactory.getCookieInteger("company-group-id");
         EmpresaGroup companyList = empresaGroupService.getByID(id);
+        
         
         String CLASS_NAME = HomeView.class.getSimpleName();
         Log.log(CLASS_NAME, "ID COMPANY GROUP RETORNADA: " + companyList.getId());
         Log.log(CLASS_NAME, "QUANTIDADE DE EMPRESAS NO GRUPO RETORNADA: " + companyList.getEmpresas().size());
         
-        H1 h1 = new H1("Sistema de Conciliação Contabil");
+        H1 h1 = new H1("Sistema de Conciliação Contábil");
         Image logo = new Image("./images/logo-clear-black.png", "Logo cont");
         ComboBox<String> companyPicker = new ComboBox<>("Seleciona a Empresa: ");
         ComboBox<String> monthPicker = new ComboBox<>("Selecione o Período: ");
@@ -76,6 +82,13 @@ public class HomeView extends Div {
         
         companyPicker.setItems(
                 companyList.empresas.stream().map(Empresa::getNomeEmpresa).toList()
+        );
+        
+        monthPicker.addValueChangeListener(
+                value -> monthPicker.getValue()
+        );
+        monthPicker.addValueChangeListener(
+                value -> companyPicker.getValue()
         );
         
         HorizontalLayout horizontalLayout = new HorizontalLayout(companyPicker, monthPicker);
@@ -95,14 +108,16 @@ public class HomeView extends Div {
         monthPicker.addValueChangeListener(event -> {
             page.executeJs("localStorage.setItem($0, $1)", "month", event.getValue());
             page.executeJs("localStorage.setItem('month', $0)", event.getValue());
-            // Log para depuração
             Log.log(CLASS_NAME, "PERÍODO SELECIONADO: " + event.getValue());
         });
         
         companyPicker.addValueChangeListener(event -> {
             page.executeJs("localStorage.setItem($1, $1)", "company-name", event.getValue());
             page.executeJs("localStorage.setItem('company-name', $0)", event.getValue());
-            // Log para depuração
+        });
+        companyPicker.addValueChangeListener(event -> {
+            page.executeJs("localStorage.setItem($1, $1)", "company-name", event.getValue());
+            page.executeJs("localStorage.setItem('company-name', $0)", event.getValue());
             Log.log(CLASS_NAME, "EMPRESA SELECIONADA: " + event.getValue());
         });
         confirmButton.addClickListener(click -> UI.getCurrent().navigate("/balancete"));
