@@ -1,9 +1,12 @@
 package com.clearcont.clearcontapp.views.main;
 
+import com.clearcont.clearcontapp.security.AuthenticatedUser;
 import com.clearcont.clearcontapp.views.routes.*;
 import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.applayout.AppLayout;
 import com.vaadin.flow.component.applayout.DrawerToggle;
+import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.dependency.CssImport;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.H3;
@@ -13,40 +16,52 @@ import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.RouterLink;
+import com.vaadin.flow.server.VaadinSession;
+import com.vaadin.flow.server.auth.AccessAnnotationChecker;
 
 @CssImport("../frontend/themes/theme-light/styles.css")
 public class MainLayout extends AppLayout {
-
-    public MainLayout() {
+    
+    private AuthenticatedUser authenticatedUser;
+    private AccessAnnotationChecker accessChecker;
+    
+    public MainLayout(AuthenticatedUser authenticatedUser, AccessAnnotationChecker accessChecker) {
+        this.authenticatedUser = authenticatedUser;
+        this.accessChecker = accessChecker;
+        
+        setPrimarySection(Section.DRAWER);
         createHeader();
         createDrawer();
     }
-
+    
     private void createHeader() {
         Image logo = new Image("./images/logo-white.png", "Logo");
         logo.setMaxHeight("35px");
-
+        
         RouterLink routerLink = new RouterLink("", HomeView.class);
         routerLink.add(logo);
-
+        
         Div container = new Div(routerLink);
-        boolean log = false;
-        String perfilText = (log) ? "Perfil" : "Login";
-        RouterLink perfil = new RouterLink(perfilText, PerfilView.class);
-        perfil.getStyle().set("font-size", "var(--lumo-font-size-l)")
-                .set("left", "var(--lumo-space-l)").set("margin", "0")
-                .setColor("white").set("text-weight", "bold");
-        perfil.getStyle().set("padding-right", "10px");
-
-        HorizontalLayout header = new HorizontalLayout(container, perfil);
+        String perfilText = "Logout";
+        Button logoutButton = new Button("Logout");
+        logoutButton.addClickListener(e -> {
+            authenticatedUser.logout();
+        });
+//        RouterLink perfil = new RouterLink(perfilText, "/logout");
+//        perfil.getStyle().set("font-size", "var(--lumo-font-size-l)")
+//                .set("left", "var(--lumo-space-l)").set("margin", "0")
+//                .setColor("white").set("text-weight", "bold");
+//        perfil.getStyle().set("padding-right", "10px");
+        
+        HorizontalLayout header = new HorizontalLayout(container, logoutButton);
         header.expand(container);
         header.setDefaultVerticalComponentAlignment(FlexComponent.Alignment.CENTER);
         header.setWidth("100%");
         header.setSpacing(true);
-
+        
         addToNavbar(new DrawerToggle(), header);
     }
-
+    
     private void createDrawer() {
         addToDrawer(new VerticalLayout(createHorizontalLayout("Home", HomeView.class, "home"),
                 createHorizontalLayout("Balancete", BalanceteView.class, "scale-unbalance"),
@@ -54,7 +69,7 @@ public class MainLayout extends AppLayout {
                 createHorizontalLayout("Dashboard", DashboardView.class, "dashboard"),
                 createHorizontalLayout("Clientes", ClientesLink.class, "building")));
     }
-
+    
     private HorizontalLayout createHorizontalLayout(String linkText, Class<? extends Component> viewClass, String iconName) {
         RouterLink link = new RouterLink(linkText, viewClass);
         link.addClassName("drawer-link");

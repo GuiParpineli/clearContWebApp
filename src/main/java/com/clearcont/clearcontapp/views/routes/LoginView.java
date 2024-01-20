@@ -29,11 +29,9 @@ public class LoginView extends LoginOverlay {
         setForgotPasswordButtonVisible(false);
         setOpened(true);
         
-        // Adicione um listener para o evento de login
         addLoginListener(e -> {
             User user = service.getUserByUserName(e.getUsername());
             if (user != null) {
-                // Agora você pode definir os cookies com segurança
                 CookieFactory cookieFactory = new CookieFactory(VaadinService.getCurrentResponse());
                 cookieFactory.setCookie("company-group-id", user.getEmpresaGroup().getId().toString());
                 cookieFactory.setCookie("username", e.getUsername());

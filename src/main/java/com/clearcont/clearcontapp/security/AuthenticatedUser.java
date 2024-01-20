@@ -20,8 +20,7 @@ import java.util.Optional;
 @Component
 public class AuthenticatedUser {
     
-    @Autowired
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
     private final AuthenticationContext authenticationContext;
     
     
