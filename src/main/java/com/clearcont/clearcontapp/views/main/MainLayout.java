@@ -22,14 +22,10 @@ import com.vaadin.flow.server.auth.AccessAnnotationChecker;
 @CssImport("../frontend/themes/theme-light/styles.css")
 public class MainLayout extends AppLayout {
     
-    private AuthenticatedUser authenticatedUser;
-    private AccessAnnotationChecker accessChecker;
+    private final AuthenticatedUser authenticatedUser;
     
-    public MainLayout(AuthenticatedUser authenticatedUser, AccessAnnotationChecker accessChecker) {
+    public MainLayout(AuthenticatedUser authenticatedUser) {
         this.authenticatedUser = authenticatedUser;
-        this.accessChecker = accessChecker;
-        
-        setPrimarySection(Section.DRAWER);
         createHeader();
         createDrawer();
     }
@@ -42,16 +38,10 @@ public class MainLayout extends AppLayout {
         routerLink.add(logo);
         
         Div container = new Div(routerLink);
-        String perfilText = "Logout";
         Button logoutButton = new Button("Logout");
         logoutButton.addClickListener(e -> {
             authenticatedUser.logout();
         });
-//        RouterLink perfil = new RouterLink(perfilText, "/logout");
-//        perfil.getStyle().set("font-size", "var(--lumo-font-size-l)")
-//                .set("left", "var(--lumo-space-l)").set("margin", "0")
-//                .setColor("white").set("text-weight", "bold");
-//        perfil.getStyle().set("padding-right", "10px");
         
         HorizontalLayout header = new HorizontalLayout(container, logoutButton);
         header.expand(container);
