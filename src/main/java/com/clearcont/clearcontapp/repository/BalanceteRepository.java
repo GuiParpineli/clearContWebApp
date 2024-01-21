@@ -9,4 +9,5 @@ import java.util.List;
 @Repository
 public interface BalanceteRepository extends JpaRepository<Balancete, Integer> {
     List<Balancete> findBalanceteByEmpresa_IdAndMesAndAno(Integer id, String month, Integer year);
+    void deleteAllByEmpresa_Id(Integer id);
 }

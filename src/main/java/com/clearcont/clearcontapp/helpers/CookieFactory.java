@@ -4,8 +4,10 @@ import com.vaadin.flow.server.VaadinResponse;
 import com.vaadin.flow.server.VaadinService;
 import jakarta.servlet.http.Cookie;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @AllArgsConstructor
+@Slf4j
 public class CookieFactory {
     VaadinResponse response;
     private final String CLASS_NAME = CookieFactory.class.getSimpleName();
@@ -22,7 +24,7 @@ public class CookieFactory {
         for (Cookie cookie : cookies) {
             if (cookie.getName().equals(cookieName)) {
                 id = Integer.parseInt(cookie.getValue());
-                Log.log(CLASS_NAME, "O valor do cookie é: " + cookie.getValue());
+                log.info(CLASS_NAME, "O valor do cookie é: " + cookie.getValue());
                 break;
             }
         }
@@ -35,7 +37,7 @@ public class CookieFactory {
         for (Cookie cookie : cookies) {
             if (cookie.getName().equals(cookieName)) {
                 cookieSaved = cookie.getValue();
-                Log.log(CLASS_NAME, "O valor do cookie é: " + cookie.getValue());
+                log.info(CLASS_NAME, "O valor do cookie é: " + cookie.getValue());
                 break;
             }
         }

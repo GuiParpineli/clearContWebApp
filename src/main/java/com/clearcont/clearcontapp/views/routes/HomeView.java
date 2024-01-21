@@ -1,7 +1,6 @@
 package com.clearcont.clearcontapp.views.routes;
 
 import com.clearcont.clearcontapp.helpers.CookieFactory;
-import com.clearcont.clearcontapp.helpers.Log;
 import com.clearcont.clearcontapp.model.Empresa;
 import com.clearcont.clearcontapp.model.EmpresaGroup;
 import com.clearcont.clearcontapp.service.EmpresaGroupService;
@@ -23,8 +22,6 @@ import com.vaadin.flow.router.Route;
 import com.vaadin.flow.server.VaadinService;
 import jakarta.annotation.security.PermitAll;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.web.server.session.InMemoryWebSessionStore;
 
 import java.time.Month;
 import java.time.format.TextStyle;
@@ -63,9 +60,8 @@ public class HomeView extends Div {
         EmpresaGroup companyList = empresaGroupService.getByID(id);
         
         
-        String CLASS_NAME = HomeView.class.getSimpleName();
-        Log.log(CLASS_NAME, "ID COMPANY GROUP RETORNADA: " + companyList.getId());
-        Log.log(CLASS_NAME, "QUANTIDADE DE EMPRESAS NO GRUPO RETORNADA: " + companyList.getEmpresas().size());
+        log.info("ID COMPANY GROUP RETORNADA: " + companyList.getId());
+        log.info("QUANTIDADE DE EMPRESAS NO GRUPO RETORNADA: " + companyList.getEmpresas().size());
         
         H1 h1 = new H1("Sistema de Conciliação Contábil");
         Image logo = new Image("./images/logo-clear-black.png", "Logo cont");
@@ -108,7 +104,7 @@ public class HomeView extends Div {
         monthPicker.addValueChangeListener(event -> {
             page.executeJs("localStorage.setItem($0, $1)", "month", event.getValue());
             page.executeJs("localStorage.setItem('month', $0)", event.getValue());
-            Log.log(CLASS_NAME, "PERÍODO SELECIONADO: " + event.getValue());
+            log.info("PERÍODO SELECIONADO: " + event.getValue());
         });
         
         companyPicker.addValueChangeListener(event -> {
@@ -118,7 +114,7 @@ public class HomeView extends Div {
         companyPicker.addValueChangeListener(event -> {
             page.executeJs("localStorage.setItem($1, $1)", "company-name", event.getValue());
             page.executeJs("localStorage.setItem('company-name', $0)", event.getValue());
-            Log.log(CLASS_NAME, "EMPRESA SELECIONADA: " + event.getValue());
+            log.info("EMPRESA SELECIONADA: " + event.getValue());
         });
         confirmButton.addClickListener(click -> UI.getCurrent().navigate("/balancete"));
         

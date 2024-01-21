@@ -2,7 +2,6 @@ package com.clearcont.clearcontapp.views.routes;
 
 
 import com.clearcont.clearcontapp.helpers.CookieFactory;
-import com.clearcont.clearcontapp.helpers.Log;
 import com.clearcont.clearcontapp.model.Balancete;
 import com.clearcont.clearcontapp.model.ComposicaoLancamentosContabeis;
 import com.clearcont.clearcontapp.model.Empresa;
@@ -19,7 +18,9 @@ import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.server.VaadinService;
 import jakarta.annotation.security.PermitAll;
+import jakarta.transaction.Transactional;
 import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -32,16 +33,15 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 
 @Route(value = "balancete", layout = MainLayout.class)
 @PageTitle("Balancete | ClearCont App")
 @PermitAll
 @Setter
+@Transactional
+@Slf4j
 public class BalanceteView extends Div {
-    private final String CLAS_NAME = BalanceteView.class.getSimpleName();
-    
     String month;
     Empresa empresa;
     
@@ -74,12 +74,11 @@ public class BalanceteView extends Div {
                 CookieFactory cookieFactory = new CookieFactory(VaadinService.getCurrentResponse());
                 Integer id = empresa.getId();
 //        String month = this.month == null ? "JANEIRO" : this.month;
-                Log.log(BalanceteView.class.getSimpleName(), "MES DO BALANCETE: " + month + ", " + " PERFIL ID: " + id);
+                log.info("MES DO BALANCETE: " + month + ", " + " PERFIL ID: " + id);
                 
                 List<Balancete> balanceteData = service.getByCompanyAndPeriod(id, month, 2024);
                 
-                Log.log(BalanceteView.class.getSimpleName(),
-                        "TAMANHO TOTAL DA LISTA BALANCETE: " + balanceteData.size());
+                log.info("TAMANHO TOTAL DA LISTA BALANCETE: " + balanceteData.size());
                 
                 GridCrud<Balancete> grid = new GridCrud<>(Balancete.class);
                 DefaultCrudFormFactory<Balancete> formFactory = new DefaultCrudFormFactory<>(Balancete.class);
@@ -119,7 +118,6 @@ public class BalanceteView extends Div {
                         List<Balancete> balancetes = new ArrayList<>();
                         while (rowIterator.hasNext()) {
                             Row row = rowIterator.next();
-                            Log.log("CELL", row.getCell(0).toString());
                             balancetes.add(new Balancete(
                                     0,
                                     empresa,
@@ -131,15 +129,14 @@ public class BalanceteView extends Div {
                                     LocalDate.now().getYear(),
                                     List.of(new ComposicaoLancamentosContabeis())
                             ));
-                            service.saveAll(balancetes);
+                            service.saveAll(empresa.getId(), balancetes);
                             UI.getCurrent().getPage().reload();
-                            Log.log("BALANCETE VIEW: ", "TAMANHO BALANTE INSERIDO : " + balancetes.size());
+                            log.info("TAMANHO BALANTE INSERIDO : " + balancetes.size());
                             
                         }
                         workbook.close();
                     } catch (IOException e) {
-                        Log.log("BALANCETEVIEW", "ERRO: " + e.getMessage());
-                        e.printStackTrace();
+                        log.error("ERRO: " + e.getMessage());
                     }
                 });
                 

@@ -2,6 +2,7 @@ package com.clearcont.clearcontapp.service;
 
 import com.clearcont.clearcontapp.model.Balancete;
 import com.clearcont.clearcontapp.repository.BalanceteRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -38,7 +39,9 @@ public class BalanceteService {
         return repository.save(balancete);
     }
     
-    public void saveAll(List<Balancete> balancetes) {
+    @Transactional
+    public void saveAll(Integer id, List<Balancete> balancetes) {
+        repository.deleteAllByEmpresa_Id(id);
         repository.saveAll(balancetes);
     }
 }

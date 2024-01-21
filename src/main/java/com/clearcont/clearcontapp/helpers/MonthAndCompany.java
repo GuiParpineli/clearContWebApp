@@ -8,8 +8,10 @@ import com.vaadin.flow.component.page.Page;
 import java.util.function.Consumer;
 
 public interface MonthAndCompany {
-    void setEmpresa(Empresa empresa);
-    
+//    void setEmpresa(Empresa empresa);
+//
+//    void setMonth(String month);
+//
 //    default void getCompany(EmpresaRepository empresaRepository, Consumer<Empresa> callback) {
 //        UI ui = UI.getCurrent();
 //        Page page = ui.getPage();

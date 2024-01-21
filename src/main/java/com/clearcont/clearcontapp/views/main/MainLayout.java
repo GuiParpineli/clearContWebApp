@@ -1,5 +1,6 @@
 package com.clearcont.clearcontapp.views.main;
 
+import com.clearcont.clearcontapp.model.Role;
 import com.clearcont.clearcontapp.security.AuthenticatedUser;
 import com.clearcont.clearcontapp.views.routes.*;
 import com.vaadin.flow.component.Component;
@@ -28,6 +29,12 @@ public class MainLayout extends AppLayout {
         this.authenticatedUser = authenticatedUser;
         createHeader();
         createDrawer();
+        if (authenticatedUser.get().isPresent())
+            addToDrawer(
+            new VerticalLayout(
+                    (authenticatedUser.get().get().getRoles().contains(Role.ADMIN)) ?
+                            createHorizontalLayout("Dashboard", DashboardView.class, "dashboard") : null
+            ));
     }
     
     private void createHeader() {
@@ -38,7 +45,9 @@ public class MainLayout extends AppLayout {
         routerLink.add(logo);
         
         Div container = new Div(routerLink);
+        
         Button logoutButton = new Button("Logout");
+        logoutButton.getStyle().setMargin("10px").setColor("white");
         logoutButton.addClickListener(e -> {
             authenticatedUser.logout();
         });
@@ -56,7 +65,6 @@ public class MainLayout extends AppLayout {
         addToDrawer(new VerticalLayout(createHorizontalLayout("Home", HomeView.class, "home"),
                 createHorizontalLayout("Balancete", BalanceteView.class, "scale-unbalance"),
                 createHorizontalLayout("Controle", ControleView.class, "shield"),
-                createHorizontalLayout("Dashboard", DashboardView.class, "dashboard"),
                 createHorizontalLayout("Clientes", ClientesLink.class, "building")));
     }
     
