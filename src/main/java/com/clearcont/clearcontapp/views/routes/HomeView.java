@@ -13,6 +13,7 @@ import com.vaadin.flow.component.html.H1;
 import com.vaadin.flow.component.html.Image;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
+import com.vaadin.flow.component.orderedlayout.FlexLayout;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.page.Page;
@@ -35,10 +36,9 @@ import java.util.stream.Stream;
 @PermitAll
 @Slf4j
 public class HomeView extends Div {
-    String version = "0.1.2-ALPHA";
+    String version = "0.2.0-BETA";
     
     private void setComboBoxValues(ComboBox<String> companyPicker, ComboBox<String> monthPicker) {
-        // Recupera os valores salvos no localStorage
         UI.getCurrent().getPage().executeJs("return localStorage.getItem('month')")
                 .then(String.class, savedMonth -> {
                     if (savedMonth != null && !savedMonth.isEmpty()) {
@@ -95,7 +95,8 @@ public class HomeView extends Div {
         confirmButton.getStyle().set("color", "white");
         Span versionFooter = new Span("Versão " + version);
         versionFooter.getStyle().setTextAlign(Style.TextAlign.CENTER).setPadding("30px");
-        VerticalLayout verticalLayout = new VerticalLayout(h1, logo, horizontalLayout, confirmButton, versionFooter);
+        FlexLayout verticalLayout = new FlexLayout(h1, logo, horizontalLayout, confirmButton, versionFooter);
+        verticalLayout.setFlexDirection(FlexLayout.FlexDirection.COLUMN);
         verticalLayout.setAlignItems(FlexComponent.Alignment.CENTER);
         verticalLayout.getStyle().setMargin("20px");
         monthPicker.getStyle().setTextAlign(Style.TextAlign.CENTER);

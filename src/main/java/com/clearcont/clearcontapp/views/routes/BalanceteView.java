@@ -68,80 +68,78 @@ public class BalanceteView extends Div {
     }
     
     public BalanceteView(BalanceteService service, EmpresaRepository empresaRepository) {
-        getCompany(empresaRepository, empresa -> {
-            getMonth(month -> {
-                
-                CookieFactory cookieFactory = new CookieFactory(VaadinService.getCurrentResponse());
-                Integer id = empresa.getId();
+        getCompany(empresaRepository, empresa -> getMonth(month -> {
+            
+            CookieFactory cookieFactory = new CookieFactory(VaadinService.getCurrentResponse());
+            Integer id = empresa.getId();
 //        String month = this.month == null ? "JANEIRO" : this.month;
-                log.info("MES DO BALANCETE: " + month + ", " + " PERFIL ID: " + id);
-                
-                List<Balancete> balanceteData = service.getByCompanyAndPeriod(id, month, 2024);
-                
-                log.info("TAMANHO TOTAL DA LISTA BALANCETE: " + balanceteData.size());
-                
-                GridCrud<Balancete> grid = new GridCrud<>(Balancete.class);
-                DefaultCrudFormFactory<Balancete> formFactory = new DefaultCrudFormFactory<>(Balancete.class);
-                formFactory.setVisibleProperties("nomeConta", "numeroConta", "totalBalancete", "classificacao");
-                grid.setCrudFormFactory(formFactory);
-                grid.getGrid().setColumns("nomeConta", "numeroConta", "totalBalancete", "classificacao");
-                grid.getGrid().setColumnReorderingAllowed(true);
-                grid.getStyle().set("border-radius", "10px");
-                grid.setAddOperation(service::save);
-                grid.setUpdateOperation(service::update);
-                grid.setDeleteOperation(service::delete);
-                grid.setFindAllOperation(() -> balanceteData);
-                grid.getGrid().addComponentColumn(balanceteComp -> {
-                    Button editButton = new Button("Conciliar");
-                    editButton.addClickListener(
-                            e -> UI.getCurrent().navigate("detail/" + balanceteComp.getId())
-                    );
-                    return editButton;
-                }).setWidth("150px").setFlexGrow(0);
-                
-                grid.getGrid().addItemDoubleClickListener(event -> {
-                    Balancete balancete = event.getItem();
-                    UI.getCurrent().navigate("detail/" + balancete.getId());
-                });
-                
-                Button btnUploadFile = new Button("Enviar Arquivo");
-                
-                MemoryBuffer memoryBuffer = new MemoryBuffer();
-                Upload singleFileUpload = new Upload(memoryBuffer);
-                
-                singleFileUpload.addSucceededListener(event -> {
-                    try {
-                        Workbook workbook = new XSSFWorkbook(memoryBuffer.getInputStream());
-                        Sheet sheet = workbook.getSheetAt(0);
-                        Iterator<Row> rowIterator = sheet.iterator();
-                        if (rowIterator.hasNext()) rowIterator.next();
-                        List<Balancete> balancetes = new ArrayList<>();
-                        while (rowIterator.hasNext()) {
-                            Row row = rowIterator.next();
-                            balancetes.add(new Balancete(
-                                    0,
-                                    empresa,
-                                    row.getCell(1).getStringCellValue(),
-                                    (int) row.getCell(0).getNumericCellValue(),
-                                    row.getCell(2).getNumericCellValue(),
-                                    row.getCell(3).getStringCellValue(),
-                                    month,
-                                    LocalDate.now().getYear(),
-                                    List.of(new ComposicaoLancamentosContabeis())
-                            ));
-                            service.saveAll(empresa.getId(), balancetes);
-                            UI.getCurrent().getPage().reload();
-                            log.info("TAMANHO BALANTE INSERIDO : " + balancetes.size());
-                            
-                        }
-                        workbook.close();
-                    } catch (IOException e) {
-                        log.error("ERRO: " + e.getMessage());
-                    }
-                });
-                
-                add(grid, singleFileUpload);
+            log.info("MES DO BALANCETE: " + month + ", " + " PERFIL ID: " + id);
+            
+            List<Balancete> balanceteData = service.getByCompanyAndPeriod(id, month, 2024);
+            
+            log.info("TAMANHO TOTAL DA LISTA BALANCETE: " + balanceteData.size());
+            
+            GridCrud<Balancete> grid = new GridCrud<>(Balancete.class);
+            DefaultCrudFormFactory<Balancete> formFactory = new DefaultCrudFormFactory<>(Balancete.class);
+            formFactory.setVisibleProperties("nomeConta", "numeroConta", "totalBalancete", "classificacao");
+            grid.setCrudFormFactory(formFactory);
+            grid.getGrid().setColumns("nomeConta", "numeroConta", "totalBalancete", "classificacao");
+            grid.getGrid().setColumnReorderingAllowed(true);
+            grid.getStyle().set("border-radius", "10px");
+            grid.setAddOperation(service::save);
+            grid.setUpdateOperation(service::update);
+            grid.setDeleteOperation(service::delete);
+            grid.setFindAllOperation(() -> balanceteData);
+            grid.getGrid().addComponentColumn(balanceteComp -> {
+                Button editButton = new Button("Conciliar");
+                editButton.addClickListener(
+                        e -> UI.getCurrent().navigate("detail/" + balanceteComp.getId())
+                );
+                return editButton;
+            }).setWidth("150px").setFlexGrow(0);
+            
+            grid.getGrid().addItemDoubleClickListener(event -> {
+                Balancete balancete = event.getItem();
+                UI.getCurrent().navigate("detail/" + balancete.getId());
             });
-        });
+            
+            Button btnUploadFile = new Button("Enviar Arquivo");
+            
+            MemoryBuffer memoryBuffer = new MemoryBuffer();
+            Upload singleFileUpload = new Upload(memoryBuffer);
+            
+            singleFileUpload.addSucceededListener(event -> {
+                try {
+                    Workbook workbook = new XSSFWorkbook(memoryBuffer.getInputStream());
+                    Sheet sheet = workbook.getSheetAt(0);
+                    Iterator<Row> rowIterator = sheet.iterator();
+                    if (rowIterator.hasNext()) rowIterator.next();
+                    List<Balancete> balancetes = new ArrayList<>();
+                    while (rowIterator.hasNext()) {
+                        Row row = rowIterator.next();
+                        balancetes.add(new Balancete(
+                                0,
+                                empresa,
+                                row.getCell(1).getStringCellValue(),
+                                (int) row.getCell(0).getNumericCellValue(),
+                                row.getCell(2).getNumericCellValue(),
+                                row.getCell(3).getStringCellValue(),
+                                month,
+                                LocalDate.now().getYear(),
+                                List.of(new ComposicaoLancamentosContabeis())
+                        ));
+                        service.saveAll(empresa.getId(), balancetes);
+                        UI.getCurrent().getPage().reload();
+                        log.info("TAMANHO BALANTE INSERIDO : " + balancetes.size());
+                        
+                    }
+                    workbook.close();
+                } catch (IOException e) {
+                    log.error("ERRO: " + e.getMessage());
+                }
+            });
+            
+            add(grid, singleFileUpload);
+        }));
     }
 }

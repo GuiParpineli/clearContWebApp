@@ -1,27 +1,37 @@
 package com.clearcont.clearcontapp.views.main;
 
+import com.clearcont.clearcontapp.model.Empresa;
 import com.clearcont.clearcontapp.model.Role;
+import com.clearcont.clearcontapp.repository.EmpresaRepository;
 import com.clearcont.clearcontapp.security.AuthenticatedUser;
 import com.clearcont.clearcontapp.views.routes.*;
 import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.Text;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.applayout.AppLayout;
 import com.vaadin.flow.component.applayout.DrawerToggle;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.dependency.CssImport;
 import com.vaadin.flow.component.html.Div;
-import com.vaadin.flow.component.html.H3;
 import com.vaadin.flow.component.html.Image;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.component.page.Page;
 import com.vaadin.flow.router.RouterLink;
-import com.vaadin.flow.server.VaadinSession;
-import com.vaadin.flow.server.auth.AccessAnnotationChecker;
+import lombok.Getter;
+import lombok.Setter;
+
+import java.util.function.Consumer;
 
 @CssImport("../frontend/themes/theme-light/styles.css")
+@Setter
+@Getter
 public class MainLayout extends AppLayout {
+    String month;
+    Empresa company;
+    
     
     private final AuthenticatedUser authenticatedUser;
     
@@ -29,12 +39,11 @@ public class MainLayout extends AppLayout {
         this.authenticatedUser = authenticatedUser;
         createHeader();
         createDrawer();
-        if (authenticatedUser.get().isPresent())
+        if (authenticatedUser.get().isPresent() && authenticatedUser.get().get().getRoles().contains(Role.ADMIN))
             addToDrawer(
-            new VerticalLayout(
-                    (authenticatedUser.get().get().getRoles().contains(Role.ADMIN)) ?
-                            createHorizontalLayout("Dashboard", DashboardView.class, "dashboard") : null
-            ));
+                    new VerticalLayout(
+                            createHorizontalLayout("Dashboard", DashboardView.class, "dashboard")
+                    ));
     }
     
     private void createHeader() {
@@ -51,14 +60,15 @@ public class MainLayout extends AppLayout {
         logoutButton.addClickListener(e -> {
             authenticatedUser.logout();
         });
-        
         HorizontalLayout header = new HorizontalLayout(container, logoutButton);
         header.expand(container);
         header.setDefaultVerticalComponentAlignment(FlexComponent.Alignment.CENTER);
+        header.setJustifyContentMode(FlexComponent.JustifyContentMode.BETWEEN);
         header.setWidth("100%");
         header.setSpacing(true);
         
         addToNavbar(new DrawerToggle(), header);
+        
     }
     
     private void createDrawer() {
@@ -76,6 +86,3 @@ public class MainLayout extends AppLayout {
         return new HorizontalLayout(FlexComponent.Alignment.BASELINE, icon, link);
     }
 }
-
-
-
