@@ -19,4 +19,6 @@ public class Responsavel {
     private String email;
     @ManyToOne
     private Empresa empresa;
+    @OneToOne
+    User user;
 }

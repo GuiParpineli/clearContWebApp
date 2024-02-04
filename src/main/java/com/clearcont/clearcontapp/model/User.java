@@ -28,7 +28,7 @@ public class User extends AbstractEntity {
     @Lob
     @Column(length = 1000000)
     private byte[] profilePicture;
-    @OneToOne
+    @ManyToOne
     EmpresaGroup empresaGroup;
     
     public User(Long id, int version, String username, String name, String hashedPassword, Set<Role> roles, byte[] profilePicture, EmpresaGroup empresaGroup) {
