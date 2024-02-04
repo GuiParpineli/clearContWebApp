@@ -20,7 +20,6 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
 
 @Route(value = "dashboard", layout = MainLayout.class)
 @PageTitle("Dashboard | Nome do Aplicativo")
@@ -28,11 +27,11 @@ import java.util.concurrent.atomic.AtomicInteger;
 @Setter
 @Getter
 public class DashboardView extends FlexLayout implements MonthAndCompany {
-    String month;
-    Empresa empresa;
-    int totalOpen;
-    int totalProgress;
-    int totalFinish;
+    private String month;
+    private Empresa empresa;
+    private int totalOpen;
+    private int totalProgress;
+    private int totalFinish;
     
     public DashboardView(ResponsavelRepository responsavelRepository, EmpresaRepository empresaRepository, ComposicaoLancamentosContabeisService cLContabeisService) {
         getCompany(empresaRepository, empresa -> {
@@ -45,8 +44,9 @@ public class DashboardView extends FlexLayout implements MonthAndCompany {
             
             SOChart soChart = new SOChart();
             soChart.setSize("800px", "500px");
-            if (responsavelPicker.getValue() == null)
+            if (responsavelPicker.getValue() == null){
                 responsavelPicker.setValue(responsaveisList.getFirst().getId() + " - " + responsaveisList.getFirst().getNome());
+            }
             String[] split = responsavelPicker.getValue().split(" - ");
             setTotalOpen(cLContabeisService.getTotalOpen(Integer.valueOf(split[0])));
             setTotalProgress(cLContabeisService.getTotalProgress(Integer.valueOf(split[0])));

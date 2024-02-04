@@ -26,16 +26,16 @@ public class InfoCardsConciliacao extends HorizontalLayout {
                 numeroConta
         );
         
-        Text status = new Text(conciliacao.getStatus().name());
+        Text status = new Text(conciliacao.getStatus().getName());
         FlexLayout conciliacaoStatus = new FlexLayout(
                 new Text("Status conciliação: "),
                 status
         );
         
-        Text saldo = new Text(getDecimalFormat().format( saldoContabil));
+        Text saldo = new Text(getDecimalFormat().format(saldoContabil));
         FlexLayout composicaoContabilFlex = new FlexLayout(
                 new Text("Composição do Saldo Contabil: "),
-                 saldo
+                saldo
         );
         FlexLayout diferencaLayout = new FlexLayout(
                 new Text("Diferença: "),

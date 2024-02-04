@@ -36,8 +36,9 @@ public class MainLayout extends AppLayout {
         if (authenticatedUser.get().isPresent() && authenticatedUser.get().get().getRoles().contains(Role.ADMIN))
             addToDrawer(
                     new VerticalLayout(
-                            createHorizontalLayout("Dashboard", DashboardView.class, "dashboard")
-                    ));
+                            createHorizontalLayout("Dashboard", DashboardView.class, "dashboard"),
+                            createHorizontalLayout("Clientes", CustomersView.class, "building"))
+            );
     }
     
     private void createHeader() {
@@ -68,8 +69,7 @@ public class MainLayout extends AppLayout {
     private void createDrawer() {
         addToDrawer(new VerticalLayout(createHorizontalLayout("Home", HomeView.class, "home"),
                 createHorizontalLayout("Balancete", BalanceteView.class, "scale-unbalance"),
-                createHorizontalLayout("Controle", ControleView.class, "shield"),
-                createHorizontalLayout("Clientes", CustomersView.class, "building")));
+                createHorizontalLayout("Controle", ControleView.class, "shield")));
     }
     
     private HorizontalLayout createHorizontalLayout(String linkText, Class<? extends Component> viewClass, String iconName) {
