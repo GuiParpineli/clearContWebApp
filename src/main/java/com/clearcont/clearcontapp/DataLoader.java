@@ -124,7 +124,7 @@ public class DataLoader implements ApplicationRunner {
                             100.0,
                             200.0,
                             (100.0 - 200.0),
-                            "EM ABERTO",
+                            StatusConciliacao.OPEN,
                             balanceteRepository.findAll().getFirst(),
                             responsavel
                     )

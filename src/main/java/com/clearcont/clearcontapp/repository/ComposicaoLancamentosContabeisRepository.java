@@ -13,4 +13,5 @@ public interface ComposicaoLancamentosContabeisRepository extends JpaRepository<
     List<ComposicaoLancamentosContabeis> findComposicaoLancamentosContabeisByBalancete_Id(Integer id);
     
     List<ComposicaoLancamentosContabeis> findComposicaoLancamentosContabeisByBalancete_Empresa_CnpjAndBalancete_AnoAndBalancete_Mes(@CNPJ String balancete_empresa_cnpj, Integer balancete_ano, String balancete_mes);
+    List<ComposicaoLancamentosContabeis> findComposicaoLancamentosContabeisByResponsavel_Id(Integer id);
 }

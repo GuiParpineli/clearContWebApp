@@ -9,7 +9,7 @@ import jakarta.annotation.security.RolesAllowed;
 
 @Route(value = "clientes", layout = MainLayout.class)
 @PageTitle("clientes| ClearCont App")
-@RolesAllowed("admin")
+@RolesAllowed("ADMIN")
 public class CustomersView extends Div {
     public CustomersView() {
         add(new H1("Hello clientes"));

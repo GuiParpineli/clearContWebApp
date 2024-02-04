@@ -59,7 +59,6 @@ public class HomeView extends Div {
         int id = cookieFactory.getCookieInteger("company-group-id");
         EmpresaGroup companyList = empresaGroupService.getByID(id);
         
-        
         log.info("ID COMPANY GROUP RETORNADA: " + companyList.getId());
         log.info("QUANTIDADE DE EMPRESAS NO GRUPO RETORNADA: " + companyList.getEmpresas().size());
         
@@ -76,16 +75,10 @@ public class HomeView extends Div {
                 .collect(Collectors.toList()));
         monthPicker.getStyle().setPadding("30px");
         
-        companyPicker.setItems(
-                companyList.empresas.stream().map(Empresa::getNomeEmpresa).toList()
-        );
+        companyPicker.setItems(companyList.empresas.stream().map(Empresa::getNomeEmpresa).toList());
         
-        monthPicker.addValueChangeListener(
-                value -> monthPicker.getValue()
-        );
-        monthPicker.addValueChangeListener(
-                value -> companyPicker.getValue()
-        );
+        monthPicker.addValueChangeListener(value -> monthPicker.getValue());
+        monthPicker.addValueChangeListener(value -> companyPicker.getValue());
         
         HorizontalLayout horizontalLayout = new HorizontalLayout(companyPicker, monthPicker);
         horizontalLayout.setAlignItems(FlexComponent.Alignment.BASELINE);

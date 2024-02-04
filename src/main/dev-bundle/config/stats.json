@@ -235,7 +235,7 @@
   "Frontend/generated/jar-resources/virtualListConnector.js"
  ],
  "frontendHashes": {
-  "themes/theme-light/styles.css": "9fb24341fa74e003a5603178a09698ca26b57f9f2a6a079a99a71255af36c28e",
+  "themes/theme-light/styles.css": "890b502dd5f65a9250e889f4c6057ed6ea1b5bfcd770cd2dfb8304330d7c0096",
   "buttonFunctions.js": "c852123f9b2c44eb75e555119d3e05a7dbe78b91d0ab616feb9df1654474707d",
   "comboBoxConnector.js": "1d004c3dae9c76f8bcc68678abe1b8f7bdc8b456f5c9c4c7f190df8ed25d66cd",
   "contextMenuConnector.js": "25a200f8086461635ddd92316ebeb5a868294c8650a190efbae120edb1088f4f",
@@ -258,12 +258,12 @@
  },
  "themeJsonContents": {},
  "entryScripts": [
-  "VAADIN/build/indexhtml-93d4b648.js"
+  "VAADIN/build/indexhtml-ebc28f7b.js"
  ],
  "webComponents": [],
  "cvdlModules": {},
  "packageJsonHash": "080305589f0f2d6e70712400fabb1a4c941c7ca813243abc10232f71779ccf58",
  "indexHtmlGenerated": [
-  "  <script type=\"module\" crossorigin src=\"./VAADIN/build/indexhtml-93d4b648.js\"></script>"
+  "  <script type=\"module\" crossorigin src=\"./VAADIN/build/indexhtml-ebc28f7b.js\"></script>"
  ]
 }

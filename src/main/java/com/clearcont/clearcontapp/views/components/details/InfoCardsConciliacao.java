@@ -26,7 +26,7 @@ public class InfoCardsConciliacao extends HorizontalLayout {
                 numeroConta
         );
         
-        Text status = new Text(conciliacao.getStatus());
+        Text status = new Text(conciliacao.getStatus().name());
         FlexLayout conciliacaoStatus = new FlexLayout(
                 new Text("Status conciliação: "),
                 status

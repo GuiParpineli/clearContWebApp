@@ -18,6 +18,7 @@ import java.util.Objects;
 @Entity
 @AllArgsConstructor
 @Getter
+@Setter
 @NoArgsConstructor
 public class ComposicaoLancamentosContabeis {
     @Id
@@ -32,7 +33,8 @@ public class ComposicaoLancamentosContabeis {
     @NotNull
     private Double credito = 0.0;
     private Double saldoContabil = debito - credito;
-    private String status = "EM ABERTO";
+    @Enumerated(EnumType.STRING)
+    private StatusConciliacao status = StatusConciliacao.OPEN;
     
     @Setter
     @JsonIgnore
