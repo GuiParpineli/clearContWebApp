@@ -2,6 +2,7 @@ package com.clearcont.clearcontapp.views.routes;
 
 
 import com.clearcont.clearcontapp.helpers.CookieFactory;
+import com.clearcont.clearcontapp.helpers.MonthAndCompany;
 import com.clearcont.clearcontapp.model.Balancete;
 import com.clearcont.clearcontapp.model.ComposicaoLancamentosContabeis;
 import com.clearcont.clearcontapp.model.Empresa;
@@ -11,6 +12,8 @@ import com.clearcont.clearcontapp.views.main.MainLayout;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.html.Div;
+import com.vaadin.flow.component.html.H2;
+import com.vaadin.flow.component.html.H3;
 import com.vaadin.flow.component.page.Page;
 import com.vaadin.flow.component.upload.Upload;
 import com.vaadin.flow.component.upload.receivers.MemoryBuffer;
@@ -19,6 +22,7 @@ import com.vaadin.flow.router.Route;
 import com.vaadin.flow.server.VaadinService;
 import jakarta.annotation.security.PermitAll;
 import jakarta.transaction.Transactional;
+import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.ss.usermodel.Row;
@@ -39,45 +43,26 @@ import java.util.function.Consumer;
 @PageTitle("Balancete | ClearCont App")
 @PermitAll
 @Setter
+@Getter
 @Transactional
 @Slf4j
-public class BalanceteView extends Div {
+public class BalanceteView extends Div implements MonthAndCompany {
     String month;
     Empresa empresa;
-    
-    private void getCompany(EmpresaRepository empresaRepository, Consumer<Empresa> callback) {
-        UI ui = UI.getCurrent();
-        Page page = ui.getPage();
-        page.executeJs("return localStorage.getItem($0)", "company-name")
-                .then(item -> {
-                    setEmpresa(empresaRepository.findEmpresaByNomeEmpresa(item.asString()).orElseThrow());
-                    System.out.println("Valor do localStorage para 'company-name': " + item.asString());
-                    callback.accept(empresa);
-                });
-    }
-    
-    private void getMonth(Consumer<String> callback) {
-        UI ui = UI.getCurrent();
-        Page page = ui.getPage();
-        page.executeJs("return localStorage.getItem($0)", "month")
-                .then(item -> {
-                    setMonth(item.asString());
-                    System.out.println("Valor do localStorage para 'month': " + item.asString());
-                    callback.accept(month);
-                });
-    }
     
     public BalanceteView(BalanceteService service, EmpresaRepository empresaRepository) {
         getCompany(empresaRepository, empresa -> getMonth(month -> {
             
-            CookieFactory cookieFactory = new CookieFactory(VaadinService.getCurrentResponse());
             Integer id = empresa.getId();
-//        String month = this.month == null ? "JANEIRO" : this.month;
             log.info("MES DO BALANCETE: " + month + ", " + " PERFIL ID: " + id);
             
             List<Balancete> balanceteData = service.getByCompanyAndPeriod(id, month, 2024);
-            
             log.info("TAMANHO TOTAL DA LISTA BALANCETE: " + balanceteData.size());
+            String year = String.valueOf(LocalDate.now().getYear());
+            if (!balanceteData.isEmpty()) year = String.valueOf(balanceteData.getFirst().getAno());
+            H3 titleText = new H3("EMPRESA: " + empresa.getNomeEmpresa() + " | MES: " + month + " | ANO: " + year);
+            Div title = new Div(titleText);
+            title.getStyle().setPadding("20px");
             
             GridCrud<Balancete> grid = new GridCrud<>(Balancete.class);
             DefaultCrudFormFactory<Balancete> formFactory = new DefaultCrudFormFactory<>(Balancete.class);
@@ -103,43 +88,46 @@ public class BalanceteView extends Div {
                 UI.getCurrent().navigate("detail/" + balancete.getId());
             });
             
-            Button btnUploadFile = new Button("Enviar Arquivo");
+            Upload singleFileUpload = getUpload(service, empresa, month);
             
-            MemoryBuffer memoryBuffer = new MemoryBuffer();
-            Upload singleFileUpload = new Upload(memoryBuffer);
-            
-            singleFileUpload.addSucceededListener(event -> {
-                try {
-                    Workbook workbook = new XSSFWorkbook(memoryBuffer.getInputStream());
-                    Sheet sheet = workbook.getSheetAt(0);
-                    Iterator<Row> rowIterator = sheet.iterator();
-                    if (rowIterator.hasNext()) rowIterator.next();
-                    List<Balancete> balancetes = new ArrayList<>();
-                    while (rowIterator.hasNext()) {
-                        Row row = rowIterator.next();
-                        balancetes.add(new Balancete(
-                                0,
-                                empresa,
-                                row.getCell(1).getStringCellValue(),
-                                (int) row.getCell(0).getNumericCellValue(),
-                                row.getCell(2).getNumericCellValue(),
-                                row.getCell(3).getStringCellValue(),
-                                month,
-                                LocalDate.now().getYear(),
-                                List.of(new ComposicaoLancamentosContabeis())
-                        ));
-                        service.saveAll(empresa.getId(), balancetes);
-                        UI.getCurrent().getPage().reload();
-                        log.info("TAMANHO BALANTE INSERIDO : " + balancetes.size());
-                        
-                    }
-                    workbook.close();
-                } catch (IOException e) {
-                    log.error("ERRO: " + e.getMessage());
-                }
-            });
-            
-            add(grid, singleFileUpload);
+            add(title, grid, singleFileUpload);
         }));
+    }
+    
+    private Upload getUpload(BalanceteService service, Empresa empresa, String month) {
+        MemoryBuffer memoryBuffer = new MemoryBuffer();
+        Upload singleFileUpload = new Upload(memoryBuffer);
+        
+        singleFileUpload.addSucceededListener(event -> {
+            try {
+                Workbook workbook = new XSSFWorkbook(memoryBuffer.getInputStream());
+                Sheet sheet = workbook.getSheetAt(0);
+                Iterator<Row> rowIterator = sheet.iterator();
+                if (rowIterator.hasNext()) rowIterator.next();
+                List<Balancete> balancetes = new ArrayList<>();
+                while (rowIterator.hasNext()) {
+                    Row row = rowIterator.next();
+                    balancetes.add(new Balancete(
+                            0,
+                            empresa,
+                            row.getCell(1).getStringCellValue(),
+                            (int) row.getCell(0).getNumericCellValue(),
+                            row.getCell(2).getNumericCellValue(),
+                            row.getCell(3).getStringCellValue(),
+                            month,
+                            LocalDate.now().getYear(),
+                            List.of(new ComposicaoLancamentosContabeis())
+                    ));
+                    service.saveAll(empresa.getId(), balancetes);
+                    UI.getCurrent().getPage().reload();
+                    log.info("TAMANHO BALANTE INSERIDO : " + balancetes.size());
+                    
+                }
+                workbook.close();
+            } catch (IOException e) {
+                log.error("ERRO: " + e.getMessage());
+            }
+        });
+        return singleFileUpload;
     }
 }

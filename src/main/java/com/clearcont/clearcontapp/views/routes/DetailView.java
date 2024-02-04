@@ -26,7 +26,6 @@ import java.util.List;
 @Slf4j
 public class DetailView extends VerticalLayout implements HasUrlParameter<String> {
     
-    private final String CLASS_NAME = DetailView.class.getSimpleName();
     private final BalanceteService service;
     private final ComposicaoLanContabeisService contabeisService;
     private final ResponsavelRepository responsavelRepository;

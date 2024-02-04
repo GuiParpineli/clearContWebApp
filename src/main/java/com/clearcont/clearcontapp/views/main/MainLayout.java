@@ -2,12 +2,9 @@ package com.clearcont.clearcontapp.views.main;
 
 import com.clearcont.clearcontapp.model.Empresa;
 import com.clearcont.clearcontapp.model.Role;
-import com.clearcont.clearcontapp.repository.EmpresaRepository;
 import com.clearcont.clearcontapp.security.AuthenticatedUser;
 import com.clearcont.clearcontapp.views.routes.*;
 import com.vaadin.flow.component.Component;
-import com.vaadin.flow.component.Text;
-import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.applayout.AppLayout;
 import com.vaadin.flow.component.applayout.DrawerToggle;
 import com.vaadin.flow.component.button.Button;
@@ -18,12 +15,9 @@ import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
-import com.vaadin.flow.component.page.Page;
 import com.vaadin.flow.router.RouterLink;
 import lombok.Getter;
 import lombok.Setter;
-
-import java.util.function.Consumer;
 
 @CssImport("../frontend/themes/theme-light/styles.css")
 @Setter
@@ -75,7 +69,7 @@ public class MainLayout extends AppLayout {
         addToDrawer(new VerticalLayout(createHorizontalLayout("Home", HomeView.class, "home"),
                 createHorizontalLayout("Balancete", BalanceteView.class, "scale-unbalance"),
                 createHorizontalLayout("Controle", ControleView.class, "shield"),
-                createHorizontalLayout("Clientes", ClientesLink.class, "building")));
+                createHorizontalLayout("Clientes", CustomersView.class, "building")));
     }
     
     private HorizontalLayout createHorizontalLayout(String linkText, Class<? extends Component> viewClass, String iconName) {

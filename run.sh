@@ -1,4 +1,5 @@
 echo BUILDING APPLICATION
+./gradlew clean
 ./gradlew build -x test
 
 echo BUILDING DOCKER IMAGE

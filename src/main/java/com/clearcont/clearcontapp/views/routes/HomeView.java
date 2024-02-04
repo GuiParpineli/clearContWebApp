@@ -98,6 +98,7 @@ public class HomeView extends Div {
         FlexLayout verticalLayout = new FlexLayout(h1, logo, horizontalLayout, confirmButton, versionFooter);
         verticalLayout.setFlexDirection(FlexLayout.FlexDirection.COLUMN);
         verticalLayout.setAlignItems(FlexComponent.Alignment.CENTER);
+        verticalLayout.setFlexWrap(FlexLayout.FlexWrap.WRAP);
         verticalLayout.getStyle().setMargin("20px");
         monthPicker.getStyle().setTextAlign(Style.TextAlign.CENTER);
         UI ui = UI.getCurrent();

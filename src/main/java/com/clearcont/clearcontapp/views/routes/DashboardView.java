@@ -1,6 +1,7 @@
 package com.clearcont.clearcontapp.views.routes;
 
 
+import com.clearcont.clearcontapp.helpers.MonthAndCompany;
 import com.clearcont.clearcontapp.model.Empresa;
 import com.clearcont.clearcontapp.model.Responsavel;
 import com.clearcont.clearcontapp.repository.EmpresaRepository;
@@ -16,6 +17,7 @@ import com.vaadin.flow.component.page.Page;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import jakarta.annotation.security.RolesAllowed;
+import lombok.Getter;
 import lombok.Setter;
 
 import java.util.List;
@@ -25,31 +27,10 @@ import java.util.function.Consumer;
 @PageTitle("Dashboard | Nome do Aplicativo")
 @RolesAllowed("ADMIN")
 @Setter
-public class DashboardView extends FlexLayout {
+@Getter
+public class DashboardView extends FlexLayout implements MonthAndCompany {
     String month;
     Empresa empresa;
-    
-    private void getCompany(EmpresaRepository empresaRepository, Consumer<Empresa> callback) {
-        UI ui = UI.getCurrent();
-        Page page = ui.getPage();
-        page.executeJs("return localStorage.getItem($0)", "company-name")
-                .then(item -> {
-                    setEmpresa(empresaRepository.findEmpresaByNomeEmpresa(item.asString()).orElseThrow());
-                    System.out.println("Valor do localStorage para 'company-name': " + item.asString());
-                    callback.accept(empresa);
-                });
-    }
-    
-    private void getMonth(Consumer<String> callback) {
-        UI ui = UI.getCurrent();
-        Page page = ui.getPage();
-        page.executeJs("return localStorage.getItem($0)", "month")
-                .then(item -> {
-                    setMonth(item.asString());
-                    System.out.println("Valor do localStorage para 'month': " + item.asString());
-                    callback.accept(month);
-                });
-    }
     
     public DashboardView(ResponsavelRepository responsavelRepository, EmpresaRepository empresaRepository) {
         getCompany(empresaRepository, empresa -> {

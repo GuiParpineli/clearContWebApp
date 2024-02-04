@@ -1,6 +1,7 @@
 package com.clearcont.clearcontapp.views.routes;
 
 import com.clearcont.clearcontapp.helpers.CookieFactory;
+import com.clearcont.clearcontapp.helpers.MonthAndCompany;
 import com.clearcont.clearcontapp.helpers.Periodo;
 import com.clearcont.clearcontapp.model.Controle;
 import com.clearcont.clearcontapp.model.Empresa;
@@ -18,6 +19,7 @@ import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.server.VaadinService;
 import jakarta.annotation.security.PermitAll;
+import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDate;
@@ -28,29 +30,10 @@ import java.util.function.Consumer;
 @PageTitle("controle | ClearCont App")
 @PermitAll
 @Setter
-public class ControleView extends Div {
+@Getter
+public class ControleView extends Div implements MonthAndCompany {
     String month;
     Empresa empresa;
-    UI ui = UI.getCurrent();
-    Page page = ui.getPage();
-    
-    private void getCompany(EmpresaRepository empresaRepository, Consumer<Empresa> callback) {
-        page.executeJs("return localStorage.getItem($0)", "company-name")
-                .then(item -> {
-                    setEmpresa(empresaRepository.findEmpresaByNomeEmpresa(item.asString()).orElseThrow());
-                    System.out.println("Valor do localStorage para 'company-name': " + item.asString());
-                    callback.accept(empresa);
-                });
-    }
-    
-    private void getMonth(Consumer<String> callback) {
-        page.executeJs("return localStorage.getItem($0)", "month")
-                .then(item -> {
-                    setMonth(item.asString());
-                    System.out.println("Valor do localStorage para 'month': " + item.asString());
-                    callback.accept(month);
-                });
-    }
     
     public ControleView(ControleService service, EmpresaRepository empresaRepository) {
         getCompany(empresaRepository, empresa -> {
