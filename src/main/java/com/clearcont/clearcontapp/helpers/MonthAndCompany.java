@@ -20,7 +20,6 @@ public interface MonthAndCompany {
     
     void setMonth(String month);
     
-    
     default void getCompany(EmpresaRepository empresaRepository, Consumer<Empresa> callback) {
         UI ui = UI.getCurrent();
         Page page = ui.getPage();

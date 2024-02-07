@@ -16,7 +16,6 @@ import java.util.Set;
 @Getter
 @Table(name = "application_user")
 public class User extends AbstractEntity {
-    
     @Column(unique = true)
     private String username;
     private String name;

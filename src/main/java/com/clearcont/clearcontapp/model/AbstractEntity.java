@@ -31,7 +31,7 @@ public abstract class AbstractEntity {
     @Override
     public boolean equals(Object obj) {
         if (!(obj instanceof AbstractEntity other)) {
-            return false; // null or other class
+            return false;
         }
         
         if (getId() != null) {

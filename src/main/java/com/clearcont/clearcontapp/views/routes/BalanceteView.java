@@ -64,34 +64,39 @@ public class BalanceteView extends Div implements MonthAndCompany {
             Div title = new Div(titleText);
             title.getStyle().setPadding("20px");
             
-            GridCrud<Balancete> grid = new GridCrud<>(Balancete.class);
-            DefaultCrudFormFactory<Balancete> formFactory = new DefaultCrudFormFactory<>(Balancete.class);
-            formFactory.setVisibleProperties("nomeConta", "numeroConta", "totalBalancete", "classificacao");
-            grid.setCrudFormFactory(formFactory);
-            grid.getGrid().setColumns("nomeConta", "numeroConta", "totalBalancete", "classificacao");
-            grid.getGrid().setColumnReorderingAllowed(true);
-            grid.getStyle().set("border-radius", "10px");
-            grid.setAddOperation(service::save);
-            grid.setUpdateOperation(service::update);
-            grid.setDeleteOperation(service::delete);
-            grid.setFindAllOperation(() -> balanceteData);
-            grid.getGrid().addComponentColumn(balanceteComp -> {
-                Button editButton = new Button("Conciliar");
-                editButton.addClickListener(
-                        e -> UI.getCurrent().navigate("detail/" + balanceteComp.getId())
-                );
-                return editButton;
-            }).setWidth("150px").setFlexGrow(0);
-            
-            grid.getGrid().addItemDoubleClickListener(event -> {
-                Balancete balancete = event.getItem();
-                UI.getCurrent().navigate("detail/" + balancete.getId());
-            });
+            GridCrud<Balancete> grid = getBalanceteGridCrud(service, balanceteData);
             
             Upload singleFileUpload = getUpload(service, empresa, month);
             
             add(title, grid, singleFileUpload);
         }));
+    }
+    
+    private static GridCrud<Balancete> getBalanceteGridCrud(BalanceteService service, List<Balancete> balanceteData) {
+        GridCrud<Balancete> grid = new GridCrud<>(Balancete.class);
+        DefaultCrudFormFactory<Balancete> formFactory = new DefaultCrudFormFactory<>(Balancete.class);
+        formFactory.setVisibleProperties("nomeConta", "numeroConta", "totalBalancete", "classificacao");
+        grid.setCrudFormFactory(formFactory);
+        grid.getGrid().setColumns("nomeConta", "numeroConta", "totalBalancete", "classificacao");
+        grid.getGrid().setColumnReorderingAllowed(true);
+        grid.getStyle().set("border-radius", "10px");
+        grid.setAddOperation(service::save);
+        grid.setUpdateOperation(service::update);
+        grid.setDeleteOperation(service::delete);
+        grid.setFindAllOperation(() -> balanceteData);
+        grid.getGrid().addComponentColumn(balanceteComp -> {
+            Button editButton = new Button("Conciliar");
+            editButton.addClickListener(
+                    e -> UI.getCurrent().navigate("detail/" + balanceteComp.getId())
+            );
+            return editButton;
+        }).setWidth("150px").setFlexGrow(0);
+        
+        grid.getGrid().addItemDoubleClickListener(event -> {
+            Balancete balancete = event.getItem();
+            UI.getCurrent().navigate("detail/" + balancete.getId());
+        });
+        return grid;
     }
     
     private Upload getUpload(BalanceteService service, Empresa empresa, String month) {

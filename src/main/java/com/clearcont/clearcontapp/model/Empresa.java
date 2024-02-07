@@ -1,5 +1,6 @@
 package com.clearcont.clearcontapp.model;
 
+import com.clearcont.clearcontapp.helpers.CNPJ;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;

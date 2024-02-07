@@ -46,7 +46,6 @@ public class Balancete {
         composicaoLancamentosContabeis.setBalancete(null);
     }
     
-    
     @Override
     public String toString() {
         return "Balancete{" +
