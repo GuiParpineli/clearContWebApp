@@ -1,10 +1,10 @@
 package com.clearcont.clearcontapp.views.main;
 
-import com.clearcont.clearcontapp.model.Empresa;
 import com.clearcont.clearcontapp.model.Role;
 import com.clearcont.clearcontapp.security.AuthenticatedUser;
 import com.clearcont.clearcontapp.views.routes.*;
 import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.applayout.AppLayout;
 import com.vaadin.flow.component.applayout.DrawerToggle;
 import com.vaadin.flow.component.button.Button;
@@ -15,6 +15,7 @@ import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.component.page.Page;
 import com.vaadin.flow.router.RouterLink;
 import lombok.Getter;
 import lombok.Setter;
@@ -23,10 +24,6 @@ import lombok.Setter;
 @Setter
 @Getter
 public class MainLayout extends AppLayout {
-    String month;
-    Empresa company;
-    
-    
     private final AuthenticatedUser authenticatedUser;
     
     public MainLayout(AuthenticatedUser authenticatedUser) {
@@ -53,8 +50,12 @@ public class MainLayout extends AppLayout {
         Button logoutButton = new Button("Logout");
         logoutButton.getStyle().setMargin("10px").setColor("white");
         logoutButton.addClickListener(e -> {
+            UI ui = UI.getCurrent();
+            Page page = ui.getPage();
+            page.executeJs("return localStorage.clear()");
             authenticatedUser.logout();
         });
+        
         HorizontalLayout header = new HorizontalLayout(container, logoutButton);
         header.expand(container);
         header.setDefaultVerticalComponentAlignment(FlexComponent.Alignment.CENTER);

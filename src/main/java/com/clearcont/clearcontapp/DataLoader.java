@@ -203,9 +203,9 @@ public class DataLoader implements ApplicationRunner {
         Responsavel responsavel4 = new Responsavel();
         
         if (responsavelRepository.findAll().isEmpty()) {
-            responsavel = responsavelRepository.save(new Responsavel(null, "Carlos", "carlos@gmail.com", empresaRepository.findAll().getFirst(), userRepository.findByUsername("carlos")));
-            responsavel2 = responsavelRepository.save(new Responsavel(null, "Alberto", "alberto@gmail.com", empresaRepository.findAll().getFirst(), userRepository.findByUsername("alberto")));
-            responsavel3 = responsavelRepository.save(new Responsavel(null, "Jessica", "jessica@gmail.com", empresaRepository.findAll().get(1), userRepository.findByUsername("jessica")));
+            responsavel = responsavelRepository.save(new Responsavel(null, "Carlos", "carlos@gmail.com", empresaRepository.findById(1).get(), userRepository.findByUsername("carlos")));
+            responsavel2 = responsavelRepository.save(new Responsavel(null, "Alberto", "alberto@gmail.com", empresaRepository.findById(1).get(), userRepository.findByUsername("alberto")));
+            responsavel3 = responsavelRepository.save(new Responsavel(null, "Jessica", "jessica@gmail.com", empresaRepository.findById(1).get(), userRepository.findByUsername("jessica")));
             responsavel4 = responsavelRepository.save(new Responsavel(null, "Jose", "jose@gmail.com", empresaRepository.findAll().getLast(), userRepository.findByUsername("jose")));
         }
         

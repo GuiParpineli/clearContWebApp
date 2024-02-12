@@ -14,6 +14,7 @@ import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.confirmdialog.ConfirmDialog;
 import com.vaadin.flow.component.html.H1;
+import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
@@ -21,6 +22,7 @@ import com.vaadin.flow.component.page.Page;
 import com.vaadin.flow.router.BeforeEvent;
 import com.vaadin.flow.router.HasUrlParameter;
 import com.vaadin.flow.router.Route;
+import com.vaadin.flow.theme.lumo.LumoIcon;
 import jakarta.annotation.security.PermitAll;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,7 +30,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.util.ArrayList;
 import java.util.List;
 
-@Route(value = "detail", layout = MainLayout.class)
+@Route(value = "conciliar", layout = MainLayout.class)
 @PermitAll
 @Slf4j
 public class DetailView extends VerticalLayout implements HasUrlParameter<String> {
@@ -52,6 +54,10 @@ public class DetailView extends VerticalLayout implements HasUrlParameter<String
         
         Button startBtn = new Button("Iniciar Conciliação");
         Button finishBtn = new Button("Fechar Conciliação");
+        startBtn.setIcon(new Icon("calc"));
+        startBtn.getStyle().setBackground("#0fc90f");
+        finishBtn.setIcon(new Icon("chevron-down"));
+        finishBtn.getStyle().setBackground("#ff4000c2");
         HorizontalLayout btns = new HorizontalLayout(startBtn, finishBtn);
         
         GridConciliar crud = new GridConciliar(balancete, contabeisService, balanceteId, responsavelRepository);

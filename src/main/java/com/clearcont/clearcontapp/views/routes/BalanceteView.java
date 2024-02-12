@@ -14,6 +14,7 @@ import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.html.H3;
+import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.page.Page;
 import com.vaadin.flow.component.upload.Upload;
 import com.vaadin.flow.component.upload.receivers.MemoryBuffer;
@@ -53,6 +54,11 @@ public class BalanceteView extends Div implements MonthAndCompany {
     public BalanceteView(BalanceteService service, EmpresaRepository empresaRepository) {
         getCompany(empresaRepository, empresa -> getMonth(month -> {
             
+            if (empresa == null || month == null || empresa.getNomeEmpresa() == null) {
+                Notification.show("Selecione uma empresa e periodo");
+                UI.getCurrent().navigate("/");
+            }
+            
             Integer id = empresa.getId();
             log.info("MES DO BALANCETE: " + month + ", " + " PERFIL ID: " + id);
             
@@ -87,14 +93,14 @@ public class BalanceteView extends Div implements MonthAndCompany {
         grid.getGrid().addComponentColumn(balanceteComp -> {
             Button editButton = new Button("Conciliar");
             editButton.addClickListener(
-                    e -> UI.getCurrent().navigate("detail/" + balanceteComp.getId())
+                    e -> UI.getCurrent().navigate("conciliar/" + balanceteComp.getId())
             );
             return editButton;
         }).setWidth("150px").setFlexGrow(0);
         
         grid.getGrid().addItemDoubleClickListener(event -> {
             Balancete balancete = event.getItem();
-            UI.getCurrent().navigate("detail/" + balancete.getId());
+            UI.getCurrent().navigate("conciliar/" + balancete.getId());
         });
         return grid;
     }
