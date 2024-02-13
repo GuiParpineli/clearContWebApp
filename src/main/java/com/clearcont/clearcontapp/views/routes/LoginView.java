@@ -35,6 +35,7 @@ public class LoginView extends LoginOverlay {
                 CookieFactory cookieFactory = new CookieFactory(VaadinService.getCurrentResponse());
                 cookieFactory.setCookie("company-group-id", user.getEmpresaGroup().getId().toString());
                 cookieFactory.setCookie("username", e.getUsername());
+                cookieFactory.setCookie("responsavel-id", String.valueOf(user.getResponsavel().getId()));
             }
         });
     }

@@ -22,7 +22,6 @@ import com.vaadin.flow.component.page.Page;
 import com.vaadin.flow.router.BeforeEvent;
 import com.vaadin.flow.router.HasUrlParameter;
 import com.vaadin.flow.router.Route;
-import com.vaadin.flow.theme.lumo.LumoIcon;
 import jakarta.annotation.security.PermitAll;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,14 +32,14 @@ import java.util.List;
 @Route(value = "conciliar", layout = MainLayout.class)
 @PermitAll
 @Slf4j
-public class DetailView extends VerticalLayout implements HasUrlParameter<String> {
+public class ConciliarView extends VerticalLayout implements HasUrlParameter<String> {
     
     private final BalanceteService service;
     private final ComposicaoLanContabeisService contabeisService;
     private final ResponsavelRepository responsavelRepository;
     
     @Autowired
-    public DetailView(BalanceteService service, ComposicaoLanContabeisService contabeisService, ResponsavelRepository responsavelRepository) {
+    public ConciliarView(BalanceteService service, ComposicaoLanContabeisService contabeisService, ResponsavelRepository responsavelRepository) {
         this.service = service;
         this.contabeisService = contabeisService;
         this.responsavelRepository = responsavelRepository;
@@ -52,12 +51,8 @@ public class DetailView extends VerticalLayout implements HasUrlParameter<String
         Balancete balancete = service.getById(balanceteId);
         List<DocumentosAnexados> documentosAnexadosList = new ArrayList<>();
         
-        Button startBtn = new Button("Iniciar Conciliação");
-        Button finishBtn = new Button("Fechar Conciliação");
-        startBtn.setIcon(new Icon("calc"));
-        startBtn.getStyle().setBackground("#0fc90f");
-        finishBtn.setIcon(new Icon("chevron-down"));
-        finishBtn.getStyle().setBackground("#ff4000c2");
+        Button startBtn = getStartBtn();
+        Button finishBtn = getFinishBtn();
         HorizontalLayout btns = new HorizontalLayout(startBtn, finishBtn);
         
         GridConciliar crud = new GridConciliar(balancete, contabeisService, balanceteId, responsavelRepository);
@@ -66,14 +61,16 @@ public class DetailView extends VerticalLayout implements HasUrlParameter<String
         
         if (conciliacao.getStatus().equals(StatusConciliacao.PROGRESS) ||
             conciliacao.getStatus().equals(StatusConciliacao.CLOSED)) {
-            startBtn.setDisableOnClick(true);
+            startBtn.getElement().setEnabled(false);
         }
         
         if (conciliacao.getStatus().equals(StatusConciliacao.OPEN) ||
             conciliacao.getStatus().equals(StatusConciliacao.CLOSED)
         ) {
-            finishBtn.setDisableOnClick(true);
+            finishBtn.getElement().setEnabled(false);
         }
+        
+        crud.setEnabled(!conciliacao.getStatus().equals(StatusConciliacao.OPEN) && !conciliacao.getStatus().equals(StatusConciliacao.CLOSED));
         
         ConfirmDialog dialogStart = getConfirmDialogStart(conciliacao);
         ConfirmDialog dialogEnd = getConfirmDialogEnd(conciliacao);
@@ -90,17 +87,30 @@ public class DetailView extends VerticalLayout implements HasUrlParameter<String
         add(conciliacaoContabil);
     }
     
+    private Button getStartBtn() {
+        Button startBtn = new Button("Iniciar Conciliação");
+        startBtn.setIcon(new Icon("calc"));
+        startBtn.getStyle().setBackground("#0fc90f");
+        return startBtn;
+    }
+    
+    private Button getFinishBtn() {
+        Button finishBtn = new Button("Fechar Conciliação");
+        finishBtn.setIcon(new Icon("chevron-down"));
+        finishBtn.getStyle().setBackground("#ff4000c2");
+        return finishBtn;
+    }
+    
     private ConfirmDialog getConfirmDialogEnd(ComposicaoLancamentosContabeis conciliacao) {
         ConfirmDialog dialog = new ConfirmDialog();
         UI ui = UI.getCurrent();
         Page page = ui.getPage();
         
         dialog.setHeader("Iniciar conciliação");
-        dialog.setText(
-                "Você tem certeza que deseja iniciar? Essa alteração não pode ser desfeita.");
+        dialog.setText("Você tem certeza que deseja finalizar? Essa alteração não pode ser desfeita.");
         dialog.setCancelable(true);
         dialog.setCancelText("Cancelar");
-        dialog.setConfirmText("Save");
+        dialog.setConfirmText("Confirmar");
         dialog.addConfirmListener(dialogEvent -> {
             conciliacao.setStatus(StatusConciliacao.CLOSED);
             contabeisService.update(conciliacao);
@@ -116,11 +126,10 @@ public class DetailView extends VerticalLayout implements HasUrlParameter<String
         Page page = ui.getPage();
         
         dialog.setHeader("Finalizar conciliação");
-        dialog.setText(
-                "Você tem certeza que deseja finalizar? Essa alteração não pode ser desfeita.");
+        dialog.setText("Você tem certeza que deseja iniciar? Essa alteração não pode ser desfeita.");
         dialog.setCancelable(true);
         dialog.setCancelText("Cancelar");
-        dialog.setConfirmText("Save");
+        dialog.setConfirmText("Confirmar");
         dialog.addConfirmListener(dialogEvent -> {
             conciliacao.setStatus(StatusConciliacao.PROGRESS);
             contabeisService.update(conciliacao);

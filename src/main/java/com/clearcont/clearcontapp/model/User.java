@@ -30,7 +30,11 @@ public class User extends AbstractEntity {
     @ManyToOne
     EmpresaGroup empresaGroup;
     
-    public User(Long id, int version, String username, String name, String hashedPassword, Set<Role> roles, byte[] profilePicture, EmpresaGroup empresaGroup) {
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+    @JoinColumn(name = "responsavel_id", unique = true)
+    private Responsavel responsavel;
+    
+    public User(Long id, int version, String username, String name, String hashedPassword, Set<Role> roles, byte[] profilePicture, EmpresaGroup empresaGroup, Responsavel responsavel) {
         super(id, version);
         this.username = username;
         this.name = name;
@@ -38,5 +42,6 @@ public class User extends AbstractEntity {
         this.roles = roles;
         this.profilePicture = profilePicture;
         this.empresaGroup = empresaGroup;
+        this.responsavel = responsavel;
     }
 }

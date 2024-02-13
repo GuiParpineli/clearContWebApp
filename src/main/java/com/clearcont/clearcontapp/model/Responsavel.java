@@ -19,6 +19,17 @@ public class Responsavel {
     private String email;
     @ManyToOne
     private Empresa empresa;
-    @OneToOne
-    User user;
+    @OneToOne(mappedBy = "responsavel", orphanRemoval = true)
+    private User user;
+    
+    public void setUser(User user) {
+        this.user = user;
+    }
+    
+    public Responsavel(Integer id, String nome, String email, Empresa empresa) {
+        this.id = id;
+        this.nome = nome;
+        this.email = email;
+        this.empresa = empresa;
+    }
 }

@@ -44,23 +44,14 @@ public class DashboardView extends FlexLayout implements MonthAndCompany {
             
             SOChart soChart = new SOChart();
             soChart.setSize("800px", "500px");
-            if (responsavelPicker.getValue() == null){
+            if (responsavelPicker.getValue() == null) {
                 responsavelPicker.setValue(responsaveisList.getFirst().getId() + " - " + responsaveisList.getFirst().getNome());
             }
             String[] split = responsavelPicker.getValue().split(" - ");
-            setTotalOpen(cLContabeisService.getTotalOpen(Integer.valueOf(split[0])));
-            setTotalProgress(cLContabeisService.getTotalProgress(Integer.valueOf(split[0])));
-            setTotalFinish(cLContabeisService.getTotalFinish(Integer.valueOf(split[0])));
-            
-            responsavelPicker.addAttachListener(
-                    click -> {
-                        if (responsavelPicker.getValue() == null)
-                            responsavelPicker.setValue(responsaveisList.getFirst().getId() + " - " + responsaveisList.getFirst().getNome());
-                        setTotalOpen(cLContabeisService.getTotalOpen(Integer.valueOf(split[0])));
-                        setTotalProgress(cLContabeisService.getTotalProgress(Integer.valueOf(split[0])));
-                        setTotalFinish(cLContabeisService.getTotalFinish(Integer.valueOf(split[0])));
-                    }
-            );
+            Integer responsavelID = Integer.valueOf(split[0]);
+            setTotalOpen(cLContabeisService.getTotalOpen(responsavelID));
+            setTotalProgress(cLContabeisService.getTotalProgress(responsavelID));
+            setTotalFinish(cLContabeisService.getTotalFinish(responsavelID));
             
             CategoryData labels = new CategoryData("Em Aberto", "Em Andamento", "Finalizados");
             
@@ -82,9 +73,7 @@ public class DashboardView extends FlexLayout implements MonthAndCompany {
             Toolbox toolbox = new Toolbox();
             toolbox.addButton(new Toolbox.Download());
             
-            Title title = new Title("Responsáveis");
-            
-            soChart.add(nc, bc, toolbox, title);
+            soChart.add(nc, bc, toolbox);
             
             Div div = new Div(soChart);
             VerticalLayout horizontalLayout = new VerticalLayout(responsavelPicker, div);
@@ -93,6 +82,30 @@ public class DashboardView extends FlexLayout implements MonthAndCompany {
             horizontalLayout.setHorizontalComponentAlignment(Alignment.CENTER);
             horizontalLayout.getStyle().setMargin("25px");
             this.setAlignContent(ContentAlignment.CENTER);
+            
+            responsavelPicker.addValueChangeListener(
+                    click -> {
+                        if (responsavelPicker.getValue() == null) {
+                            responsavelPicker.setValue(responsaveisList.getFirst().getId() + " - " + responsaveisList.getFirst().getNome());
+                        }
+                        String[] splitLambda = responsavelPicker.getValue().split(" - ");
+                        Integer responsavelIDL = Integer.valueOf(splitLambda[0]);
+                        setTotalOpen(cLContabeisService.getTotalOpen(responsavelIDL));
+                        setTotalProgress(cLContabeisService.getTotalProgress(responsavelIDL));
+                        setTotalFinish(cLContabeisService.getTotalFinish(responsavelIDL));
+                        data.set(0, totalOpen);
+                        data.set(1, totalProgress);
+                        data.set(2, totalFinish);
+                        try {
+                            soChart.updateData(
+                                    data
+                            );
+                        } catch (Exception e) {
+                            throw new RuntimeException(e);
+                        }
+                    }
+            );
+            
             
             add(horizontalLayout);
         });
