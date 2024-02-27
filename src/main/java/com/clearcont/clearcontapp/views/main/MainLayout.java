@@ -53,6 +53,7 @@ public class MainLayout extends AppLayout {
             UI ui = UI.getCurrent();
             Page page = ui.getPage();
             page.executeJs("return localStorage.clear()");
+            page.executeJs("return sessionStorage.clear()");
             authenticatedUser.logout();
         });
         

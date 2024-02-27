@@ -13,11 +13,12 @@ import org.vaadin.crudui.form.impl.form.factory.DefaultCrudFormFactory;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.Collections;
 import java.util.Locale;
 
 public class GridConciliar extends VerticalLayout {
     
-    public GridConciliar(Balancete balancete, ComposicaoLanContabeisService contabeisService, Integer balanceteId, ResponsavelRepository responsavelRepository) {
+    public GridConciliar(Balancete balancete, ComposicaoLanContabeisService contabeisService, Long balanceteId, ResponsavelRepository responsavelRepository) {
         
         CookieFactory cookieFactory = new CookieFactory(VaadinService.getCurrentResponse());
         GridCrud<ComposicaoLancamentosContabeis> crud = new GridCrud<>(ComposicaoLancamentosContabeis.class);

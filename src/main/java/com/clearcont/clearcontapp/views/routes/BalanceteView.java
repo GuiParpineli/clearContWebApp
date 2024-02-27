@@ -36,6 +36,7 @@ import org.vaadin.crudui.form.impl.form.factory.DefaultCrudFormFactory;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.function.Consumer;
@@ -50,18 +51,18 @@ import java.util.function.Consumer;
 public class BalanceteView extends Div implements MonthAndCompany {
     String month;
     Empresa empresa;
-    
+
     public BalanceteView(BalanceteService service, EmpresaRepository empresaRepository) {
         getCompany(empresaRepository, empresa -> getMonth(month -> {
-            
+
             if (empresa == null || month == null || empresa.getNomeEmpresa() == null) {
                 Notification.show("Selecione uma empresa e periodo");
                 UI.getCurrent().navigate("/");
             }
-            
+
             Integer id = empresa.getId();
             log.info("MES DO BALANCETE: " + month + ", " + " PERFIL ID: " + id);
-            
+
             List<Balancete> balanceteData = service.getByCompanyAndPeriod(id, month, 2024);
             log.info("TAMANHO TOTAL DA LISTA BALANCETE: " + balanceteData.size());
             String year = String.valueOf(LocalDate.now().getYear());
@@ -69,15 +70,15 @@ public class BalanceteView extends Div implements MonthAndCompany {
             H3 titleText = new H3("EMPRESA: " + empresa.getNomeEmpresa() + " | MES: " + month + " | ANO: " + year);
             Div title = new Div(titleText);
             title.getStyle().setPadding("20px");
-            
+
             GridCrud<Balancete> grid = getBalanceteGridCrud(service, balanceteData);
-            
+
             Upload singleFileUpload = getUpload(service, empresa, month);
-            
+
             add(title, grid, singleFileUpload);
         }));
     }
-    
+
     private static GridCrud<Balancete> getBalanceteGridCrud(BalanceteService service, List<Balancete> balanceteData) {
         GridCrud<Balancete> grid = new GridCrud<>(Balancete.class);
         DefaultCrudFormFactory<Balancete> formFactory = new DefaultCrudFormFactory<>(Balancete.class);
@@ -97,18 +98,18 @@ public class BalanceteView extends Div implements MonthAndCompany {
             );
             return editButton;
         }).setWidth("150px").setFlexGrow(0);
-        
+
         grid.getGrid().addItemDoubleClickListener(event -> {
             Balancete balancete = event.getItem();
             UI.getCurrent().navigate("conciliar/" + balancete.getId());
         });
         return grid;
     }
-    
+
     private Upload getUpload(BalanceteService service, Empresa empresa, String month) {
         MemoryBuffer memoryBuffer = new MemoryBuffer();
         Upload singleFileUpload = new Upload(memoryBuffer);
-        
+
         singleFileUpload.addSucceededListener(event -> {
             try {
                 Workbook workbook = new XSSFWorkbook(memoryBuffer.getInputStream());
@@ -118,21 +119,23 @@ public class BalanceteView extends Div implements MonthAndCompany {
                 List<Balancete> balancetes = new ArrayList<>();
                 while (rowIterator.hasNext()) {
                     Row row = rowIterator.next();
-                    balancetes.add(new Balancete(
-                            0,
-                            empresa,
-                            row.getCell(1).getStringCellValue(),
-                            (int) row.getCell(0).getNumericCellValue(),
-                            row.getCell(2).getNumericCellValue(),
-                            row.getCell(3).getStringCellValue(),
-                            month,
-                            LocalDate.now().getYear(),
-                            List.of(new ComposicaoLancamentosContabeis())
-                    ));
+                    balancetes.add(
+                            new Balancete(
+                                    0L,
+                                    empresa,
+                                    row.getCell(1).getStringCellValue(),
+                                    (int) row.getCell(0).getNumericCellValue(),
+                                    row.getCell(2).getNumericCellValue(),
+                                    row.getCell(3).getStringCellValue(),
+                                    month,
+                                    LocalDate.now().getYear(),
+                                    List.of(new ComposicaoLancamentosContabeis())
+                            )
+                    );
                     service.saveAll(empresa.getId(), balancetes);
                     UI.getCurrent().getPage().reload();
                     log.info("TAMANHO BALANTE INSERIDO : " + balancetes.size());
-                    
+
                 }
                 workbook.close();
             } catch (IOException e) {

@@ -19,7 +19,7 @@ public class ComposicaoLancamentosContabeisService {
         return contabeisRepository.findAll();
     }
     
-    public ComposicaoLancamentosContabeis getByID(Integer id) {
+    public ComposicaoLancamentosContabeis getByID(Long id) {
         return contabeisRepository.findById(id).orElseThrow();
     }
     

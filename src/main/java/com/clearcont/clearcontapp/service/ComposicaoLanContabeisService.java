@@ -12,48 +12,48 @@ import static com.clearcont.clearcontapp.helpers.DecimalFormatBR.getDecimalForma
 
 @Service
 public class ComposicaoLanContabeisService {
-    
+
     private final ComposicaoLancamentosContabeisRepository contabeisRepository;
-    
+
     public ComposicaoLanContabeisService(ComposicaoLancamentosContabeisRepository contabeisRepository) {
         this.contabeisRepository = contabeisRepository;
     }
-    
+
     public List<ComposicaoLancamentosContabeis> getAll() {
         return contabeisRepository.findAll();
     }
-    
-    public ComposicaoLancamentosContabeis getByID(Integer id) {
+
+    public ComposicaoLancamentosContabeis getByID(Long id) {
         return contabeisRepository.findById(id).orElse(new ComposicaoLancamentosContabeis());
     }
-    
+
     public void save(ComposicaoLancamentosContabeis entity) {
         contabeisRepository.save(entity);
     }
-    
-    public void deleteByID(Integer id) {
+
+    public void deleteByID(Long id) {
         contabeisRepository.deleteById(id);
     }
-    
-    public List<ComposicaoLancamentosContabeis> getByBalanceteID(Integer id) {
+
+    public List<ComposicaoLancamentosContabeis> getByBalanceteID(Long id) {
         return contabeisRepository.findComposicaoLancamentosContabeisByBalancete_Id(id);
     }
-    
+
     public List<ComposicaoLancamentosContabeis> getByYearMonthAndCnpj(String cnpj, Integer year, String month) {
         return contabeisRepository.findComposicaoLancamentosContabeisByBalancete_Empresa_CnpjAndBalancete_AnoAndBalancete_Mes(cnpj, year, month);
     }
-    
+
     public void update(ComposicaoLancamentosContabeis entity) {
         contabeisRepository.saveAndFlush(entity);
     }
-    
-    
-    public double getSaldoContabil(Integer balanceteId) {
+
+
+    public double getSaldoContabil(Long balanceteId) {
         return contabeisRepository.findComposicaoLancamentosContabeisByBalancete_Id(balanceteId)
                 .stream().mapToDouble((ComposicaoLancamentosContabeis::getDoubleSaldoContabil)).sum();
     }
-    
-    public void atualizarSaldoContabil(Integer balanceteId, GridCrud crud) {
+
+    public void atualizarSaldoContabil(Long balanceteId, GridCrud crud) {
         DecimalFormat formatter = getDecimalFormat();
         double saldoContabil = getSaldoContabil(balanceteId);
         crud.getGrid().getColumnByKey("saldoContabil")

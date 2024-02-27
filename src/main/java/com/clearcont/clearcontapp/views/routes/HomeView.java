@@ -47,13 +47,13 @@ public class HomeView extends Div implements MonthAndCompany {
     private String version;
     
     private void setComboBoxValues(ComboBox<String> companyPicker, ComboBox<String> monthPicker) {
-        UI.getCurrent().getPage().executeJs("return localStorage.getItem('month')")
+        UI.getCurrent().getPage().executeJs("return sessionStorage.getItem('month')")
                 .then(String.class, savedMonth -> {
                     if (savedMonth != null && !savedMonth.isEmpty()) {
                         monthPicker.setValue(savedMonth);
                     }
                 });
-        UI.getCurrent().getPage().executeJs("return localStorage.getItem('company-name')")
+        UI.getCurrent().getPage().executeJs("return sessionStorage.getItem('company-name')")
                 .then(String.class, savedCompanyName -> {
                     if (savedCompanyName != null && !savedCompanyName.isEmpty()) {
                         companyPicker.setValue(savedCompanyName);
@@ -118,12 +118,12 @@ public class HomeView extends Div implements MonthAndCompany {
         companyPicker.setItems(companyList.empresas.stream().map(Empresa::getNomeEmpresa).toList());
         
         companyPicker.addValueChangeListener(event -> {
-            page.executeJs("localStorage.setItem($1, $1)", "company-name", event.getValue());
-            page.executeJs("localStorage.setItem('company-name', $0)", event.getValue());
+            page.executeJs("sessionStorage.setItem($1, $1)", "company-name", event.getValue());
+            page.executeJs("sessionStorage.setItem('company-name', $0)", event.getValue());
         });
         companyPicker.addValueChangeListener(event -> {
-            page.executeJs("localStorage.setItem($1, $1)", "company-name", event.getValue());
-            page.executeJs("localStorage.setItem('company-name', $0)", event.getValue());
+            page.executeJs("sessionStorage.setItem($1, $1)", "company-name", event.getValue());
+            page.executeJs("sessionStorage.setItem('company-name', $0)", event.getValue());
             log.info("EMPRESA SELECIONADA: " + event.getValue());
         });
         return companyPicker;
@@ -143,8 +143,8 @@ public class HomeView extends Div implements MonthAndCompany {
         monthPicker.getStyle().setTextAlign(Style.TextAlign.CENTER);
         
         monthPicker.addValueChangeListener(event -> {
-            page.executeJs("localStorage.setItem($0, $1)", "month", event.getValue());
-            page.executeJs("localStorage.setItem('month', $0)", event.getValue());
+            page.executeJs("sessionStorage.setItem($0, $1)", "month", event.getValue());
+            page.executeJs("sessionStorage.setItem('month', $0)", event.getValue());
             log.info("PERÍODO SELECIONADO: " + event.getValue());
         });
         return monthPicker;

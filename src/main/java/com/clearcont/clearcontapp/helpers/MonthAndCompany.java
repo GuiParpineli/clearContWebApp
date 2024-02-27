@@ -23,7 +23,7 @@ public interface MonthAndCompany {
     default void getCompany(EmpresaRepository empresaRepository, Consumer<Empresa> callback) {
         UI ui = UI.getCurrent();
         Page page = ui.getPage();
-        page.executeJs("return localStorage.getItem($0)", "company-name")
+        page.executeJs("return sessionStorage.getItem($0)", "company-name")
                 .then(item -> {
                     setEmpresa(empresaRepository.findEmpresaByNomeEmpresa(item.asString()).orElse(new Empresa()));
                     callback.accept(getEmpresa());
@@ -33,7 +33,7 @@ public interface MonthAndCompany {
     default void getMonth(Consumer<String> callback) {
         UI ui = UI.getCurrent();
         Page page = ui.getPage();
-        page.executeJs("return localStorage.getItem($0)", "month")
+        page.executeJs("return sessionStorage.getItem($0)", "month")
                 .then(item -> {
                     setMonth(item.asString());
                     callback.accept(getMonth());

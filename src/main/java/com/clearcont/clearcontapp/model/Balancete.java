@@ -13,11 +13,10 @@ import java.util.Objects;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder
 public class Balancete {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private Long id;
     @ManyToOne
     @Setter
     private Empresa empresa;

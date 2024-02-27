@@ -9,6 +9,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
@@ -22,7 +23,7 @@ public class DataLoader implements ApplicationRunner {
     private final ComposicaoLancamentosContabeisRepository composicaoLancamentosContabeisRepository;
     private final ResponsavelRepository responsavelRepository;
     private final UserRepository userRepository;
-    
+
     public DataLoader(BalanceteRepository balanceteRepository,
                       EmpresaRepository empresaRepository, ControleRepository controleRepository,
                       EmpresaGroupRepository empresaGroupRepository,
@@ -37,15 +38,15 @@ public class DataLoader implements ApplicationRunner {
         this.responsavelRepository = responsavelRepository;
         this.userRepository = userRepository;
     }
-    
+
     @Override
     public void run(ApplicationArguments args) throws Exception {
         Empresa empresa = new Empresa();
         Empresa empresa2 = new Empresa();
         Empresa empresa3 = new Empresa();
-        
+
         if (empresaGroupRepository.findAll().isEmpty()) {
-            
+
             empresa = empresaRepository.save(
                     new Empresa(
                             null,
@@ -53,7 +54,7 @@ public class DataLoader implements ApplicationRunner {
                             "01.001.001/0001-01",
                             "cientea@gmail.com"
                     ));
-            
+
             empresa2 = empresaRepository.save(
                     new Empresa(
                             null,
@@ -69,57 +70,62 @@ public class DataLoader implements ApplicationRunner {
                             "cienteD@gmail.com"
                     ));
         }
-        
+
         if (balanceteRepository.findAll().isEmpty()) {
             balanceteRepository.save(
-                    Balancete.builder().classificacao("ATIVO")
-                            .empresa(empresa)
-                            .id(null)
-                            .nomeConta("BANCO ITAU")
-                            .numeroConta(375)
-                            .mes("JANEIRO")
-                            .ano(2024)
-                            .totalBalancete(248.36334)
-                            .build()
-            );
-            
+                    new Balancete(
+                            null,
+                            empresa,
+                            "BANCO ITAU",
+                            375,
+                            248.36334,
+                            "ATIVO",
+                            "JANEIRO",
+                            2024,
+                            Collections.emptyList()
+                    ));
+
             balanceteRepository.save(
-                    Balancete.builder().classificacao("ATIVO")
-                            .empresa(empresa)
-                            .id(null)
-                            .nomeConta("BANCO ITAU")
-                            .numeroConta(375)
-                            .mes("JANEIRO")
-                            .ano(2024)
-                            .totalBalancete(248.36334)
-                            .build()
-            );
-            
+                    new Balancete(
+                            null,
+                            empresa,
+                            "BANCO ITAU",
+                            375,
+                            248.36334,
+                            "ATIVO",
+                            "JANEIRO",
+                            2024,
+                            Collections.emptyList()
+                    ));
+
             balanceteRepository.save(
-                    Balancete.builder().classificacao("ATIVO")
-                            .empresa(empresa2)
-                            .id(null)
-                            .nomeConta("BANCO BRADESCO")
-                            .numeroConta(379)
-                            .ano(2023)
-                            .mes("DEZEMBRO")
-                            .totalBalancete(9948.36334)
-                            .build()
+                    new Balancete(
+                            null,
+                            empresa2,
+                            "BANCO BRADESCO",
+                            379,
+                            9948.36334,
+                            "ATIVO",
+                            "DEZEMBRO",
+                            2023,
+                            Collections.emptyList()
+                    )
             );
-            
+
             balanceteRepository.save(
-                    Balancete.builder().classificacao("ATIVO")
-                            .empresa(empresa3)
-                            .id(null)
-                            .nomeConta("BANCO SANTANDER")
-                            .numeroConta(388)
-                            .ano(2024)
-                            .mes("JANEIRO")
-                            .totalBalancete(928.222)
-                            .build()
-            );
+                    new Balancete(
+                            null,
+                            empresa3,
+                            "BANCO SANTANDER",
+                            388,
+                            928.222,
+                            "ATIVO",
+                            "JANEIRO",
+                            2024,
+                            Collections.emptyList()
+                    ));
         }
-        
+
         if (empresaGroupRepository.findAll().isEmpty()) {
             empresaGroupRepository.save(
                     new EmpresaGroup(
@@ -134,13 +140,13 @@ public class DataLoader implements ApplicationRunner {
                     )
             );
         }
-        
+
         Responsavel responsavelAdmin = new Responsavel();
         Responsavel responsavel = new Responsavel();
         Responsavel responsavel2 = new Responsavel();
         Responsavel responsavel3 = new Responsavel();
         Responsavel responsavel4 = new Responsavel();
-        
+
         if (responsavelRepository.findAll().isEmpty()) {
             responsavelAdmin = responsavelRepository.save(new Responsavel(null, "Admin", "admin@gmail.com", empresaRepository.findById(1).get()));
             responsavel = responsavelRepository.save(new Responsavel(null, "Carlos", "carlos@gmail.com", empresaRepository.findById(1).get()));
@@ -148,8 +154,8 @@ public class DataLoader implements ApplicationRunner {
             responsavel3 = responsavelRepository.save(new Responsavel(null, "Jessica", "jessica@gmail.com", empresaRepository.findById(1).get()));
             responsavel4 = responsavelRepository.save(new Responsavel(null, "Jose", "jose@gmail.com", empresaRepository.findById(2).get()));
         }
-        
-        
+
+
         if (userRepository.findAll().isEmpty()) {
             userRepository.save(
                     new User(
@@ -221,7 +227,7 @@ public class DataLoader implements ApplicationRunner {
         if (composicaoLancamentosContabeisRepository.findAll().isEmpty()) {
             composicaoLancamentosContabeisRepository.save(
                     new ComposicaoLancamentosContabeis(
-                            0,
+                            0L,
                             LocalDate.now(),
                             "loreash",
                             100.0,
@@ -234,7 +240,7 @@ public class DataLoader implements ApplicationRunner {
             );
             composicaoLancamentosContabeisRepository.save(
                     new ComposicaoLancamentosContabeis(
-                            0,
+                            0L,
                             LocalDate.now(),
                             "Compra",
                             1000.0,
@@ -247,7 +253,7 @@ public class DataLoader implements ApplicationRunner {
             );
             composicaoLancamentosContabeisRepository.save(
                     new ComposicaoLancamentosContabeis(
-                            0,
+                            0L,
                             LocalDate.now(),
                             "Compra",
                             1000.0,
@@ -259,6 +265,6 @@ public class DataLoader implements ApplicationRunner {
                     )
             );
         }
-        
+
     }
 }

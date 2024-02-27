@@ -42,19 +42,19 @@ public class TopBarControleView extends FlexLayout {
     Page page = ui.getPage();
     
     private void getCompany(EmpresaRepository empresaRepository, Consumer<Empresa> callback) {
-        page.executeJs("return localStorage.getItem($0)", "company-name")
+        page.executeJs("return sessionStorage.getItem($0)", "company-name")
                 .then(item -> {
                     setEmpresa(empresaRepository.findEmpresaByNomeEmpresa(item.asString()).orElseThrow());
-                    System.out.println("Valor do localStorage para 'company-name': " + item.asString());
+                    System.out.println("Valor do sessionStorage para 'company-name': " + item.asString());
                     callback.accept(empresa);
                 });
     }
     
     private void getMonth(Consumer<String> callback) {
-        page.executeJs("return localStorage.getItem($0)", "month")
+        page.executeJs("return sessionStorage.getItem($0)", "month")
                 .then(item -> {
                     setMonth(item.asString());
-                    System.out.println("Valor do localStorage para 'month': " + item.asString());
+                    System.out.println("Valor do sessionStorage para 'month': " + item.asString());
                     callback.accept(month);
                 });
     }
