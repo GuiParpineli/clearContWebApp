@@ -57,6 +57,10 @@ public class ComposicaoLancamentosContabeis {
         this.responsavel = responsavel;
     }
 
+    public ComposicaoLancamentosContabeis(Responsavel responsavel) {
+        this.responsavel = responsavel;
+    }
+
     public int contarPontos(String texto) {
         int contador = 0;
         for (int i = 0; i < texto.length(); i++) {

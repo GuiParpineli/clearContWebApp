@@ -1,24 +1,20 @@
 package com.clearcont.clearcontapp.service;
 
 import com.amazonaws.AmazonServiceException;
+import com.amazonaws.SdkClientException;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.*;
 import com.clearcont.clearcontapp.model.Anexo;
-import com.clearcont.clearcontapp.model.Balancete;
 import com.clearcont.clearcontapp.model.ComposicaoLancamentosContabeis;
 import com.clearcont.clearcontapp.repository.AnexoRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FilenameUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.InputStreamResource;
-import org.springframework.core.io.Resource;
-import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.net.MalformedURLException;
-import java.nio.file.Path;
 import java.sql.Timestamp;
 import java.util.Date;
 import java.util.List;
@@ -27,6 +23,7 @@ import java.util.stream.Collectors;
 
 
 @Service
+@Slf4j
 public class AnexoStorageServiceImpl implements AnexoStorageService {
 
     private final AnexoRepository anexoRepository;
@@ -44,10 +41,10 @@ public class AnexoStorageServiceImpl implements AnexoStorageService {
     }
 
     @Override
-    public void saveFile(MultipartFile multipartFile, ComposicaoLancamentosContabeis lancamentosContabeis) throws IOException {
+    public void saveFile(MultipartFile multipartFile, ComposicaoLancamentosContabeis lancamentosContabeis, String companyName) throws IOException {
         String extension = FilenameUtils.getExtension(multipartFile.getOriginalFilename());
         String fileName = FilenameUtils.removeExtension(multipartFile.getOriginalFilename());
-        String key = FOLDER + fileName + "." + extension;
+        String key = FOLDER + companyName + fileName + "." + extension;
         saveAnexoToServer(multipartFile, key);
         Anexo anexo = new Anexo();
         anexo.setComposicaoLancamentosContabeis(lancamentosContabeis);
@@ -62,13 +59,28 @@ public class AnexoStorageServiceImpl implements AnexoStorageService {
     }
 
     @Override
-    public void deleteFile(Long fileId) {
+    public void deleteFile(Long fileId, String companyName) {
         Optional<Anexo> imageOpt = anexoRepository.findById(fileId);
         if (imageOpt.isPresent()) {
             Anexo anexo = imageOpt.get();
-            String key = FOLDER + anexo.getName() + "." + anexo.getExt();
-            space.deleteObject(new DeleteObjectRequest(doSpaceBucket, key));
-            anexoRepository.delete(anexo);
+            String key = FOLDER + companyName + anexo.getName() + "." + anexo.getExt();
+            try {
+                space.deleteObject(new DeleteObjectRequest(doSpaceBucket, key));
+                anexoRepository.delete(anexo);
+            } catch (AmazonServiceException e) {
+                log.info("Caught an AmazonServiceException, which means your request made it "
+                        + "to Amazon S3, but was rejected with an error response for some reason.");
+                log.info("Error Message:    " + e.getMessage());
+                log.info("HTTP Status Code: " + e.getStatusCode());
+                log.info("AWS Error Code:   " + e.getErrorCode());
+                log.info("Error Type:       " + e.getErrorType());
+                log.info("Request ID:       " + e.getRequestId());
+            } catch (SdkClientException e) {
+                log.info("Caught an SdkClientException, which means the client encountered "
+                        + "a serious internal problem while trying to communicate with S3, "
+                        + "such as not being able to access the network.");
+                log.info("Error Message: " + e.getMessage());
+            }
         }
     }
 

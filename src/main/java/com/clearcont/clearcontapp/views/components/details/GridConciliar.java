@@ -17,7 +17,7 @@ import java.util.Locale;
 
 public class GridConciliar extends VerticalLayout {
 
-    public GridConciliar(Balancete balancete, ComposicaoLancamentosContabeisService contabeisService, Long balanceteId, ResponsavelRepository responsavelRepository, InfoCardsConciliacao infoCards) {
+    public GridConciliar(Balancete balancete, ComposicaoLancamentosContabeisService contabeisService, Long balanceteId, ResponsavelRepository responsavelRepository, BalanceteDetailsLayout infoCards) {
 
         CookieFactory cookieFactory = new CookieFactory(VaadinService.getCurrentResponse());
         GridCrud<ComposicaoLancamentosContabeis> crud = new GridCrud<>(ComposicaoLancamentosContabeis.class);
@@ -32,7 +32,7 @@ public class GridConciliar extends VerticalLayout {
             datePicker.setLocale(Locale.of("pt", "BR"));
             datePicker.addValueChangeListener(event -> {
                 LocalDate selectedDate = event.getValue();
-                String dataFormatada = selectedDate.format(formatador);
+                selectedDate.format(formatador);
             });
         });
 
@@ -57,10 +57,10 @@ public class GridConciliar extends VerticalLayout {
             return a;
         });
         crud.setFindAllOperation(() -> {
-            var all = contabeisService.getByBalanceteID(balanceteId);
-            contabeisService.atualizarSaldoContabil(balanceteId, crud);
-            infoCards.updateDiferencaLayout(balancete.getDoubleTotalBalancete(), contabeisService.getSaldoContabil(balanceteId));
-            return all;
+                    var all = contabeisService.getByBalanceteID(balanceteId);
+                    contabeisService.atualizarSaldoContabil(balanceteId, crud);
+                    infoCards.updateDiferencaLayout(balancete.getDoubleTotalBalancete(), contabeisService.getSaldoContabil(balanceteId));
+                    return all;
                 }
         );
         crud.setDeleteOperation(a -> {

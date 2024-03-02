@@ -32,7 +32,8 @@ server:
   servlet:
     session:
       tracking-modes: cookie
-version: 0.3.0
 logging:
   file:
     path: /home/logsJava
+
+version: 0.5.0

@@ -1,11 +1,14 @@
 package com.clearcont.clearcontapp.views.routes;
 
 
+import com.clearcont.clearcontapp.helpers.CookieFactory;
 import com.clearcont.clearcontapp.helpers.MonthAndCompany;
 import com.clearcont.clearcontapp.model.Balancete;
 import com.clearcont.clearcontapp.model.ComposicaoLancamentosContabeis;
 import com.clearcont.clearcontapp.model.Empresa;
+import com.clearcont.clearcontapp.model.Responsavel;
 import com.clearcont.clearcontapp.repository.EmpresaRepository;
+import com.clearcont.clearcontapp.repository.ResponsavelRepository;
 import com.clearcont.clearcontapp.service.BalanceteService;
 import com.clearcont.clearcontapp.views.main.MainLayout;
 import com.vaadin.flow.component.UI;
@@ -17,6 +20,7 @@ import com.vaadin.flow.component.upload.Upload;
 import com.vaadin.flow.component.upload.receivers.MemoryBuffer;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
+import com.vaadin.flow.server.VaadinService;
 import jakarta.annotation.security.PermitAll;
 import jakarta.transaction.Transactional;
 import lombok.Getter;
@@ -34,6 +38,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Optional;
 
 @Route(value = "balancete", layout = MainLayout.class)
 @PageTitle("Balancete | ClearCont App")
@@ -45,15 +50,22 @@ import java.util.List;
 public class BalanceteView extends Div implements MonthAndCompany {
     String month;
     Empresa empresa;
+    private final ResponsavelRepository responsavelRepository;
 
-    public BalanceteView(BalanceteService service, EmpresaRepository empresaRepository) {
+    public BalanceteView(BalanceteService service, EmpresaRepository empresaRepository, ResponsavelRepository responsavelRepository) {
+        this.responsavelRepository = responsavelRepository;
         processCompanyAndMonth(empresaRepository, service);
     }
 
     private void processCompanyAndMonth(EmpresaRepository empresaRepository, BalanceteService service) {
+
+        CookieFactory cookieFactory = new CookieFactory(VaadinService.getCurrentResponse());
+
         getCompany(empresaRepository, empresa -> getMonth(month -> {
             verifySelectedCompanyAndMonthExistAndNavigate(empresa, month);
 
+            Integer responsavelID = cookieFactory.getCookieInteger("responsavel-id");
+            Responsavel responsavel = responsavelRepository.findById(responsavelID).orElseThrow();
             Integer id = empresa.getId();
             String companyName = empresa.getNomeEmpresa();
             log.info("MES DO BALANCETE: " + month + ", " + " PERFIL ID: " + id);
@@ -67,7 +79,7 @@ public class BalanceteView extends Div implements MonthAndCompany {
 
             Div title = getTitleDiv(titleText);
             GridCrud<Balancete> grid = getBalanceteGridCrud(service, balanceteData);
-            Upload singleFileUpload = getUpload(service, empresa, month);
+            Upload singleFileUpload = getUpload(service, empresa, month, responsavel);
 
             add(title, grid, singleFileUpload);
         }));
@@ -84,7 +96,7 @@ public class BalanceteView extends Div implements MonthAndCompany {
         }
     }
 
-    private Div getTitleDiv(H3 titleText){
+    private Div getTitleDiv(H3 titleText) {
         Div title = new Div(titleText);
         title.getStyle().setPadding("20px");
         return title;
@@ -117,7 +129,7 @@ public class BalanceteView extends Div implements MonthAndCompany {
         return grid;
     }
 
-    private Upload getUpload(BalanceteService service, Empresa empresa, String month) {
+    private Upload getUpload(BalanceteService service, Empresa empresa, String month, Responsavel responsavel) {
         MemoryBuffer memoryBuffer = new MemoryBuffer();
         Upload singleFileUpload = new Upload(memoryBuffer);
 
@@ -140,7 +152,7 @@ public class BalanceteView extends Div implements MonthAndCompany {
                                     row.getCell(3).getStringCellValue(),
                                     month,
                                     LocalDate.now().getYear(),
-                                    List.of(new ComposicaoLancamentosContabeis())
+                                    List.of(new ComposicaoLancamentosContabeis(responsavel))
                             )
                     );
                     service.saveAll(empresa.getId(), balancetes);

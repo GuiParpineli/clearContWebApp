@@ -7,7 +7,7 @@ import com.clearcont.clearcontapp.service.AnexoStorageServiceImpl;
 import com.clearcont.clearcontapp.service.BalanceteService;
 import com.clearcont.clearcontapp.service.ComposicaoLancamentosContabeisService;
 import com.clearcont.clearcontapp.views.components.details.GridConciliar;
-import com.clearcont.clearcontapp.views.components.details.InfoCardsConciliacao;
+import com.clearcont.clearcontapp.views.components.details.BalanceteDetailsLayout;
 import com.clearcont.clearcontapp.views.main.MainLayout;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
@@ -26,7 +26,6 @@ import jakarta.annotation.security.PermitAll;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Route(value = "conciliar", layout = MainLayout.class)
@@ -60,11 +59,14 @@ public class ConciliarView extends VerticalLayout implements HasUrlParameter<Str
         HorizontalLayout btns = new HorizontalLayout(startBtn, finishBtn);
 
         List<ComposicaoLancamentosContabeis> conciliacaoList = contabeisService.getByBalanceteID(balanceteId);
-        if (conciliacaoList.isEmpty()) conciliacaoList = List.of(new ComposicaoLancamentosContabeis());
+        if (conciliacaoList.isEmpty()) {
+            conciliacaoList = List.of(new ComposicaoLancamentosContabeis());
+            contabeisService.update(conciliacaoList.getFirst());
+        }
         double saldoContabil = contabeisService.getSaldoContabil(balanceteId);
 
         ComposicaoLancamentosContabeis conciliacao = conciliacaoList.getLast();
-        InfoCardsConciliacao infoCards = new InfoCardsConciliacao(balancete, conciliacao, saldoContabil, anexoStorageService);
+        BalanceteDetailsLayout infoCards = new BalanceteDetailsLayout(balancete, conciliacao, saldoContabil, anexoStorageService);
         GridConciliar crud = new GridConciliar(balancete, contabeisService, balanceteId, responsavelRepository, infoCards);
         checkStatusforDisableorEnableBtn(conciliacao);
 
@@ -87,14 +89,11 @@ public class ConciliarView extends VerticalLayout implements HasUrlParameter<Str
     }
 
     private void checkStatusforDisableorEnableBtn(ComposicaoLancamentosContabeis conciliacao) {
-        if (conciliacao.getStatus().equals(StatusConciliacao.PROGRESS) ||
-                conciliacao.getStatus().equals(StatusConciliacao.CLOSED)) {
+        if (conciliacao.getStatus().equals(StatusConciliacao.PROGRESS) || conciliacao.getStatus().equals(StatusConciliacao.CLOSED)) {
             startBtn.getElement().setEnabled(false);
         }
 
-        if (conciliacao.getStatus().equals(StatusConciliacao.OPEN) ||
-                conciliacao.getStatus().equals(StatusConciliacao.CLOSED)
-        ) {
+        if (conciliacao.getStatus().equals(StatusConciliacao.OPEN) || conciliacao.getStatus().equals(StatusConciliacao.CLOSED)) {
             finishBtn.getElement().setEnabled(false);
         }
     }
@@ -124,9 +123,9 @@ public class ConciliarView extends VerticalLayout implements HasUrlParameter<Str
         dialog.setCancelText("Cancelar");
         dialog.setConfirmText("Confirmar");
         dialog.addConfirmListener(dialogEvent -> {
-            if (conciliacao.getId() == null || conciliacao.getId() <= 0) contabeisService.save(
-                    new ComposicaoLancamentosContabeis(balancete, responsavel)
-            );
+            if (conciliacao.getResponsavel() == null) {
+                contabeisService.save(new ComposicaoLancamentosContabeis(balancete, responsavel));
+            }
             checkStatusforDisableorEnableBtn(conciliacao);
             conciliacao.setStatus(StatusConciliacao.PROGRESS);
             contabeisService.update(conciliacao);
@@ -154,6 +153,4 @@ public class ConciliarView extends VerticalLayout implements HasUrlParameter<Str
         });
         return dialog;
     }
-
-
 }
