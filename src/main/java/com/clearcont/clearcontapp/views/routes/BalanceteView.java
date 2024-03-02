@@ -1,7 +1,6 @@
 package com.clearcont.clearcontapp.views.routes;
 
 
-import com.clearcont.clearcontapp.helpers.CookieFactory;
 import com.clearcont.clearcontapp.helpers.MonthAndCompany;
 import com.clearcont.clearcontapp.model.Balancete;
 import com.clearcont.clearcontapp.model.ComposicaoLancamentosContabeis;
@@ -12,15 +11,12 @@ import com.clearcont.clearcontapp.views.main.MainLayout;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.html.Div;
-import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.html.H3;
 import com.vaadin.flow.component.notification.Notification;
-import com.vaadin.flow.component.page.Page;
 import com.vaadin.flow.component.upload.Upload;
 import com.vaadin.flow.component.upload.receivers.MemoryBuffer;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
-import com.vaadin.flow.server.VaadinService;
 import jakarta.annotation.security.PermitAll;
 import jakarta.transaction.Transactional;
 import lombok.Getter;
@@ -36,10 +32,8 @@ import org.vaadin.crudui.form.impl.form.factory.DefaultCrudFormFactory;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
-import java.util.function.Consumer;
 
 @Route(value = "balancete", layout = MainLayout.class)
 @PageTitle("Balancete | ClearCont App")
@@ -53,30 +47,47 @@ public class BalanceteView extends Div implements MonthAndCompany {
     Empresa empresa;
 
     public BalanceteView(BalanceteService service, EmpresaRepository empresaRepository) {
-        getCompany(empresaRepository, empresa -> getMonth(month -> {
+        processCompanyAndMonth(empresaRepository, service);
+    }
 
-            if (empresa == null || month == null || empresa.getNomeEmpresa() == null) {
-                Notification.show("Selecione uma empresa e periodo");
-                UI.getCurrent().navigate("/");
-            }
+    private void processCompanyAndMonth(EmpresaRepository empresaRepository, BalanceteService service) {
+        getCompany(empresaRepository, empresa -> getMonth(month -> {
+            verifySelectedCompanyAndMonthExistAndNavigate(empresa, month);
 
             Integer id = empresa.getId();
+            String companyName = empresa.getNomeEmpresa();
             log.info("MES DO BALANCETE: " + month + ", " + " PERFIL ID: " + id);
+            List<Balancete> balanceteData = service.getByCompanyAndPeriod(id, month, LocalDate.now().getYear());
 
-            List<Balancete> balanceteData = service.getByCompanyAndPeriod(id, month, 2024);
-            log.info("TAMANHO TOTAL DA LISTA BALANCETE: " + balanceteData.size());
-            String year = String.valueOf(LocalDate.now().getYear());
-            if (!balanceteData.isEmpty()) year = String.valueOf(balanceteData.getFirst().getAno());
-            H3 titleText = new H3("EMPRESA: " + empresa.getNomeEmpresa() + " | MES: " + month + " | ANO: " + year);
-            Div title = new Div(titleText);
-            title.getStyle().setPadding("20px");
+            int totalSize = balanceteData.size();
+            log.info("TAMANHO TOTAL DA LISTA BALANCETE: " + totalSize);
+            String year = balanceteData.isEmpty() ? String.valueOf(LocalDate.now().getYear()) : String.valueOf(balanceteData.getFirst().getAno());
 
+            H3 titleText = new H3(getTitle(companyName, month, year));
+
+            Div title = getTitleDiv(titleText);
             GridCrud<Balancete> grid = getBalanceteGridCrud(service, balanceteData);
-
             Upload singleFileUpload = getUpload(service, empresa, month);
 
             add(title, grid, singleFileUpload);
         }));
+    }
+
+    private String getTitle(String companyName, String month, String year) {
+        return "EMPRESA: " + companyName + " | MES: " + month + " | ANO: " + year;
+    }
+
+    private void verifySelectedCompanyAndMonthExistAndNavigate(Empresa empresa, String month) {
+        if (empresa == null || month == null || empresa.getNomeEmpresa() == null) {
+            Notification.show("Selecione uma empresa e periodo");
+            UI.getCurrent().navigate("/");
+        }
+    }
+
+    private Div getTitleDiv(H3 titleText){
+        Div title = new Div(titleText);
+        title.getStyle().setPadding("20px");
+        return title;
     }
 
     private static GridCrud<Balancete> getBalanceteGridCrud(BalanceteService service, List<Balancete> balanceteData) {

@@ -1,7 +1,7 @@
 package com.clearcont.clearcontapp.views.main;
 
 import com.clearcont.clearcontapp.model.Role;
-import com.clearcont.clearcontapp.security.AuthenticatedUser;
+import com.clearcont.clearcontapp.config.security.AuthenticatedUser;
 import com.clearcont.clearcontapp.views.routes.*;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.UI;

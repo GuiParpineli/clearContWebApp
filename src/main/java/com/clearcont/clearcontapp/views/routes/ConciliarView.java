@@ -3,8 +3,9 @@ package com.clearcont.clearcontapp.views.routes;
 import com.clearcont.clearcontapp.helpers.CookieFactory;
 import com.clearcont.clearcontapp.model.*;
 import com.clearcont.clearcontapp.repository.ResponsavelRepository;
+import com.clearcont.clearcontapp.service.AnexoStorageServiceImpl;
 import com.clearcont.clearcontapp.service.BalanceteService;
-import com.clearcont.clearcontapp.service.ComposicaoLanContabeisService;
+import com.clearcont.clearcontapp.service.ComposicaoLancamentosContabeisService;
 import com.clearcont.clearcontapp.views.components.details.GridConciliar;
 import com.clearcont.clearcontapp.views.components.details.InfoCardsConciliacao;
 import com.clearcont.clearcontapp.views.main.MainLayout;
@@ -27,7 +28,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @Route(value = "conciliar", layout = MainLayout.class)
 @PermitAll
@@ -35,15 +35,17 @@ import java.util.Optional;
 public class ConciliarView extends VerticalLayout implements HasUrlParameter<String> {
 
     private final BalanceteService service;
-    private final ComposicaoLanContabeisService contabeisService;
+    private final ComposicaoLancamentosContabeisService contabeisService;
+    private final AnexoStorageServiceImpl anexoStorageService;
     private final ResponsavelRepository responsavelRepository;
     Button startBtn = getStartBtn();
     Button finishBtn = getFinishBtn();
 
     @Autowired
-    public ConciliarView(BalanceteService service, ComposicaoLanContabeisService contabeisService, ResponsavelRepository responsavelRepository) {
+    public ConciliarView(BalanceteService service, ComposicaoLancamentosContabeisService contabeisService, AnexoStorageServiceImpl anexoStorageService, ResponsavelRepository responsavelRepository) {
         this.service = service;
         this.contabeisService = contabeisService;
+        this.anexoStorageService = anexoStorageService;
         this.responsavelRepository = responsavelRepository;
     }
 
@@ -54,16 +56,16 @@ public class ConciliarView extends VerticalLayout implements HasUrlParameter<Str
         Balancete balancete = service.getById(balanceteId);
         log.info("BALANCETE ID: " + balanceteId);
         log.info("BALANCETE NOME DA CONTA: " + balancete.getNomeConta());
-        List<DocumentosAnexados> documentosAnexadosList = new ArrayList<>();
 
         HorizontalLayout btns = new HorizontalLayout(startBtn, finishBtn);
 
-        GridConciliar crud = new GridConciliar(balancete, contabeisService, balanceteId, responsavelRepository);
         List<ComposicaoLancamentosContabeis> conciliacaoList = contabeisService.getByBalanceteID(balanceteId);
         if (conciliacaoList.isEmpty()) conciliacaoList = List.of(new ComposicaoLancamentosContabeis());
-        ComposicaoLancamentosContabeis conciliacao = conciliacaoList.getLast();
         double saldoContabil = contabeisService.getSaldoContabil(balanceteId);
 
+        ComposicaoLancamentosContabeis conciliacao = conciliacaoList.getLast();
+        InfoCardsConciliacao infoCards = new InfoCardsConciliacao(balancete, conciliacao, saldoContabil, anexoStorageService);
+        GridConciliar crud = new GridConciliar(balancete, contabeisService, balanceteId, responsavelRepository, infoCards);
         checkStatusforDisableorEnableBtn(conciliacao);
 
         crud.setEnabled(!conciliacao.getStatus().equals(StatusConciliacao.OPEN) && !conciliacao.getStatus().equals(StatusConciliacao.CLOSED));
@@ -76,7 +78,6 @@ public class ConciliarView extends VerticalLayout implements HasUrlParameter<Str
         startBtn.addClickListener(click -> dialogStart.open());
         finishBtn.addClickListener(click -> dialogEnd.open());
 
-        InfoCardsConciliacao infoCards = new InfoCardsConciliacao(balancete, conciliacao, saldoContabil);
         log.info("ID COMPOSICAO LANCAMENTOS CONTABEIS: " + conciliacao.getId());
 
         VerticalLayout conciliacaoContabil = new VerticalLayout(new H1("Conciliação Contábil"), infoCards, btns, crud);
