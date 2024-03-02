@@ -5,7 +5,7 @@ import java.text.DecimalFormatSymbols;
 
 public class DecimalFormatBR {
     public static DecimalFormat getDecimalFormat() {
-        DecimalFormat formatter = new DecimalFormat("#,###.##");
+        DecimalFormat formatter = new DecimalFormat("R$ #,###.##");
         DecimalFormatSymbols s = new DecimalFormatSymbols();
         s.setDecimalSeparator(',');
         s.setGroupingSeparator('.');

@@ -12,16 +12,16 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class DoConfig {
 
-	@Value("${do.space.key}")
+	@Value("${do.spaces.key}")
 	private String doSpaceKey;
 
-	@Value("${do.space.secret}")
+	@Value("${do.spaces.secret}")
 	private String doSpaceSecret;
 
-	@Value("${do.space.endpoint}")
+	@Value("${do.spaces.endpoint}")
 	private String doSpaceEndpoint;
 
-	@Value("${do.space.region}")
+	@Value("${do.spaces.region}")
 	private String doSpaceRegion;
 
 	@Bean

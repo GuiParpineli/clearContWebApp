@@ -6,7 +6,7 @@ plugins {
 }
 
 group = "com.clearcont"
-version = "0.2.0-BETA"
+version = "0.3.0"
 
 java {
     sourceCompatibility = JavaVersion.VERSION_21
@@ -42,7 +42,7 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-security:3.2.2")
     implementation("org.springframework.boot:spring-boot-starter-validation:3.2.2")
     implementation("org.springframework.boot:spring-boot-starter-web:3.2.1")
-    implementation("commons-io:commons-io:2.8.0")
+    implementation("commons-io:commons-io:2.15.1")
     implementation("com.vaadin:vaadin-spring-boot-starter:24.3.3")
     implementation("org.vaadin.crudui:crudui:7.1.0")
     implementation("com.storedobject.chart:so-charts:3.2.4")
@@ -50,7 +50,7 @@ dependencies {
     implementation("org.springframework.security:spring-security-oauth2-jose:6.2.1")
     implementation("org.springframework.security:spring-security-oauth2-resource-server:6.2.1")
     implementation("jakarta.validation:jakarta.validation-api:3.1.0-M1")
-    implementation("com.amazonaws:aws-java-sdk-s3:1.12.667")
+    implementation("com.amazonaws:aws-java-sdk-s3:1.12.669")
     compileOnly("org.projectlombok:lombok:1.18.30")
     developmentOnly("org.springframework.boot:spring-boot-devtools:3.2.2")
     runtimeOnly("com.mysql:mysql-connector-j:8.3.0")
@@ -68,4 +68,3 @@ dependencyManagement {
 tasks.withType<Test> {
     useJUnitPlatform()
 }
-

@@ -1,90 +1,50 @@
 package com.clearcont.clearcontapp.config.security;
 
+import com.clearcont.clearcontapp.views.routes.LoginView;
+import com.vaadin.flow.spring.security.VaadinWebSecurity;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.CsrfConfigurer;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.oauth2.jose.jws.JwsAlgorithms;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
+import javax.crypto.spec.SecretKeySpec;
+import java.util.Base64;
 
-//@Configuration
-////@EnableWebSecurity
-//public class SecurityConfiguration implements WebMvcConfigurer {
-
-/*    private final LoggerMiddleware loggerMiddleware;
-
-    private final CriarAuthenticationProvider authenticationProvider;
-
-    private static final String[] AUTH_LIST = {
-            "/",
-            "/v3/api-docs",
-            "/configuration/ui",
-            "/swagger-resources",
-            "/configuration/security",
-            "/swagger-ui.html",
-            "/webjars/**",
-            "/swagger-ui/index.html"
-    };
-
-    @Autowired
-    public SecurityConfiguration(LoggerMiddleware loggerMiddleware, CriarAuthenticationProvider authenticationProvider) {
-        this.loggerMiddleware = loggerMiddleware;
-        this.authenticationProvider = authenticationProvider;
-    }
-
-    @Bean
-    public AuthenticationManager authenticationManager(HttpSecurity httpSecurity) throws Exception {
-        AuthenticationManagerBuilder authenticationManagerBuilder =
-                httpSecurity.getSharedObject(AuthenticationManagerBuilder.class);
-        authenticationManagerBuilder.authenticationProvider(this.authenticationProvider);
-
-        return authenticationManagerBuilder.build();
-    }
-
-    @Bean
-    public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
-        httpSecurity
-                .cors(AbstractHttpConfigurer::disable)
-                .csrf(AbstractHttpConfigurer::disable)
-                .authorizeHttpRequests((requests) -> requests
-                        .requestMatchers(AUTH_LIST).authenticated()
-                        .requestMatchers("/resources/**").permitAll()
-                        .requestMatchers("/**").permitAll()
-                ).formLogin(form -> form
-                        .loginPage(LOGIN_PATH)
-                        .loginProcessingUrl(AUTHENTICATION_PATH)
-                        .defaultSuccessUrl("/", true)
-                        .permitAll()
-                ).logout(LogoutConfigurer::permitAll);
-
-        return httpSecurity.build();
-    }
-
-    @Bean
-    public AuthenticationManager authenticationManagerBean(
-            AuthenticationConfiguration authenticationConfiguration
-    ) throws Exception {
-        return authenticationConfiguration.getAuthenticationManager();
-    }
-
-    @Bean
-    public CorsConfigurationSource corsConfigurationSource() {
-        CorsConfiguration corsConfiguration = new CorsConfiguration();
-
-        corsConfiguration.setAllowedMethods(List.of("*"));
-        corsConfiguration.setAllowedHeaders(List.of("*"));
-        corsConfiguration.setAllowCredentials(true);
-
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", corsConfiguration);
-        return source;
-    }
-
+@Configuration
+@EnableWebSecurity
+public class SecurityConfiguration extends VaadinWebSecurity {
+    
+    @Value("${jwt.auth.secret}")
+    private String authSecret;
+    
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
-
+    
+    @Bean
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
+        return authenticationConfiguration.getAuthenticationManager();
+    }
+    
     @Override
-    public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(loggerMiddleware);
-    }*/
+    public void configure(HttpSecurity httpSecurity) throws Exception {
+        httpSecurity
+                .authorizeHttpRequests(auth -> {
+                    auth.requestMatchers(new AntPathRequestMatcher("/images/*.png")).permitAll();
+                    auth.requestMatchers(new AntPathRequestMatcher("/line-awesome/**/*.svg")).permitAll();
+                });
+        super.configure(httpSecurity);
+        setLoginView(httpSecurity, LoginView.class);
+        setStatelessAuthentication(httpSecurity, new SecretKeySpec(Base64.getDecoder().decode(authSecret), JwsAlgorithms.HS256), "com.clearcont.clearcontapp");
+    }
 
-//}
+}

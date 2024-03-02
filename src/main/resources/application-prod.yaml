@@ -12,6 +12,9 @@ spring:
     url: jdbc:mysql://clearcontwebapp-mysql-1:3306/mydatabase
     username: root
     password: verysecret
+  servlet:
+    multipart:
+      max-file-size: 10MB
   jpa:
     show-sql: false
     properties:
