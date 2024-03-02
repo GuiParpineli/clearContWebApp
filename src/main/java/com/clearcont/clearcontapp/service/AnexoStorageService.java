@@ -10,9 +10,9 @@ import org.springframework.web.multipart.MultipartFile;
 
 public interface AnexoStorageService {
 
-    void saveFile(MultipartFile multipartFile, ComposicaoLancamentosContabeis lancamentosContabeis) throws IOException;
+    void saveFile(MultipartFile multipartFile, ComposicaoLancamentosContabeis lancamentosContabeis, String companyName) throws IOException;
 
-    void deleteFile(Long id) throws Exception;
+    void deleteFile(Long fileId, String companyName);
 
     List<Anexo> getAnexo();
 }
