@@ -15,7 +15,7 @@ import java.time.LocalDateTime;
 public class ComposicaoDePendencia {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private Long id;
     private LocalDateTime data;
     private String descricao;
     private Double valor;

@@ -8,6 +8,7 @@ import com.clearcont.clearcontapp.service.ComposicaoLancamentosContabeisService;
 import com.vaadin.flow.component.datepicker.DatePicker;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.server.VaadinService;
+import org.jetbrains.annotations.NotNull;
 import org.vaadin.crudui.crud.impl.GridCrud;
 import org.vaadin.crudui.form.impl.form.factory.DefaultCrudFormFactory;
 
@@ -17,7 +18,7 @@ import java.util.Locale;
 
 public class GridConciliar extends VerticalLayout {
 
-    public GridConciliar(Balancete balancete, ComposicaoLancamentosContabeisService contabeisService, Long balanceteId, ResponsavelRepository responsavelRepository, BalanceteDetailsLayout infoCards) {
+    public GridConciliar(@NotNull Balancete balancete, @NotNull ComposicaoLancamentosContabeisService contabeisService, Long balanceteId, @NotNull ResponsavelRepository responsavelRepository, @NotNull BalanceteDetailsLayout infoCards) {
 
         CookieFactory cookieFactory = new CookieFactory(VaadinService.getCurrentResponse());
         GridCrud<ComposicaoLancamentosContabeis> crud = new GridCrud<>(ComposicaoLancamentosContabeis.class);
@@ -49,7 +50,7 @@ public class GridConciliar extends VerticalLayout {
 
         crud.setAddOperation(a -> {
             a.setBalancete(balancete);
-            Integer responsavelID = cookieFactory.getCookieInteger("responsavel-id");
+            Long responsavelID = cookieFactory.getCookieInteger("responsavel-id");
             a.setResponsavel(responsavelRepository.findById(responsavelID).orElseThrow());
             contabeisService.save(a);
             contabeisService.atualizarSaldoContabil(balanceteId, crud);

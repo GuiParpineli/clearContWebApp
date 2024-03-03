@@ -1,7 +1,7 @@
 package com.clearcont.clearcontapp.views.main;
 
-import com.clearcont.clearcontapp.model.Role;
 import com.clearcont.clearcontapp.config.security.AuthenticatedUser;
+import com.clearcont.clearcontapp.model.Role;
 import com.clearcont.clearcontapp.views.routes.*;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.UI;
@@ -19,6 +19,7 @@ import com.vaadin.flow.component.page.Page;
 import com.vaadin.flow.router.RouterLink;
 import lombok.Getter;
 import lombok.Setter;
+import org.jetbrains.annotations.NotNull;
 
 @CssImport("../frontend/themes/theme-light/styles.css")
 @Setter
@@ -26,7 +27,7 @@ import lombok.Setter;
 public class MainLayout extends AppLayout {
     private final AuthenticatedUser authenticatedUser;
     
-    public MainLayout(AuthenticatedUser authenticatedUser) {
+    public MainLayout(@NotNull AuthenticatedUser authenticatedUser) {
         this.authenticatedUser = authenticatedUser;
         createHeader();
         createDrawer();
@@ -74,7 +75,7 @@ public class MainLayout extends AppLayout {
                 createHorizontalLayout("Controle", ControleView.class, "shield")));
     }
     
-    private HorizontalLayout createHorizontalLayout(String linkText, Class<? extends Component> viewClass, String iconName) {
+    private @NotNull HorizontalLayout createHorizontalLayout(String linkText, Class<? extends Component> viewClass, String iconName) {
         RouterLink link = new RouterLink(linkText, viewClass);
         link.addClassName("drawer-link");
         Icon icon = new Icon(iconName);

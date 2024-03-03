@@ -5,5 +5,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface ComposicaoDePendenciaRepository extends JpaRepository<ComposicaoDePendencia, Integer> {
+public interface ComposicaoDePendenciaRepository extends JpaRepository<ComposicaoDePendencia, Long> {
 }

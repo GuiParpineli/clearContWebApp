@@ -8,6 +8,6 @@ import java.util.List;
 
 @Repository
 public interface BalanceteRepository extends JpaRepository<Balancete, Long> {
-    List<Balancete> findBalanceteByEmpresa_IdAndMesAndAno(Integer id, String month, Integer year);
-    void deleteAllByEmpresa_Id(Integer id);
+    List<Balancete> findBalanceteByEmpresa_IdAndMesAndAno(Long id, String month, Integer year);
+    void deleteAllByEmpresa_Id(Long id);
 }

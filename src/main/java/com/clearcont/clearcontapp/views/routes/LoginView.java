@@ -9,14 +9,14 @@ import com.vaadin.flow.component.login.LoginOverlay;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.server.VaadinService;
-import org.springframework.security.core.userdetails.UserDetails;
+import org.jetbrains.annotations.NotNull;
 
 
 @Route(value = "login", layout = MainLayout.class)
 @PageTitle("Login")
 public class LoginView extends LoginOverlay {
     
-    public LoginView(UserAppService service) {
+    public LoginView(@NotNull UserAppService service) {
         setAction("login");
         
         LoginI18n i18n = LoginI18n.createDefault();

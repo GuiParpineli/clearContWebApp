@@ -3,8 +3,8 @@ package com.clearcont.clearcontapp.service;
 import com.clearcont.clearcontapp.model.Balancete;
 import com.clearcont.clearcontapp.model.ComposicaoLancamentosContabeis;
 import com.clearcont.clearcontapp.model.Controle;
-import com.clearcont.clearcontapp.repository.ControleRepository;
 import jakarta.transaction.Transactional;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -20,7 +20,7 @@ public class ControleService {
         this.balanceteService = balanceteService;
     }
     
-    public List<Controle> getAllByMonthAndCompanyID(Integer id, String month, Integer year) {
+    public @NotNull List<Controle> getAllByMonthAndCompanyID(Long id, String month, Integer year) {
         List<Balancete> byCompanyAndPeriod = balanceteService.getByCompanyAndPeriod(id, month, year);
         List<Controle> controles = new ArrayList<>();
         byCompanyAndPeriod.forEach(

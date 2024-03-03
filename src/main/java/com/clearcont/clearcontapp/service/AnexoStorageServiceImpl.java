@@ -9,6 +9,7 @@ import com.clearcont.clearcontapp.model.ComposicaoLancamentosContabeis;
 import com.clearcont.clearcontapp.repository.AnexoRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FilenameUtils;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.stereotype.Service;
@@ -33,7 +34,7 @@ public class AnexoStorageServiceImpl implements AnexoStorageService {
     @Value("${do.spaces.bucket}")
     private String doSpaceBucket;
 
-    String FOLDER = "files/";
+    @NotNull String FOLDER = "files/";
 
     public AnexoStorageServiceImpl(AnexoRepository anexoRepository, AmazonS3 space) {
         this.anexoRepository = anexoRepository;
@@ -41,7 +42,7 @@ public class AnexoStorageServiceImpl implements AnexoStorageService {
     }
 
     @Override
-    public void saveFile(MultipartFile multipartFile, ComposicaoLancamentosContabeis lancamentosContabeis, String companyName) throws IOException {
+    public void saveFile(@NotNull MultipartFile multipartFile, ComposicaoLancamentosContabeis lancamentosContabeis, String companyName) throws IOException {
         String extension = FilenameUtils.getExtension(multipartFile.getOriginalFilename());
         String fileName = FilenameUtils.removeExtension(multipartFile.getOriginalFilename());
         String key = FOLDER + companyName + fileName + "." + extension;
@@ -59,7 +60,7 @@ public class AnexoStorageServiceImpl implements AnexoStorageService {
     }
 
     @Override
-    public void deleteFile(Long fileId, String companyName) {
+    public void deleteFile(@NotNull Long fileId, String companyName) {
         Optional<Anexo> imageOpt = anexoRepository.findById(fileId);
         if (imageOpt.isPresent()) {
             Anexo anexo = imageOpt.get();
@@ -84,7 +85,7 @@ public class AnexoStorageServiceImpl implements AnexoStorageService {
         }
     }
 
-    private void saveAnexoToServer(MultipartFile multipartFile, String key) throws IOException {
+    private void saveAnexoToServer(@NotNull MultipartFile multipartFile, String key) throws IOException {
         ObjectMetadata metadata = new ObjectMetadata();
         metadata.setContentLength(multipartFile.getInputStream().available());
         if (multipartFile.getContentType() != null && !"".equals(multipartFile.getContentType())) {
@@ -94,11 +95,11 @@ public class AnexoStorageServiceImpl implements AnexoStorageService {
     }
 
     @Override
-    public List<Anexo> getAnexo() {
+    public @NotNull List<Anexo> getAnexo() {
         return anexoRepository.findAll();
     }
 
-    public List<String> getAnexoFileNames() {
+    public @NotNull List<String> getAnexoFileNames() {
 
         ListObjectsV2Result result = space.listObjectsV2(doSpaceBucket);
         List<S3ObjectSummary> objects = result.getObjectSummaries();
@@ -117,7 +118,7 @@ public class AnexoStorageServiceImpl implements AnexoStorageService {
     }
 
 
-    public InputStreamResource loadFileAsResource(String fileName, String fileExt) {
+    public @NotNull InputStreamResource loadFileAsResource(String fileName, String fileExt) {
         try {
             String key = FOLDER + fileName + "." + fileExt;
             S3Object object = space.getObject(new GetObjectRequest(doSpaceBucket, key));

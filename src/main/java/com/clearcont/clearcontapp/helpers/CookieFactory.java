@@ -5,6 +5,7 @@ import com.vaadin.flow.server.VaadinService;
 import jakarta.servlet.http.Cookie;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.jetbrains.annotations.NotNull;
 
 @AllArgsConstructor
 @Slf4j
@@ -18,12 +19,12 @@ public class CookieFactory {
         response.addCookie(cookie);
     }
     
-    public Integer getCookieInteger(String cookieName) {
-        int id = 0;
+    public @NotNull Long getCookieInteger(String cookieName) {
+        long id = 0L;
         Cookie[] cookies = VaadinService.getCurrentRequest().getCookies();
         for (Cookie cookie : cookies) {
             if (cookie.getName().equals(cookieName)) {
-                id = Integer.parseInt(cookie.getValue());
+                id = Long.parseLong(cookie.getValue());
                 log.info(CLASS_NAME, "O valor do cookie é: " + cookie.getValue());
                 break;
             }

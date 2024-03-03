@@ -3,6 +3,7 @@ package com.clearcont.clearcontapp.service;
 import com.clearcont.clearcontapp.model.ComposicaoLancamentosContabeis;
 import com.clearcont.clearcontapp.model.StatusConciliacao;
 import com.clearcont.clearcontapp.repository.ComposicaoLancamentosContabeisRepository;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
 import org.vaadin.crudui.crud.impl.GridCrud;
 
@@ -20,19 +21,19 @@ public class ComposicaoLancamentosContabeisService {
         this.contabeisRepository = contabeisRepository;
     }
 
-    public List<ComposicaoLancamentosContabeis> getAll() {
+    public @NotNull List<ComposicaoLancamentosContabeis> getAll() {
         return contabeisRepository.findAll();
     }
 
-    public ComposicaoLancamentosContabeis getByID(Long id) {
+    public @NotNull ComposicaoLancamentosContabeis getByID(@NotNull Long id) {
         return contabeisRepository.findById(id).orElse(new ComposicaoLancamentosContabeis());
     }
 
-    public void save(ComposicaoLancamentosContabeis entity) {
+    public void save(@NotNull ComposicaoLancamentosContabeis entity) {
         contabeisRepository.save(entity);
     }
 
-    public void deleteByID(Long id) {
+    public void deleteByID(@NotNull Long id) {
         contabeisRepository.deleteById(id);
     }
 
@@ -44,7 +45,7 @@ public class ComposicaoLancamentosContabeisService {
         return contabeisRepository.findComposicaoLancamentosContabeisByBalancete_Empresa_CnpjAndBalancete_AnoAndBalancete_Mes(cnpj, year, month);
     }
 
-    public void update(ComposicaoLancamentosContabeis entity) {
+    public void update(@NotNull ComposicaoLancamentosContabeis entity) {
         contabeisRepository.saveAndFlush(entity);
     }
 
@@ -54,14 +55,14 @@ public class ComposicaoLancamentosContabeisService {
                 .stream().mapToDouble((ComposicaoLancamentosContabeis::getDoubleSaldoContabil)).sum();
     }
 
-    public void atualizarSaldoContabil(Long balanceteId, GridCrud crud) {
+    public void atualizarSaldoContabil(Long balanceteId, @NotNull GridCrud crud) {
         DecimalFormat formatter = getDecimalFormat();
         double saldoContabil = getSaldoContabil(balanceteId);
         crud.getGrid().getColumnByKey("saldoContabil")
                 .setFooter("TOTAL SALDO: R$" + formatter.format(saldoContabil));
     }
 
-    public int getTotalOpen(Integer responsavelID) {
+    public int getTotalOpen(Long responsavelID) {
         List<ComposicaoLancamentosContabeis> contabeisList = contabeisRepository.
                 findComposicaoLancamentosContabeisByResponsavel_Id(responsavelID);
         int total = 0;
@@ -73,7 +74,7 @@ public class ComposicaoLancamentosContabeisService {
         return total;
     }
 
-    public int getTotalProgress(Integer responsavelID) {
+    public int getTotalProgress(Long responsavelID) {
         List<ComposicaoLancamentosContabeis> contabeisList = contabeisRepository.findComposicaoLancamentosContabeisByResponsavel_Id(responsavelID);
         int total = 0;
         for (ComposicaoLancamentosContabeis contabeis : contabeisList) {
@@ -84,7 +85,7 @@ public class ComposicaoLancamentosContabeisService {
         return total;
     }
 
-    public int getTotalFinish(Integer responsavelID) {
+    public int getTotalFinish(Long responsavelID) {
         List<ComposicaoLancamentosContabeis> contabeisList = contabeisRepository.findComposicaoLancamentosContabeisByResponsavel_Id(responsavelID);
         int total = 0;
         for (ComposicaoLancamentosContabeis contabeis : contabeisList) {

@@ -51,6 +51,8 @@ dependencies {
     implementation("org.springframework.security:spring-security-oauth2-resource-server:6.2.1")
     implementation("jakarta.validation:jakarta.validation-api:3.1.0-M1")
     implementation("com.amazonaws:aws-java-sdk-s3:1.12.669")
+    implementation("org.jetbrains:annotations:24.0.0")
+    implementation("org.jetbrains:annotations:24.0.0")
     compileOnly("org.projectlombok:lombok:1.18.30")
     developmentOnly("org.springframework.boot:spring-boot-devtools:3.2.2")
     runtimeOnly("com.mysql:mysql-connector-j:8.3.0")
@@ -67,4 +69,8 @@ dependencyManagement {
 
 tasks.withType<Test> {
     useJUnitPlatform()
+}
+
+tasks.jar {
+    enabled = false
 }

@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.jetbrains.annotations.NotNull;
 
 import java.time.LocalDate;
 
@@ -45,15 +46,15 @@ public class Controle {
         return valorDiferenca;
     }
     
-    public String getSaldoBalancete() {
+    public @NotNull String getSaldoBalancete() {
         return DecimalFormatBR.getDecimalFormat().format(saldoBalancete);
     }
     
-    public String getSaldoAnalise() {
+    public @NotNull String getSaldoAnalise() {
         return DecimalFormatBR.getDecimalFormat().format(saldoAnalise);
     }
     
-    public String getValorDiferenca() {
+    public @NotNull String getValorDiferenca() {
         return DecimalFormatBR.getDecimalFormat().format(valorDiferenca);
     }
 }

@@ -30,6 +30,8 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.vaadin.crudui.crud.impl.GridCrud;
 import org.vaadin.crudui.form.impl.form.factory.DefaultCrudFormFactory;
 
@@ -38,7 +40,6 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Optional;
 
 @Route(value = "balancete", layout = MainLayout.class)
 @PageTitle("Balancete | ClearCont App")
@@ -52,21 +53,21 @@ public class BalanceteView extends Div implements MonthAndCompany {
     Empresa empresa;
     private final ResponsavelRepository responsavelRepository;
 
-    public BalanceteView(BalanceteService service, EmpresaRepository empresaRepository, ResponsavelRepository responsavelRepository) {
+    public BalanceteView(@NotNull BalanceteService service, EmpresaRepository empresaRepository, ResponsavelRepository responsavelRepository) {
         this.responsavelRepository = responsavelRepository;
         processCompanyAndMonth(empresaRepository, service);
     }
 
-    private void processCompanyAndMonth(EmpresaRepository empresaRepository, BalanceteService service) {
+    private void processCompanyAndMonth(EmpresaRepository empresaRepository, @NotNull BalanceteService service) {
 
         CookieFactory cookieFactory = new CookieFactory(VaadinService.getCurrentResponse());
 
         getCompany(empresaRepository, empresa -> getMonth(month -> {
             verifySelectedCompanyAndMonthExistAndNavigate(empresa, month);
 
-            Integer responsavelID = cookieFactory.getCookieInteger("responsavel-id");
+            Long responsavelID = cookieFactory.getCookieInteger("responsavel-id");
             Responsavel responsavel = responsavelRepository.findById(responsavelID).orElseThrow();
-            Integer id = empresa.getId();
+            Long id = empresa.getId();
             String companyName = empresa.getNomeEmpresa();
             log.info("MES DO BALANCETE: " + month + ", " + " PERFIL ID: " + id);
             List<Balancete> balanceteData = service.getByCompanyAndPeriod(id, month, LocalDate.now().getYear());
@@ -85,24 +86,24 @@ public class BalanceteView extends Div implements MonthAndCompany {
         }));
     }
 
-    private String getTitle(String companyName, String month, String year) {
+    private @NotNull String getTitle(String companyName, String month, String year) {
         return "EMPRESA: " + companyName + " | MES: " + month + " | ANO: " + year;
     }
 
-    private void verifySelectedCompanyAndMonthExistAndNavigate(Empresa empresa, String month) {
+    private void verifySelectedCompanyAndMonthExistAndNavigate(@Nullable Empresa empresa, @Nullable String month) {
         if (empresa == null || month == null || empresa.getNomeEmpresa() == null) {
             Notification.show("Selecione uma empresa e periodo");
             UI.getCurrent().navigate("/");
         }
     }
 
-    private Div getTitleDiv(H3 titleText) {
+    private @NotNull Div getTitleDiv(H3 titleText) {
         Div title = new Div(titleText);
         title.getStyle().setPadding("20px");
         return title;
     }
 
-    private static GridCrud<Balancete> getBalanceteGridCrud(BalanceteService service, List<Balancete> balanceteData) {
+    private static @NotNull GridCrud<Balancete> getBalanceteGridCrud(@NotNull BalanceteService service, List<Balancete> balanceteData) {
         GridCrud<Balancete> grid = new GridCrud<>(Balancete.class);
         DefaultCrudFormFactory<Balancete> formFactory = new DefaultCrudFormFactory<>(Balancete.class);
         formFactory.setVisibleProperties("nomeConta", "numeroConta", "totalBalancete", "classificacao");
@@ -129,7 +130,7 @@ public class BalanceteView extends Div implements MonthAndCompany {
         return grid;
     }
 
-    private Upload getUpload(BalanceteService service, Empresa empresa, String month, Responsavel responsavel) {
+    private @NotNull Upload getUpload(@NotNull BalanceteService service, @NotNull Empresa empresa, String month, Responsavel responsavel) {
         MemoryBuffer memoryBuffer = new MemoryBuffer();
         Upload singleFileUpload = new Upload(memoryBuffer);
 
