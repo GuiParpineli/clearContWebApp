@@ -15,10 +15,10 @@ import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.upload.Upload;
-import com.vaadin.flow.component.upload.receivers.MemoryBuffer;
 import com.vaadin.flow.component.upload.receivers.MultiFileMemoryBuffer;
 import com.vaadin.flow.server.StreamResource;
 import elemental.json.Json;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -28,13 +28,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class DownloadComponent extends HorizontalLayout {
-    private VerticalLayout downloadButtonsLayout = new VerticalLayout();
+    private @NotNull VerticalLayout downloadButtonsLayout = new VerticalLayout();
 
     private final AnexoStorageServiceImpl anexoStorageService;
     private final ComposicaoLancamentosContabeis lancamentosContabeis;
     private final String companyName;
 
-    public DownloadComponent(AnexoStorageServiceImpl anexoStorageService, ComposicaoLancamentosContabeis lancamentosContabeis, String companyName) {
+    public DownloadComponent(AnexoStorageServiceImpl anexoStorageService, @NotNull ComposicaoLancamentosContabeis lancamentosContabeis, String companyName) {
         this.anexoStorageService = anexoStorageService;
         this.lancamentosContabeis = lancamentosContabeis;
         this.companyName = companyName;
@@ -51,7 +51,7 @@ public class DownloadComponent extends HorizontalLayout {
         );
     }
 
-    private Upload getUpload() {
+    private @NotNull Upload getUpload() {
         MultiFileMemoryBuffer multiFileMemoryBuffer = new MultiFileMemoryBuffer();
         Upload multiFileUpload = new Upload(multiFileMemoryBuffer);
 
@@ -87,7 +87,7 @@ public class DownloadComponent extends HorizontalLayout {
         downloadButtons.forEach(downloadButtonsLayout::add);
     }
 
-    private List<HorizontalLayout> updateFileList(Long composicaoId) {
+    private @NotNull List<HorizontalLayout> updateFileList(Long composicaoId) {
         List<Anexo> anexos = anexoStorageService.getAnexosByComposicao(composicaoId);
         List<HorizontalLayout> fileLayouts = new ArrayList<>();
         for (Anexo anexo : anexos) {

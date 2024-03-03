@@ -8,6 +8,7 @@ import com.vaadin.flow.spring.security.AuthenticationContext;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
@@ -29,13 +30,13 @@ public class AuthenticatedUser {
     }
     
     
-    private Optional<Authentication> getAuthentication() {
+    private @NotNull Optional<Authentication> getAuthentication() {
         SecurityContext context = SecurityContextHolder.getContext();
         return Optional.ofNullable(context.getAuthentication())
                 .filter(authentication -> !(authentication instanceof AnonymousAuthenticationToken));
     }
     
-    public Optional<User> get() {
+    public @NotNull Optional<User> get() {
         return getAuthentication().map(authentication -> userRepository.findByUsername(authentication.getName()));
     }
     
@@ -67,7 +68,7 @@ public class AuthenticatedUser {
         response.addCookie(k);
     }
     
-    private String getRequestContextPath(HttpServletRequest request) {
+    private String getRequestContextPath(@NotNull HttpServletRequest request) {
         final String contextPath = request.getContextPath();
         return "".equals(contextPath) ? "/" : contextPath;
     }

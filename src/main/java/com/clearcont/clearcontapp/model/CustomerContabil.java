@@ -3,6 +3,7 @@ package com.clearcont.clearcontapp.model;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.proxy.HibernateProxy;
+import org.jetbrains.annotations.Nullable;
 
 import java.time.LocalDate;
 import java.util.Objects;
@@ -29,7 +30,7 @@ public class CustomerContabil {
     ComposicaoLancamentosContabeis composicaoLancamentosContabeis;
 
     @Override
-    public final boolean equals(Object o) {
+    public final boolean equals(@Nullable Object o) {
         if (this == o) return true;
         if (o == null) return false;
         Class<?> oEffectiveClass = o instanceof HibernateProxy ? ((HibernateProxy) o).getHibernateLazyInitializer().getPersistentClass() : o.getClass();

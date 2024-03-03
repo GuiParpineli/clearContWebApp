@@ -18,7 +18,6 @@ import java.util.Set;
 public class DataLoader implements ApplicationRunner {
     private final BalanceteRepository balanceteRepository;
     private final EmpresaRepository empresaRepository;
-    private final ControleRepository controleRepository;
     private final EmpresaGroupRepository empresaGroupRepository;
     private final ComposicaoLancamentosContabeisRepository composicaoLancamentosContabeisRepository;
     private final ResponsavelRepository responsavelRepository;
@@ -34,7 +33,6 @@ public class DataLoader implements ApplicationRunner {
                       CustomerContabilRepository customerContabilRepository) {
         this.balanceteRepository = balanceteRepository;
         this.empresaRepository = empresaRepository;
-        this.controleRepository = controleRepository;
         this.empresaGroupRepository = empresaGroupRepository;
         this.composicaoLancamentosContabeisRepository = composicaoLancamentosContabeisRepository;
         this.responsavelRepository = responsavelRepository;

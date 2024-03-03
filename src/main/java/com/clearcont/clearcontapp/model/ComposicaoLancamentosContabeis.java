@@ -2,14 +2,19 @@ package com.clearcont.clearcontapp.model;
 
 import com.clearcont.clearcontapp.helpers.DecimalFormatBR;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.vaadin.flow.component.notification.Notification;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 import org.hibernate.proxy.HibernateProxy;
+import org.jetbrains.annotations.Nullable;
 
+import java.text.NumberFormat;
+import java.text.ParseException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Locale;
@@ -20,6 +25,7 @@ import java.util.Objects;
 @Getter
 @Setter
 @NoArgsConstructor
+@Slf4j
 public class ComposicaoLancamentosContabeis {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -29,12 +35,12 @@ public class ComposicaoLancamentosContabeis {
     @Setter
     private String historico;
     @NotNull
-    private Double debito = 0.0;
+    private @org.jetbrains.annotations.NotNull Double debito = 0.0;
     @NotNull
-    private Double credito = 0.0;
-    private Double saldoContabil = debito - credito;
+    private @org.jetbrains.annotations.NotNull Double credito = 0.0;
+    private @org.jetbrains.annotations.NotNull Double saldoContabil = debito - credito;
     @Enumerated(EnumType.STRING)
-    private StatusConciliacao status = StatusConciliacao.OPEN;
+    private @org.jetbrains.annotations.NotNull StatusConciliacao status = StatusConciliacao.OPEN;
 
     @Setter
     @JsonIgnore
@@ -61,7 +67,7 @@ public class ComposicaoLancamentosContabeis {
         this.responsavel = responsavel;
     }
 
-    public int contarPontos(String texto) {
+    public int contarPontos(@org.jetbrains.annotations.NotNull String texto) {
         int contador = 0;
         for (int i = 0; i < texto.length(); i++) {
             if (texto.charAt(i) == '.') {
@@ -71,32 +77,43 @@ public class ComposicaoLancamentosContabeis {
         return contador;
     }
 
-    public String getDataFormated() {
+    public @org.jetbrains.annotations.NotNull String getDataFormated() {
         var formatador = DateTimeFormatter.ofPattern("dd/MM/yyyy").withLocale(Locale.of("pt", "BR"));
         return this.data.format(formatador);
     }
 
-    public void setDebito(String debito) {
-        if (contarPontos(debito) < 1) this.debito = Double.valueOf(debito.replace(",", "."));
-        else this.debito = Double.valueOf(debito.replaceFirst("\\.", "").replaceFirst(",", "."));
-        this.saldoContabil = this.debito - this.credito;
+
+    public void setDebito(@org.jetbrains.annotations.NotNull String debito) {
+        NumberFormat format = NumberFormat.getInstance(Locale.of("pt", "BR"));
+        try {
+            this.debito = format.parse(debito.replace("R$", "").trim()).doubleValue();
+            this.saldoContabil = this.debito - this.credito;
+        } catch (ParseException e) {
+            log.info(e.getMessage());
+            Notification.show("Erro");
+        }
     }
 
-    public void setCredito(String credito) {
-        if (contarPontos(credito) < 1) this.credito = Double.valueOf(credito.replace(",", "."));
-        else this.credito = Double.valueOf(credito.replaceFirst("\\.", "").replaceFirst(",", "."));
-        this.saldoContabil = this.debito - this.credito;
+    public void setCredito(@org.jetbrains.annotations.NotNull String credito) {
+        NumberFormat format = NumberFormat.getInstance(Locale.of("pt", "BR"));
+        try {
+            this.credito = format.parse(credito.replace("R$", "").trim()).doubleValue();
+            this.saldoContabil = this.debito - this.credito;
+        } catch (ParseException e) {
+            log.info(e.getMessage());
+            Notification.show("Erro");
+        }
     }
 
-    public String getDebito() {
+    public @org.jetbrains.annotations.NotNull String getDebito() {
         return DecimalFormatBR.getDecimalFormat().format(debito);
     }
 
-    public String getCredito() {
+    public @org.jetbrains.annotations.NotNull String getCredito() {
         return DecimalFormatBR.getDecimalFormat().format(credito);
     }
 
-    public String getSaldoContabil() {
+    public @org.jetbrains.annotations.NotNull String getSaldoContabil() {
         return DecimalFormatBR.getDecimalFormat().format(saldoContabil);
     }
 
@@ -105,7 +122,7 @@ public class ComposicaoLancamentosContabeis {
     }
 
     @Override
-    public final boolean equals(Object o) {
+    public final boolean equals(@Nullable Object o) {
         if (this == o) return true;
         if (o == null) return false;
         Class<?> oEffectiveClass = o instanceof HibernateProxy ? ((HibernateProxy) o).getHibernateLazyInitializer().getPersistentClass() : o.getClass();

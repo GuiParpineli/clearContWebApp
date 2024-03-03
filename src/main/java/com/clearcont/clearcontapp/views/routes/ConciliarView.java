@@ -1,13 +1,16 @@
 package com.clearcont.clearcontapp.views.routes;
 
 import com.clearcont.clearcontapp.helpers.CookieFactory;
-import com.clearcont.clearcontapp.model.*;
+import com.clearcont.clearcontapp.model.Balancete;
+import com.clearcont.clearcontapp.model.ComposicaoLancamentosContabeis;
+import com.clearcont.clearcontapp.model.Responsavel;
+import com.clearcont.clearcontapp.model.StatusConciliacao;
 import com.clearcont.clearcontapp.repository.ResponsavelRepository;
 import com.clearcont.clearcontapp.service.AnexoStorageServiceImpl;
 import com.clearcont.clearcontapp.service.BalanceteService;
 import com.clearcont.clearcontapp.service.ComposicaoLancamentosContabeisService;
-import com.clearcont.clearcontapp.views.components.details.GridConciliar;
 import com.clearcont.clearcontapp.views.components.details.BalanceteDetailsLayout;
+import com.clearcont.clearcontapp.views.components.details.GridConciliar;
 import com.clearcont.clearcontapp.views.main.MainLayout;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
@@ -24,6 +27,7 @@ import com.vaadin.flow.router.Route;
 import com.vaadin.flow.server.VaadinService;
 import jakarta.annotation.security.PermitAll;
 import lombok.extern.slf4j.Slf4j;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
@@ -37,8 +41,8 @@ public class ConciliarView extends VerticalLayout implements HasUrlParameter<Str
     private final ComposicaoLancamentosContabeisService contabeisService;
     private final AnexoStorageServiceImpl anexoStorageService;
     private final ResponsavelRepository responsavelRepository;
-    Button startBtn = getStartBtn();
-    Button finishBtn = getFinishBtn();
+    @NotNull Button startBtn = getStartBtn();
+    @NotNull Button finishBtn = getFinishBtn();
 
     @Autowired
     public ConciliarView(BalanceteService service, ComposicaoLancamentosContabeisService contabeisService, AnexoStorageServiceImpl anexoStorageService, ResponsavelRepository responsavelRepository) {
@@ -49,7 +53,7 @@ public class ConciliarView extends VerticalLayout implements HasUrlParameter<Str
     }
 
     @Override
-    public void setParameter(BeforeEvent event, String parameter) {
+    public void setParameter(BeforeEvent event, @NotNull String parameter) {
         CookieFactory cookieFactory = new CookieFactory(VaadinService.getCurrentResponse());
         Long balanceteId = Long.parseLong(parameter);
         Balancete balancete = service.getById(balanceteId);
@@ -88,7 +92,7 @@ public class ConciliarView extends VerticalLayout implements HasUrlParameter<Str
         add(conciliacaoContabil);
     }
 
-    private void checkStatusforDisableorEnableBtn(ComposicaoLancamentosContabeis conciliacao) {
+    private void checkStatusforDisableorEnableBtn(@NotNull ComposicaoLancamentosContabeis conciliacao) {
         if (conciliacao.getStatus().equals(StatusConciliacao.PROGRESS) || conciliacao.getStatus().equals(StatusConciliacao.CLOSED)) {
             startBtn.getElement().setEnabled(false);
         }
@@ -98,21 +102,21 @@ public class ConciliarView extends VerticalLayout implements HasUrlParameter<Str
         }
     }
 
-    private Button getStartBtn() {
+    private @NotNull Button getStartBtn() {
         Button startBtn = new Button("Iniciar Conciliação");
         startBtn.setIcon(new Icon("calc"));
         startBtn.getStyle().setBackground("#0fc90f");
         return startBtn;
     }
 
-    private Button getFinishBtn() {
+    private @NotNull Button getFinishBtn() {
         Button finishBtn = new Button("Fechar Conciliação");
         finishBtn.setIcon(new Icon("chevron-down"));
         finishBtn.getStyle().setBackground("#ff4000c2");
         return finishBtn;
     }
 
-    private ConfirmDialog getConfirmDialogStart(ComposicaoLancamentosContabeis conciliacao, Balancete balancete, Responsavel responsavel) {
+    private @NotNull ConfirmDialog getConfirmDialogStart(@NotNull ComposicaoLancamentosContabeis conciliacao, Balancete balancete, Responsavel responsavel) {
         ConfirmDialog dialog = new ConfirmDialog();
         UI ui = UI.getCurrent();
         Page page = ui.getPage();
@@ -135,7 +139,7 @@ public class ConciliarView extends VerticalLayout implements HasUrlParameter<Str
         return dialog;
     }
 
-    private ConfirmDialog getConfirmDialogEnd(ComposicaoLancamentosContabeis conciliacao) {
+    private @NotNull ConfirmDialog getConfirmDialogEnd(@NotNull ComposicaoLancamentosContabeis conciliacao) {
         ConfirmDialog dialog = new ConfirmDialog();
         UI ui = UI.getCurrent();
         Page page = ui.getPage();

@@ -1,39 +1,28 @@
 package com.clearcont.clearcontapp.model;
 
 import com.amazonaws.util.IOUtils;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.*;
 
-public class InputStreamMultipartFile implements MultipartFile {
-    private final InputStream inputStream;
-    private final String name;
-
-    public InputStreamMultipartFile(InputStream inputStream, String name) {
-        this.inputStream = inputStream;
-        this.name = name;
-    }
-
+public record InputStreamMultipartFile(@NotNull InputStream inputStream, @NotNull String name) implements MultipartFile  {
     @Override
-    public String getName() {
+    public @NotNull String getName() {
         return name;
     }
-
     @Override
     public String getOriginalFilename() {
         return name;
     }
-
     @Override
     public String getContentType() {
         return "application/octet-stream";
     }
-
     @Override
     public boolean isEmpty() {
         return false;
     }
-
     @Override
     public long getSize() {
         try {
@@ -42,19 +31,16 @@ public class InputStreamMultipartFile implements MultipartFile {
             return 0L;
         }
     }
-
     @Override
-    public byte[] getBytes() throws IOException {
+    public byte @NotNull [] getBytes() throws IOException {
         return IOUtils.toByteArray(inputStream);
     }
-
     @Override
-    public InputStream getInputStream() throws IOException {
+    public @NotNull InputStream getInputStream() {
         return inputStream;
     }
-
     @Override
-    public void transferTo(File dest) throws IOException, IllegalStateException {
+    public void transferTo(@NotNull File dest) throws IOException, IllegalStateException {
         try (OutputStream os = new FileOutputStream(dest)) {
             IOUtils.copy(inputStream, os);
         }

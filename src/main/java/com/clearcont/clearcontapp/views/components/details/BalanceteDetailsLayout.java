@@ -7,20 +7,19 @@ import com.vaadin.flow.component.Text;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.H3;
 import com.vaadin.flow.component.html.Span;
-import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.FlexLayout;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
-import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.dom.Style;
+import org.jetbrains.annotations.NotNull;
 
 import static com.clearcont.clearcontapp.helpers.DecimalFormatBR.getDecimalFormat;
 
 
 public class BalanceteDetailsLayout extends HorizontalLayout {
-    FlexLayout diferencaLayout = new FlexLayout();
-    Text diferencaValue = new Text("0.00");
+    @NotNull FlexLayout diferencaLayout = new FlexLayout();
+    @NotNull Text diferencaValue = new Text("0.00");
 
-    public BalanceteDetailsLayout(Balancete balancete, ComposicaoLancamentosContabeis conciliacao, double saldoContabil, AnexoStorageServiceImpl anexoStorageService) {
+    public BalanceteDetailsLayout(@NotNull Balancete balancete, @NotNull ComposicaoLancamentosContabeis conciliacao, double saldoContabil, AnexoStorageServiceImpl anexoStorageService) {
         FlexLayout accountName = createStyledLayout("Nome da conta: ", balancete.getNomeConta());
         FlexLayout accountNumber = createStyledLayout("Numero da conta: ", String.valueOf(balancete.getNumeroConta()));
         FlexLayout conciliationStatusLabel = createStyledLayout("Status conciliação: ", conciliacao.getStatus().getName());
@@ -63,7 +62,7 @@ public class BalanceteDetailsLayout extends HorizontalLayout {
         diferencaValue.setText("R$ " + (getDecimalFormat().format(diferenca)));
     }
 
-    private FlexLayout createStyledLayout(String label, String value) {
+    private @NotNull FlexLayout createStyledLayout(String label, String value) {
         Span span = new Span(value);
         span.getStyle().set("font-weight", "800").set("padding-left", "5px");
         return new FlexLayout(new Span(label), span);

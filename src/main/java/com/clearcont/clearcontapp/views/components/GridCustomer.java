@@ -1,16 +1,14 @@
 package com.clearcont.clearcontapp.views.components;
 
-import com.clearcont.clearcontapp.helpers.CookieFactory;
 import com.clearcont.clearcontapp.model.CustomerContabil;
 import com.clearcont.clearcontapp.repository.CustomerContabilRepository;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
-import com.vaadin.flow.server.VaadinService;
+import org.jetbrains.annotations.NotNull;
 import org.vaadin.crudui.crud.impl.GridCrud;
 import org.vaadin.crudui.form.impl.form.factory.DefaultCrudFormFactory;
 
 public class GridCustomer extends VerticalLayout {
-    public GridCustomer(CustomerContabilRepository repository) {
-        CookieFactory cookieFactory = new CookieFactory(VaadinService.getCurrentResponse());
+    public GridCustomer(@NotNull CustomerContabilRepository repository, Long empresaID) {
         GridCrud<CustomerContabil> crud = new GridCrud<>(CustomerContabil.class);
 
         DefaultCrudFormFactory<CustomerContabil> formFactory = getCustomerContabilDefaultCrudFormFactory();
@@ -31,12 +29,11 @@ public class GridCustomer extends VerticalLayout {
                 "composicaoLancamentosContabeis.credito",
                 "composicaoLancamentosContabeis.historico"
         );
-
-        crud.setFindAllOperation(repository::findAll);
+        crud.setFindAllOperation(() -> repository.findAllByComposicaoLancamentosContabeis_Balancete_Empresa_Id(empresaID));
         add(crud);
     }
 
-    private static DefaultCrudFormFactory<CustomerContabil> getCustomerContabilDefaultCrudFormFactory() {
+    private static @NotNull DefaultCrudFormFactory<CustomerContabil> getCustomerContabilDefaultCrudFormFactory() {
         DefaultCrudFormFactory<CustomerContabil> formFactory = new DefaultCrudFormFactory<>(CustomerContabil.class);
         formFactory.setVisibleProperties(
                 "numNotaFiscal",

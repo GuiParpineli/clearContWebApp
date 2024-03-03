@@ -26,6 +26,7 @@ import jakarta.annotation.security.PermitAll;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Value;
 
 import java.time.Month;
@@ -46,7 +47,7 @@ public class HomeView extends Div implements MonthAndCompany {
     @Value("${version}")
     private String version;
     
-    private void setComboBoxValues(ComboBox<String> companyPicker, ComboBox<String> monthPicker) {
+    private void setComboBoxValues(@NotNull ComboBox<String> companyPicker, @NotNull ComboBox<String> monthPicker) {
         UI.getCurrent().getPage().executeJs("return sessionStorage.getItem('month')")
                 .then(String.class, savedMonth -> {
                     if (savedMonth != null && !savedMonth.isEmpty()) {
@@ -61,7 +62,7 @@ public class HomeView extends Div implements MonthAndCompany {
                 });
     }
     
-    public HomeView(EmpresaGroupService empresaGroupService, EmpresaRepository empresaRepository) {
+    public HomeView(@NotNull EmpresaGroupService empresaGroupService, EmpresaRepository empresaRepository) {
         UI ui = UI.getCurrent();
         Page page = ui.getPage();
         getCompany(empresaRepository, empresa -> getMonth(month -> {
@@ -78,7 +79,7 @@ public class HomeView extends Div implements MonthAndCompany {
             logo.setMaxHeight("200px");
             
             ComboBox<String> companyPicker = getCompanyPicker(companyList, page);
-            ComboBox<String> monthPicker = getMonthPicker(companyPicker, logo, page);
+            ComboBox<String> monthPicker = getMonthPicker(companyPicker, page);
             
             UI.getCurrent().addAttachListener(event -> setComboBoxValues(companyPicker, monthPicker));
             
@@ -98,14 +99,14 @@ public class HomeView extends Div implements MonthAndCompany {
         }));
     }
     
-    private Span getVersionFooter() {
+    private @NotNull Span getVersionFooter() {
         Span versionFooter = new Span("Versão " + version + " - Todos direitos reservados.");
         versionFooter.getStyle().setTextAlign(Style.TextAlign.CENTER).setPadding("30px");
         versionFooter.getStyle().setPosition(Style.Position.ABSOLUTE).setBottom("0");
         return versionFooter;
     }
     
-    private static Button getConfirmButton() {
+    private static @NotNull Button getConfirmButton() {
         Button confirmButton = new Button("Confirmar");
         confirmButton.getStyle().setBackground("green");
         confirmButton.getStyle().set("color", "white");
@@ -113,7 +114,7 @@ public class HomeView extends Div implements MonthAndCompany {
         return confirmButton;
     }
     
-    private static ComboBox<String> getCompanyPicker(EmpresaGroup companyList, Page page) {
+    private static @NotNull ComboBox<String> getCompanyPicker(@NotNull EmpresaGroup companyList, @NotNull Page page) {
         ComboBox<String> companyPicker = new ComboBox<>("Seleciona a Empresa: ");
         companyPicker.setItems(companyList.empresas.stream().map(Empresa::getNomeEmpresa).toList());
         
@@ -129,9 +130,8 @@ public class HomeView extends Div implements MonthAndCompany {
         return companyPicker;
     }
     
-    private ComboBox<String> getMonthPicker(ComboBox<String> companyPicker, Image logo, Page page) {
+    private @NotNull ComboBox<String> getMonthPicker(@NotNull ComboBox<String> companyPicker, @NotNull Page page) {
         ComboBox<String> monthPicker = new ComboBox<>("Selecione o Período: ");
-        
         
         Locale locale = new Locale.Builder().setLanguage("pt").setRegion("BR").build();
         monthPicker.setItems(Stream.of(Month.values())
@@ -150,7 +150,7 @@ public class HomeView extends Div implements MonthAndCompany {
         return monthPicker;
     }
     
-    private static FlexLayout getFlexLayout(H1 h1, Image logo, HorizontalLayout horizontalLayout, Button confirmButton, Span versionFooter) {
+    private static @NotNull FlexLayout getFlexLayout(H1 h1, Image logo, HorizontalLayout horizontalLayout, Button confirmButton, Span versionFooter) {
         FlexLayout verticalLayout = new FlexLayout(h1, logo, horizontalLayout, confirmButton, versionFooter);
         verticalLayout.setFlexDirection(FlexLayout.FlexDirection.COLUMN);
         verticalLayout.setAlignItems(FlexComponent.Alignment.CENTER);

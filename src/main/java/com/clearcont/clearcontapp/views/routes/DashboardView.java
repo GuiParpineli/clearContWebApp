@@ -18,11 +18,12 @@ import com.vaadin.flow.router.Route;
 import jakarta.annotation.security.RolesAllowed;
 import lombok.Getter;
 import lombok.Setter;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
 @Route(value = "dashboard", layout = MainLayout.class)
-@PageTitle("Dashboard | Nome do Aplicativo")
+@PageTitle("Dashboard | ClearCont App")
 @RolesAllowed("ADMIN")
 @Setter
 @Getter
@@ -33,7 +34,7 @@ public class DashboardView extends FlexLayout implements MonthAndCompany {
     private int totalProgress;
     private int totalFinish;
     
-    public DashboardView(ResponsavelRepository responsavelRepository, EmpresaRepository empresaRepository, ComposicaoLancamentosContabeisService cLContabeisService) {
+    public DashboardView(@NotNull ResponsavelRepository responsavelRepository, EmpresaRepository empresaRepository, @NotNull ComposicaoLancamentosContabeisService cLContabeisService) {
         getCompany(empresaRepository, empresa -> {
             
             List<Responsavel> responsaveisList = responsavelRepository.findResponsavelByEmpresa_Id(empresa.getId());
@@ -48,7 +49,7 @@ public class DashboardView extends FlexLayout implements MonthAndCompany {
                 responsavelPicker.setValue(responsaveisList.getFirst().getId() + " - " + responsaveisList.getFirst().getNome());
             }
             String[] split = responsavelPicker.getValue().split(" - ");
-            Integer responsavelID = Integer.valueOf(split[0]);
+            Long responsavelID = Long.valueOf(split[0]);
             setTotalOpen(cLContabeisService.getTotalOpen(responsavelID));
             setTotalProgress(cLContabeisService.getTotalProgress(responsavelID));
             setTotalFinish(cLContabeisService.getTotalFinish(responsavelID));
@@ -89,7 +90,7 @@ public class DashboardView extends FlexLayout implements MonthAndCompany {
                             responsavelPicker.setValue(responsaveisList.getFirst().getId() + " - " + responsaveisList.getFirst().getNome());
                         }
                         String[] splitLambda = responsavelPicker.getValue().split(" - ");
-                        Integer responsavelIDL = Integer.valueOf(splitLambda[0]);
+                        Long responsavelIDL = Long.valueOf(splitLambda[0]);
                         setTotalOpen(cLContabeisService.getTotalOpen(responsavelIDL));
                         setTotalProgress(cLContabeisService.getTotalProgress(responsavelIDL));
                         setTotalFinish(cLContabeisService.getTotalFinish(responsavelIDL));

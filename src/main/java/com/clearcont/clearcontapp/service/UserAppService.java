@@ -2,6 +2,7 @@ package com.clearcont.clearcontapp.service;
 
 import com.clearcont.clearcontapp.model.User;
 import com.clearcont.clearcontapp.repository.UserRepository;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -22,7 +23,7 @@ public class UserAppService implements UserDetailsService {
     }
     
     @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+    public @NotNull UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         User user = userRepository.findByUsername(username);
         if (user == null) {
             throw new UsernameNotFoundException("No user present with username: " + username);
@@ -36,7 +37,7 @@ public class UserAppService implements UserDetailsService {
         return userRepository.findByUsername(username);
     }
     
-    private static List<GrantedAuthority> getAuthorities(User user) {
+    private static @NotNull List<GrantedAuthority> getAuthorities(@NotNull User user) {
         return user.getRoles().stream().map(role -> new SimpleGrantedAuthority("ROLE_" + role))
                 .collect(Collectors.toList());
         

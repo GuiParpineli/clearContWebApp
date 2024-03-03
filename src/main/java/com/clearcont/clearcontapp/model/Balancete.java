@@ -2,8 +2,13 @@ package com.clearcont.clearcontapp.model;
 
 import com.clearcont.clearcontapp.helpers.DecimalFormatBR;
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.hibernate.proxy.HibernateProxy;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,24 +38,24 @@ public class Balancete {
     private Integer ano;
 
     @OneToMany(mappedBy = "balancete", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<ComposicaoLancamentosContabeis> composicaoLancamentosContabeisList = new ArrayList<>();
+    private @NotNull List<ComposicaoLancamentosContabeis> composicaoLancamentosContabeisList = new ArrayList<>();
 
-    public void addComposicaoLancamentosContabeis(ComposicaoLancamentosContabeis composicaoLancamentosContabeis) {
+    public void addComposicaoLancamentosContabeis(@NotNull ComposicaoLancamentosContabeis composicaoLancamentosContabeis) {
         this.composicaoLancamentosContabeisList.add(composicaoLancamentosContabeis);
         composicaoLancamentosContabeis.setBalancete(this);
     }
 
-    public void removeComposicaoLancamentosContabeis(ComposicaoLancamentosContabeis composicaoLancamentosContabeis) {
+    public void removeComposicaoLancamentosContabeis(@NotNull ComposicaoLancamentosContabeis composicaoLancamentosContabeis) {
         this.composicaoLancamentosContabeisList.remove(composicaoLancamentosContabeis);
         composicaoLancamentosContabeis.setBalancete(null);
     }
 
     @Override
-    public String toString() {
+    public @NotNull String toString() {
         return "Balancete{" + "id=" + id + ", empresa=" + empresa + ", nomeConta='" + nomeConta + '\'' + ", numeroConta=" + numeroConta + ", totalBalancete=" + totalBalancete + ", classificacao='" + classificacao + '\'' + ", mes='" + mes + '\'' + ", ano=" + ano + '}';
     }
 
-    public int contarPontos(String texto) {
+    public int contarPontos(@NotNull String texto) {
         int contador = 0;
         for (int i = 0; i < texto.length(); i++) {
             if (texto.charAt(i) == '.') {
@@ -60,12 +65,12 @@ public class Balancete {
         return contador;
     }
 
-    public void setTotalBalancete(String totalBalancete) {
+    public void setTotalBalancete(@NotNull String totalBalancete) {
         if (contarPontos(totalBalancete) < 1) this.totalBalancete = Double.valueOf(totalBalancete.replace(",", "."));
         else this.totalBalancete = Double.valueOf(totalBalancete.replaceFirst("\\.", "").replaceFirst(",", "."));
     }
 
-    public String getTotalBalancete() {
+    public @NotNull String getTotalBalancete() {
         return DecimalFormatBR.getDecimalFormat().format(totalBalancete);
     }
 
@@ -74,7 +79,7 @@ public class Balancete {
     }
 
     @Override
-    public final boolean equals(Object o) {
+    public final boolean equals(@Nullable Object o) {
         if (this == o) return true;
         if (o == null) return false;
         Class<?> oEffectiveClass = o instanceof HibernateProxy ? ((HibernateProxy) o).getHibernateLazyInitializer().getPersistentClass() : o.getClass();

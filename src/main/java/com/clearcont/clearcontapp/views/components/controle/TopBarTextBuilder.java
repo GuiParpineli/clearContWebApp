@@ -1,7 +1,9 @@
 package com.clearcont.clearcontapp.views.components.controle;
 
+import org.jetbrains.annotations.NotNull;
+
 public class TopBarTextBuilder {
-    public TopBarText createTopBarText() {
+    public @NotNull TopBarText createTopBarText() {
         return new TopBarText();
     }
 }

@@ -1,6 +1,7 @@
 package com.clearcont.clearcontapp.helpers;
 
-import java.time.LocalDate;
+import org.jetbrains.annotations.NotNull;
+
 import java.time.Month;
 import java.time.format.TextStyle;
 import java.util.Locale;
@@ -8,7 +9,7 @@ import java.util.Locale;
 public class Periodo {
     static Locale locale = new Locale.Builder().setLanguage("pt").setRegion("BR").build();
     
-    public static int getMonthByPeriodoString(String periodo) {
+    public static int getMonthByPeriodoString(@NotNull String periodo) {
         return switch (periodo) {
             case "JANEIRO" -> 1;
             case "FEVEREIRO" -> 2;
@@ -26,7 +27,7 @@ public class Periodo {
         };
     }
     
-    public static String getMonthByInt(Integer i) {
+    public static @NotNull String getMonthByInt(Integer i) {
         return Month.of(i).getDisplayName(TextStyle.FULL, locale);
     }
 }

@@ -4,8 +4,7 @@ import com.clearcont.clearcontapp.model.Empresa;
 import com.clearcont.clearcontapp.repository.EmpresaRepository;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.page.Page;
-import lombok.Setter;
-import lombok.extern.slf4j.Slf4j;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Component;
 
 import java.util.function.Consumer;
@@ -20,7 +19,7 @@ public interface MonthAndCompany {
     
     void setMonth(String month);
     
-    default void getCompany(EmpresaRepository empresaRepository, Consumer<Empresa> callback) {
+    default void getCompany(@NotNull EmpresaRepository empresaRepository, @NotNull Consumer<Empresa> callback) {
         UI ui = UI.getCurrent();
         Page page = ui.getPage();
         page.executeJs("return sessionStorage.getItem($0)", "company-name")
@@ -30,7 +29,7 @@ public interface MonthAndCompany {
                 });
     }
     
-    default void getMonth(Consumer<String> callback) {
+    default void getMonth(@NotNull Consumer<String> callback) {
         UI ui = UI.getCurrent();
         Page page = ui.getPage();
         page.executeJs("return sessionStorage.getItem($0)", "month")
