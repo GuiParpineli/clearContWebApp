@@ -87,11 +87,11 @@ public class AnexoStorageServiceImpl implements AnexoStorageService {
 
     private void saveAnexoToServer(@NotNull MultipartFile multipartFile, String key) throws IOException {
         ObjectMetadata metadata = new ObjectMetadata();
-        metadata.setContentLength(multipartFile.inputStream().available());
+        metadata.setContentLength(multipartFile.getInputStream().available());
         if (multipartFile.getContentType() != null && !"".equals(multipartFile.getContentType())) {
             metadata.setContentType(multipartFile.getContentType());
         }
-        space.putObject(new PutObjectRequest(doSpaceBucket, key, multipartFile.inputStream(), metadata).withCannedAcl(CannedAccessControlList.PublicRead));
+        space.putObject(new PutObjectRequest(doSpaceBucket, key, multipartFile.getInputStream(), metadata).withCannedAcl(CannedAccessControlList.PublicRead));
     }
 
     @Override
