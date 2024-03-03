@@ -64,9 +64,9 @@ public class BalanceteView extends Div implements MonthAndCompany {
         getCompany(empresaRepository, empresa -> getMonth(month -> {
             verifySelectedCompanyAndMonthExistAndNavigate(empresa, month);
 
-            Integer responsavelID = cookieFactory.getCookieInteger("responsavel-id");
+            Long responsavelID = cookieFactory.getCookieInteger("responsavel-id");
             Responsavel responsavel = responsavelRepository.findById(responsavelID).orElseThrow();
-            Integer id = empresa.getId();
+            Long id = empresa.getId();
             String companyName = empresa.getNomeEmpresa();
             log.info("MES DO BALANCETE: " + month + ", " + " PERFIL ID: " + id);
             List<Balancete> balanceteData = service.getByCompanyAndPeriod(id, month, LocalDate.now().getYear());

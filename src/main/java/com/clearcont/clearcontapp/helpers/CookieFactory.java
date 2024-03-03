@@ -18,12 +18,12 @@ public class CookieFactory {
         response.addCookie(cookie);
     }
     
-    public Integer getCookieInteger(String cookieName) {
-        int id = 0;
+    public Long getCookieInteger(String cookieName) {
+        long id = 0L;
         Cookie[] cookies = VaadinService.getCurrentRequest().getCookies();
         for (Cookie cookie : cookies) {
             if (cookie.getName().equals(cookieName)) {
-                id = Integer.parseInt(cookie.getValue());
+                id = Long.parseLong(cookie.getValue());
                 log.info(CLASS_NAME, "O valor do cookie é: " + cookie.getValue());
                 break;
             }

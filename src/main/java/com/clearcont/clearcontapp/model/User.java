@@ -15,7 +15,10 @@ import java.util.Set;
 @Setter
 @Getter
 @Table(name = "application_user")
-public class User extends AbstractEntity {
+public class User {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
     @Column(unique = true)
     private String username;
     private String name;
@@ -29,13 +32,13 @@ public class User extends AbstractEntity {
     private byte[] profilePicture;
     @ManyToOne
     EmpresaGroup empresaGroup;
-    
+
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     @JoinColumn(name = "responsavel_id", unique = true)
     private Responsavel responsavel;
-    
-    public User(Long id, int version, String username, String name, String hashedPassword, Set<Role> roles, byte[] profilePicture, EmpresaGroup empresaGroup, Responsavel responsavel) {
-        super(id, version);
+
+    public User(Long id,  String username, String name, String hashedPassword, Set<Role> roles, byte[] profilePicture, EmpresaGroup empresaGroup, Responsavel responsavel) {
+        this.id = id;
         this.username = username;
         this.name = name;
         this.hashedPassword = hashedPassword;

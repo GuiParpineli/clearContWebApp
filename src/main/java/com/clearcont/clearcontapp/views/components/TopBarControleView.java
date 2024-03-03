@@ -63,7 +63,7 @@ public class TopBarControleView extends FlexLayout {
         getCompany(empresaRepository, empresa -> {
             getMonth(month -> {
                 int year = LocalDate.now().getYear();
-                Integer id = empresa.getId();
+                Long id = empresa.getId();
                 
                 Empresa empresaTopBar = controleService.getAllByMonthAndCompanyID(id, month, year).getLast().getEmpresa();
                 Controle controle = controleService.getAllByMonthAndCompanyID(id, month, year).getFirst();

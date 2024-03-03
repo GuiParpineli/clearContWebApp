@@ -23,7 +23,7 @@ public class BalanceteService {
         return repository.findById(balanceteId).get();
     }
 
-    public List<Balancete> getByCompanyAndPeriod(Integer id, String mes, Integer ano) {
+    public List<Balancete> getByCompanyAndPeriod(Long id, String mes, Integer ano) {
         return repository.findBalanceteByEmpresa_IdAndMesAndAno(id, mes, ano);
     }
 
@@ -40,7 +40,7 @@ public class BalanceteService {
     }
 
     @Transactional
-    public void saveAll(Integer id, List<Balancete> balancetes) {
+    public void saveAll(Long id, List<Balancete> balancetes) {
         repository.deleteAllByEmpresa_Id(id);
         repository.saveAll(balancetes);
     }

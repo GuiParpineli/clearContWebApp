@@ -20,7 +20,7 @@ public class ControleService {
         this.balanceteService = balanceteService;
     }
     
-    public List<Controle> getAllByMonthAndCompanyID(Integer id, String month, Integer year) {
+    public List<Controle> getAllByMonthAndCompanyID(Long id, String month, Integer year) {
         List<Balancete> byCompanyAndPeriod = balanceteService.getByCompanyAndPeriod(id, month, year);
         List<Controle> controles = new ArrayList<>();
         byCompanyAndPeriod.forEach(

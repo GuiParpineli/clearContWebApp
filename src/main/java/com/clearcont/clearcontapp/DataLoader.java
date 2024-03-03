@@ -23,13 +23,15 @@ public class DataLoader implements ApplicationRunner {
     private final ComposicaoLancamentosContabeisRepository composicaoLancamentosContabeisRepository;
     private final ResponsavelRepository responsavelRepository;
     private final UserRepository userRepository;
+    private final CustomerContabilRepository customerContabilRepository;
 
     public DataLoader(BalanceteRepository balanceteRepository,
                       EmpresaRepository empresaRepository, ControleRepository controleRepository,
                       EmpresaGroupRepository empresaGroupRepository,
                       ComposicaoLancamentosContabeisRepository composicaoLancamentosContabeisRepository,
                       ResponsavelRepository responsavelRepository,
-                      UserRepository userRepository) {
+                      UserRepository userRepository,
+                      CustomerContabilRepository customerContabilRepository) {
         this.balanceteRepository = balanceteRepository;
         this.empresaRepository = empresaRepository;
         this.controleRepository = controleRepository;
@@ -37,6 +39,7 @@ public class DataLoader implements ApplicationRunner {
         this.composicaoLancamentosContabeisRepository = composicaoLancamentosContabeisRepository;
         this.responsavelRepository = responsavelRepository;
         this.userRepository = userRepository;
+        this.customerContabilRepository = customerContabilRepository;
     }
 
     @Override
@@ -129,14 +132,14 @@ public class DataLoader implements ApplicationRunner {
         if (empresaGroupRepository.findAll().isEmpty()) {
             empresaGroupRepository.save(
                     new EmpresaGroup(
-                            0,
-                            List.of(empresaRepository.findById(1).get(), empresaRepository.findById(2).get())
+                            0L,
+                            List.of(empresaRepository.findById(1L).get(), empresaRepository.findById(2L).get())
                     )
             );
             empresaGroupRepository.save(
                     new EmpresaGroup(
-                            0,
-                            List.of(empresaRepository.findById(3).get())
+                            0L,
+                            List.of(empresaRepository.findById(3L).get())
                     )
             );
         }
@@ -148,18 +151,18 @@ public class DataLoader implements ApplicationRunner {
         Responsavel responsavel4 = new Responsavel();
 
         if (responsavelRepository.findAll().isEmpty()) {
-            responsavelAdmin = responsavelRepository.save(new Responsavel(null, "Admin", "admin@gmail.com", empresaRepository.findById(1).get()));
-            responsavel = responsavelRepository.save(new Responsavel(null, "Carlos", "carlos@gmail.com", empresaRepository.findById(1).get()));
-            responsavel2 = responsavelRepository.save(new Responsavel(null, "Alberto", "alberto@gmail.com", empresaRepository.findById(1).get()));
-            responsavel3 = responsavelRepository.save(new Responsavel(null, "Jessica", "jessica@gmail.com", empresaRepository.findById(1).get()));
-            responsavel4 = responsavelRepository.save(new Responsavel(null, "Jose", "jose@gmail.com", empresaRepository.findById(2).get()));
+            responsavelAdmin = responsavelRepository.save(new Responsavel(null, "Admin", "admin@gmail.com", empresaRepository.findById(1L).get()));
+            responsavel = responsavelRepository.save(new Responsavel(null, "Carlos", "carlos@gmail.com", empresaRepository.findById(1L).get()));
+            responsavel2 = responsavelRepository.save(new Responsavel(null, "Alberto", "alberto@gmail.com", empresaRepository.findById(1L).get()));
+            responsavel3 = responsavelRepository.save(new Responsavel(null, "Jessica", "jessica@gmail.com", empresaRepository.findById(1L).get()));
+            responsavel4 = responsavelRepository.save(new Responsavel(null, "Jose", "jose@gmail.com", empresaRepository.findById(2L).get()));
         }
 
 
         if (userRepository.findAll().isEmpty()) {
             userRepository.save(
                     new User(
-                            null, 1, "admin",
+                            null,  "admin",
                             "Emma Powerful",
                             "$2a$10$jpLNVNeA7Ar/ZQ2DKbKCm.MuT2ESe.Qop96jipKMq7RaUgCoQedV.",
                             Set.of(Role.ADMIN),
@@ -171,28 +174,28 @@ public class DataLoader implements ApplicationRunner {
             BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
             userRepository.save(
                     new User(
-                            null, 1, "user",
+                            null, "user",
                             "John Doe",
                             bCryptPasswordEncoder.encode("user"),
                             Set.of(Role.USER),
                             null,
-                            empresaGroupRepository.findById(2).get(), null
+                            empresaGroupRepository.findById(2L).get(), null
                     )
             );
             userRepository.save(
                     new User(
-                            null, 1, "carlos",
+                            null,  "carlos",
                             "Carlos",
                             bCryptPasswordEncoder.encode("carlos"),
                             Set.of(Role.USER),
                             null,
-                            empresaGroupRepository.findById(1).get(),
+                            empresaGroupRepository.findById(1L).get(),
                             responsavel
                     )
             );
             userRepository.save(
                     new User(
-                            null, 1, "alberto",
+                            null,  "alberto",
                             "Alberto",
                             bCryptPasswordEncoder.encode("alberto"),
                             Set.of(Role.USER),
@@ -203,23 +206,23 @@ public class DataLoader implements ApplicationRunner {
             );
             userRepository.save(
                     new User(
-                            null, 1, "jessica",
+                            null, "jessica",
                             "Jessica",
                             bCryptPasswordEncoder.encode("jessica"),
                             Set.of(Role.USER),
                             null,
-                            empresaGroupRepository.findById(1).get(),
+                            empresaGroupRepository.findById(1L).get(),
                             responsavel3
                     )
             );
             userRepository.save(
                     new User(
-                            null, 1, "jose",
+                            null, "jose",
                             "Jose",
                             bCryptPasswordEncoder.encode("jose"),
                             Set.of(Role.USER),
                             null,
-                            empresaGroupRepository.findById(2).get(),
+                            empresaGroupRepository.findById(2L).get(),
                             responsavel4
                     )
             );
@@ -265,6 +268,21 @@ public class DataLoader implements ApplicationRunner {
                     )
             );
         }
+
+        customerContabilRepository.save(
+                new CustomerContabil(
+                        0L,
+                        1,
+                        LocalDate.now(),
+                        20.0,
+                        10.0,
+                        313.0,
+                        813.0,
+                        22,
+                        "Aberto",
+                        composicaoLancamentosContabeisRepository.findAll().getFirst()
+                )
+        );
 
     }
 }

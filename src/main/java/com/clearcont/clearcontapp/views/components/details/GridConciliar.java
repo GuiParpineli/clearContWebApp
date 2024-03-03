@@ -49,7 +49,7 @@ public class GridConciliar extends VerticalLayout {
 
         crud.setAddOperation(a -> {
             a.setBalancete(balancete);
-            Integer responsavelID = cookieFactory.getCookieInteger("responsavel-id");
+            Long responsavelID = cookieFactory.getCookieInteger("responsavel-id");
             a.setResponsavel(responsavelRepository.findById(responsavelID).orElseThrow());
             contabeisService.save(a);
             contabeisService.atualizarSaldoContabil(balanceteId, crud);

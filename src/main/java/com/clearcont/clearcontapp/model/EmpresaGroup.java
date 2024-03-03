@@ -20,7 +20,7 @@ import java.util.List;
 public class EmpresaGroup {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private Long id;
     @OneToMany(fetch = FetchType.EAGER)
     public List<Empresa> empresas;
 }

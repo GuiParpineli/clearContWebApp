@@ -67,7 +67,7 @@ public class HomeView extends Div implements MonthAndCompany {
         getCompany(empresaRepository, empresa -> getMonth(month -> {
             
             CookieFactory cookieFactory = new CookieFactory(VaadinService.getCurrentResponse());
-            int id = cookieFactory.getCookieInteger("company-group-id");
+            long id = cookieFactory.getCookieInteger("company-group-id");
             EmpresaGroup companyList = empresaGroupService.getByID(id);
             
             log.info("ID COMPANY GROUP RETORNADA: " + companyList.getId());
@@ -160,4 +160,3 @@ public class HomeView extends Div implements MonthAndCompany {
         return verticalLayout;
     }
 }
-

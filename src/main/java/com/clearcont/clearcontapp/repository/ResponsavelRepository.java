@@ -7,6 +7,6 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface ResponsavelRepository extends JpaRepository<Responsavel, Integer> {
-    List<Responsavel> findResponsavelByEmpresa_Id(Integer id);
+public interface ResponsavelRepository extends JpaRepository<Responsavel, Long> {
+    List<Responsavel> findResponsavelByEmpresa_Id(Long id);
 }

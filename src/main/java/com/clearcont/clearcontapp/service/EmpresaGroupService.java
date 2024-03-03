@@ -12,7 +12,7 @@ public class EmpresaGroupService {
         this.repository = repository;
     }
     
-    public EmpresaGroup getByID(Integer id) {
+    public EmpresaGroup getByID(Long id) {
         return repository.findById(id).orElseThrow();
     }
     

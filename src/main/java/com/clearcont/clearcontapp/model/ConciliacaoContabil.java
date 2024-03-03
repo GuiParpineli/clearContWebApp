@@ -16,7 +16,7 @@ import java.time.LocalDateTime;
 public class ConciliacaoContabil {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private Long id;
     private String status;
     private LocalDateTime data;
     private String classificacao;
