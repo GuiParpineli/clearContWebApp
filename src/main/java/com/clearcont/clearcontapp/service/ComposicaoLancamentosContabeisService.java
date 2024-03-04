@@ -1,8 +1,11 @@
 package com.clearcont.clearcontapp.service;
 
 import com.clearcont.clearcontapp.model.ComposicaoLancamentosContabeis;
+import com.clearcont.clearcontapp.model.CustomerContabil;
 import com.clearcont.clearcontapp.model.StatusConciliacao;
 import com.clearcont.clearcontapp.repository.ComposicaoLancamentosContabeisRepository;
+import com.clearcont.clearcontapp.repository.CustomerContabilRepository;
+import jakarta.transaction.Transactional;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
 import org.vaadin.crudui.crud.impl.GridCrud;
@@ -16,9 +19,11 @@ import static com.clearcont.clearcontapp.helpers.DecimalFormatBR.getDecimalForma
 public class ComposicaoLancamentosContabeisService {
 
     private final ComposicaoLancamentosContabeisRepository contabeisRepository;
+    private final CustomerContabilRepository customerRepository;
 
-    public ComposicaoLancamentosContabeisService(ComposicaoLancamentosContabeisRepository contabeisRepository) {
+    public ComposicaoLancamentosContabeisService(ComposicaoLancamentosContabeisRepository contabeisRepository, CustomerContabilRepository customerRepository) {
         this.contabeisRepository = contabeisRepository;
+        this.customerRepository = customerRepository;
     }
 
     public @NotNull List<ComposicaoLancamentosContabeis> getAll() {
@@ -94,5 +99,12 @@ public class ComposicaoLancamentosContabeisService {
             }
         }
         return total;
+    }
+
+    @Transactional
+    public void saveWithCustomer(@NotNull ComposicaoLancamentosContabeis entity, CustomerContabil customer) {
+        customerRepository.save(customer);
+        entity.setCustomerContabil(customer);
+        contabeisRepository.save(entity);
     }
 }

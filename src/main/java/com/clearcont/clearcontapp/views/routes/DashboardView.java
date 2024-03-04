@@ -23,7 +23,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 
 @Route(value = "dashboard", layout = MainLayout.class)
-@PageTitle("Dashboard | ClearCont App")
+@PageTitle("Dashboard")
 @RolesAllowed("ADMIN")
 @Setter
 @Getter

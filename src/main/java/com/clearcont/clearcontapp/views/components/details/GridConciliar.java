@@ -3,6 +3,7 @@ package com.clearcont.clearcontapp.views.components.details;
 import com.clearcont.clearcontapp.helpers.CookieFactory;
 import com.clearcont.clearcontapp.model.Balancete;
 import com.clearcont.clearcontapp.model.ComposicaoLancamentosContabeis;
+import com.clearcont.clearcontapp.model.CustomerContabil;
 import com.clearcont.clearcontapp.repository.ResponsavelRepository;
 import com.clearcont.clearcontapp.service.ComposicaoLancamentosContabeisService;
 import com.vaadin.flow.component.datepicker.DatePicker;
@@ -52,7 +53,7 @@ public class GridConciliar extends VerticalLayout {
             a.setBalancete(balancete);
             Long responsavelID = cookieFactory.getCookieInteger("responsavel-id");
             a.setResponsavel(responsavelRepository.findById(responsavelID).orElseThrow());
-            contabeisService.save(a);
+            contabeisService.saveWithCustomer(a, new CustomerContabil());
             contabeisService.atualizarSaldoContabil(balanceteId, crud);
             infoCards.updateDiferencaLayout(balancete.getDoubleTotalBalancete(), contabeisService.getSaldoContabil(balanceteId));
             return a;

@@ -22,7 +22,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 @Route(value = "controle", layout = MainLayout.class)
-@PageTitle("controle | ClearCont App")
+@PageTitle("Controle")
 @PermitAll
 @Setter
 @Getter

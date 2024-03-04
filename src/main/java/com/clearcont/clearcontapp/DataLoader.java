@@ -160,7 +160,7 @@ public class DataLoader implements ApplicationRunner {
         if (userRepository.findAll().isEmpty()) {
             userRepository.save(
                     new User(
-                            null,  "admin",
+                            null, "admin",
                             "Emma Powerful",
                             "$2a$10$jpLNVNeA7Ar/ZQ2DKbKCm.MuT2ESe.Qop96jipKMq7RaUgCoQedV.",
                             Set.of(Role.ADMIN),
@@ -182,7 +182,7 @@ public class DataLoader implements ApplicationRunner {
             );
             userRepository.save(
                     new User(
-                            null,  "carlos",
+                            null, "carlos",
                             "Carlos",
                             bCryptPasswordEncoder.encode("carlos"),
                             Set.of(Role.USER),
@@ -193,7 +193,7 @@ public class DataLoader implements ApplicationRunner {
             );
             userRepository.save(
                     new User(
-                            null,  "alberto",
+                            null, "alberto",
                             "Alberto",
                             bCryptPasswordEncoder.encode("alberto"),
                             Set.of(Role.USER),
@@ -225,6 +225,40 @@ public class DataLoader implements ApplicationRunner {
                     )
             );
         }
+
+        CustomerContabil customerContabil = new CustomerContabil();
+        CustomerContabil customerContabil2 = new CustomerContabil();
+        if (customerContabilRepository.findAll().isEmpty()) {
+
+            customerContabil = customerContabilRepository.save(
+                    new CustomerContabil(
+                            0L,
+                            1,
+                            LocalDate.now(),
+                            20.0,
+                            10.0,
+                            313.0,
+                            813.0,
+                            "Aberto",
+                            null
+                    )
+            );
+            customerContabil2 = customerContabilRepository.save(
+                    new CustomerContabil(
+                            0L,
+                            1231,
+                            LocalDate.of(2024, 1, 1),
+                            4230.0,
+                            889.21,
+                            32133.12,
+                            813.12,
+                            "Aberto",
+                            null
+                    )
+            );
+
+        }
+
         if (composicaoLancamentosContabeisRepository.findAll().isEmpty()) {
             composicaoLancamentosContabeisRepository.save(
                     new ComposicaoLancamentosContabeis(
@@ -236,7 +270,8 @@ public class DataLoader implements ApplicationRunner {
                             (100.0 - 200.0),
                             StatusConciliacao.OPEN,
                             balanceteRepository.findAll().getFirst(),
-                            responsavel
+                            responsavel,
+                            customerContabil
                     )
             );
             composicaoLancamentosContabeisRepository.save(
@@ -249,38 +284,11 @@ public class DataLoader implements ApplicationRunner {
                             (1000.0),
                             StatusConciliacao.OPEN,
                             balanceteRepository.findAll().getFirst(),
-                            responsavel2
-                    )
-            );
-            composicaoLancamentosContabeisRepository.save(
-                    new ComposicaoLancamentosContabeis(
-                            0L,
-                            LocalDate.now(),
-                            "Compra",
-                            1000.0,
-                            0.0,
-                            (1000.0),
-                            StatusConciliacao.OPEN,
-                            balanceteRepository.findAll().getFirst(),
-                            responsavel3
+                            responsavel2,
+                            customerContabil2
                     )
             );
         }
-
-        customerContabilRepository.save(
-                new CustomerContabil(
-                        0L,
-                        1,
-                        LocalDate.now(),
-                        20.0,
-                        10.0,
-                        313.0,
-                        813.0,
-                        22,
-                        "Aberto",
-                        composicaoLancamentosContabeisRepository.findAll().getFirst()
-                )
-        );
 
     }
 }

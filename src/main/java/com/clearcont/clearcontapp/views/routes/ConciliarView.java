@@ -1,10 +1,7 @@
 package com.clearcont.clearcontapp.views.routes;
 
 import com.clearcont.clearcontapp.helpers.CookieFactory;
-import com.clearcont.clearcontapp.model.Balancete;
-import com.clearcont.clearcontapp.model.ComposicaoLancamentosContabeis;
-import com.clearcont.clearcontapp.model.Responsavel;
-import com.clearcont.clearcontapp.model.StatusConciliacao;
+import com.clearcont.clearcontapp.model.*;
 import com.clearcont.clearcontapp.repository.ResponsavelRepository;
 import com.clearcont.clearcontapp.service.AnexoStorageServiceImpl;
 import com.clearcont.clearcontapp.service.BalanceteService;
@@ -23,6 +20,7 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.page.Page;
 import com.vaadin.flow.router.BeforeEvent;
 import com.vaadin.flow.router.HasUrlParameter;
+import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.server.VaadinService;
 import jakarta.annotation.security.PermitAll;
@@ -35,6 +33,7 @@ import java.util.List;
 @Route(value = "conciliar", layout = MainLayout.class)
 @PermitAll
 @Slf4j
+@PageTitle("Conciliar")
 public class ConciliarView extends VerticalLayout implements HasUrlParameter<String> {
 
     private final BalanceteService service;
@@ -128,7 +127,7 @@ public class ConciliarView extends VerticalLayout implements HasUrlParameter<Str
         dialog.setConfirmText("Confirmar");
         dialog.addConfirmListener(dialogEvent -> {
             if (conciliacao.getResponsavel() == null) {
-                contabeisService.save(new ComposicaoLancamentosContabeis(balancete, responsavel));
+                contabeisService.saveWithCustomer(new ComposicaoLancamentosContabeis(balancete, responsavel), new CustomerContabil());
             }
             checkStatusforDisableorEnableBtn(conciliacao);
             conciliacao.setStatus(StatusConciliacao.PROGRESS);

@@ -42,7 +42,7 @@ import java.util.Iterator;
 import java.util.List;
 
 @Route(value = "balancete", layout = MainLayout.class)
-@PageTitle("Balancete | ClearCont App")
+@PageTitle("Balancete")
 @PermitAll
 @Setter
 @Getter

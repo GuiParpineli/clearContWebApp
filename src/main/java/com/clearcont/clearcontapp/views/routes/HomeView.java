@@ -36,7 +36,7 @@ import java.util.stream.Stream;
 
 
 @Route(value = "", layout = MainLayout.class)
-@PageTitle("Home| Nome do Aplicativo")
+@PageTitle("Home")
 @PermitAll
 @Slf4j
 @Getter

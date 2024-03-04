@@ -30,27 +30,28 @@ public class ComposicaoLancamentosContabeis {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Setter
     private LocalDate data;
-    @Setter
     private String historico;
     @NotNull
-    private @org.jetbrains.annotations.NotNull Double debito = 0.0;
+    private Double debito = 0.0;
     @NotNull
-    private @org.jetbrains.annotations.NotNull Double credito = 0.0;
-    private @org.jetbrains.annotations.NotNull Double saldoContabil = debito - credito;
+    private Double credito = 0.0;
+    private Double saldoContabil = debito - credito;
     @Enumerated(EnumType.STRING)
-    private @org.jetbrains.annotations.NotNull StatusConciliacao status = StatusConciliacao.OPEN;
+    private StatusConciliacao status = StatusConciliacao.OPEN;
 
     @Setter
     @JsonIgnore
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     @JoinColumn(name = "balancete_id")
     private Balancete balancete;
 
     @Setter
     @ManyToOne
     private Responsavel responsavel;
+
+    @OneToOne(fetch = FetchType.LAZY)    @JoinColumn(name = "customer_contabil_id")
+    private CustomerContabil customerContabil;
 
     public ComposicaoLancamentosContabeis(Balancete balancete, Responsavel responsavel) {
         this.data = LocalDate.now();
@@ -121,19 +122,4 @@ public class ComposicaoLancamentosContabeis {
         return saldoContabil;
     }
 
-    @Override
-    public final boolean equals(@Nullable Object o) {
-        if (this == o) return true;
-        if (o == null) return false;
-        Class<?> oEffectiveClass = o instanceof HibernateProxy ? ((HibernateProxy) o).getHibernateLazyInitializer().getPersistentClass() : o.getClass();
-        Class<?> thisEffectiveClass = this instanceof HibernateProxy ? ((HibernateProxy) this).getHibernateLazyInitializer().getPersistentClass() : this.getClass();
-        if (thisEffectiveClass != oEffectiveClass) return false;
-        ComposicaoLancamentosContabeis that = (ComposicaoLancamentosContabeis) o;
-        return getId() != null && Objects.equals(getId(), that.getId());
-    }
-
-    @Override
-    public final int hashCode() {
-        return this instanceof HibernateProxy ? ((HibernateProxy) this).getHibernateLazyInitializer().getPersistentClass().hashCode() : getClass().hashCode();
-    }
 }

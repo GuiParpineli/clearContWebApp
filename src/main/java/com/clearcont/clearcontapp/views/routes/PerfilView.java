@@ -10,7 +10,7 @@ import com.vaadin.flow.router.Route;
 import jakarta.annotation.security.PermitAll;
 
 @Route(value = "perfil", layout = MainLayout.class)
-@PageTitle("Perfil | ClearCont App")
+@PageTitle("Perfil")
 @PermitAll
 public class PerfilView extends Div {
     public PerfilView() {

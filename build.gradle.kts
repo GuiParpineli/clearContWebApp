@@ -6,7 +6,7 @@ plugins {
 }
 
 group = "com.clearcont"
-version = "0.5.0"
+version = "0.8.3"
 
 java {
     sourceCompatibility = JavaVersion.VERSION_21
