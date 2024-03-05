@@ -35,7 +35,9 @@ public class MainLayout extends AppLayout {
             addToDrawer(
                     new VerticalLayout(
                             createHorizontalLayout("Dashboard", DashboardView.class, "dashboard"),
-                            createHorizontalLayout("Clientes", CustomersView.class, "building"))
+                            createHorizontalLayout("Clientes", CustomersView.class, "building"),
+                            createHorizontalLayout("Fornecedores", FornecedoresView.class, "suitcase")
+                    )
             );
     }
     

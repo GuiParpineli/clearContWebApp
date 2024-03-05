@@ -15,11 +15,11 @@ import java.util.List;
 @Transactional
 public class ControleService {
     private final BalanceteService balanceteService;
-    
+
     public ControleService(BalanceteService balanceteService) {
         this.balanceteService = balanceteService;
     }
-    
+
     public @NotNull List<Controle> getAllByMonthAndCompanyID(Long id, String month, Integer year) {
         List<Balancete> byCompanyAndPeriod = balanceteService.getByCompanyAndPeriod(id, month, year);
         List<Controle> controles = new ArrayList<>();
@@ -35,8 +35,9 @@ public class ControleService {
                                         balancete.getDoubleTotalBalancete(),
                                         balancete.getComposicaoLancamentosContabeisList().stream().mapToDouble(
                                                 ComposicaoLancamentosContabeis::getDoubleSaldoContabil).sum(),
-                                         balancete.getComposicaoLancamentosContabeisList()
-                                                .stream().mapToDouble(ComposicaoLancamentosContabeis::getDoubleSaldoContabil).sum() - balancete.getDoubleTotalBalancete(),
+                                        balancete.getComposicaoLancamentosContabeisList()
+                                                .stream().mapToDouble(ComposicaoLancamentosContabeis::getDoubleSaldoContabil)
+                                                .sum() - balancete.getDoubleTotalBalancete(),
                                         "ABERTO",
                                         "",
                                         false,

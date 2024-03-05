@@ -31,7 +31,8 @@ public class Balancete {
     private Integer numeroConta;
     private Double totalBalancete;
     @Setter
-    private String classificacao;
+    @Enumerated(EnumType.STRING)
+    private TypeCount classificacao;
     @Setter
     private String mes;
     @Setter

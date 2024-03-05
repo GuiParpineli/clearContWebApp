@@ -20,7 +20,7 @@ public class Controle {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String subGrupo;
-    private String circulante;
+    private TypeCount circulante;
     private String nomeConta;
     private Double saldoBalancete;
     private Double saldoAnalise;

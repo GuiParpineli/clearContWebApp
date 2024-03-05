@@ -3,10 +3,7 @@ package com.clearcont.clearcontapp.views.routes;
 
 import com.clearcont.clearcontapp.helpers.CookieFactory;
 import com.clearcont.clearcontapp.helpers.MonthAndCompany;
-import com.clearcont.clearcontapp.model.Balancete;
-import com.clearcont.clearcontapp.model.ComposicaoLancamentosContabeis;
-import com.clearcont.clearcontapp.model.Empresa;
-import com.clearcont.clearcontapp.model.Responsavel;
+import com.clearcont.clearcontapp.model.*;
 import com.clearcont.clearcontapp.repository.EmpresaRepository;
 import com.clearcont.clearcontapp.repository.ResponsavelRepository;
 import com.clearcont.clearcontapp.service.BalanceteService;
@@ -150,7 +147,7 @@ public class BalanceteView extends Div implements MonthAndCompany {
                                     row.getCell(1).getStringCellValue(),
                                     (int) row.getCell(0).getNumericCellValue(),
                                     row.getCell(2).getNumericCellValue(),
-                                    row.getCell(3).getStringCellValue(),
+                                    TypeCount.valueOf(row.getCell(3).getStringCellValue()),
                                     month,
                                     LocalDate.now().getYear(),
                                     List.of(new ComposicaoLancamentosContabeis(responsavel))

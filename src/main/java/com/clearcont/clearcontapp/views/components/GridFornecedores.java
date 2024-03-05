@@ -1,6 +1,7 @@
 package com.clearcont.clearcontapp.views.components;
 
 import com.clearcont.clearcontapp.model.*;
+import com.clearcont.clearcontapp.repository.CustomerContabilRepository;
 import com.clearcont.clearcontapp.service.CustomerContabilService;
 import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.datepicker.DatePicker;
@@ -17,10 +18,10 @@ import java.util.Locale;
 import java.util.stream.Collectors;
 
 @Transactional
-public class GridCustomer extends VerticalLayout {
+public class GridFornecedores extends VerticalLayout {
     private long balanceteID = 0;
 
-    public GridCustomer(@NotNull CustomerContabilService customerService, List<Balancete> balancetes, Responsavel responsavel) {
+    public GridFornecedores(@NotNull CustomerContabilService customerService, List<Balancete> balancetes, Responsavel responsavel) {
         GridCrud<CustomerContabil> crud = new GridCrud<>(CustomerContabil.class);
         DefaultCrudFormFactory<CustomerContabil> formFactory = getCustomerContabilDefaultCrudFormFactory();
         ComboBox<Balancete> balancetePicker = new ComboBox<>();
@@ -37,7 +38,7 @@ public class GridCustomer extends VerticalLayout {
                         updatedContabilCustomers.stream().filter(
                                         customerContabil ->
                                                 customerContabil.getComposicaoLancamentosContabeis()
-                                                        .getBalancete().getClassificacao().equals(TypeCount.ATIVO))
+                                                        .getBalancete().getClassificacao().equals(TypeCount.PASSIVO))
                                 .toList());
                 crud.refreshGrid();
             }
@@ -68,7 +69,7 @@ public class GridCustomer extends VerticalLayout {
         crud.setFindAllOperation(() -> contabilCustomers.stream().filter(
                         customerContabil ->
                                 customerContabil.getComposicaoLancamentosContabeis()
-                                        .getBalancete().getClassificacao().equals(TypeCount.ATIVO))
+                                        .getBalancete().getClassificacao().equals(TypeCount.PASSIVO))
                 .toList());
         crud.setAddOperation(
                 customerContabil -> {
@@ -77,7 +78,7 @@ public class GridCustomer extends VerticalLayout {
                     composicao.setCustomerContabil(customerContabil);
                     customerContabil.setComposicaoLancamentosContabeis(composicao);
                     customerContabil.getComposicaoLancamentosContabeis().setBalancete(balancetePicker.getValue());
-                    customerContabil.getComposicaoLancamentosContabeis().getBalancete().setClassificacao(TypeCount.ATIVO);
+                    customerContabil.getComposicaoLancamentosContabeis().getBalancete().setClassificacao(TypeCount.PASSIVO);
                     customerContabil.getComposicaoLancamentosContabeis().setResponsavel(responsavel);
                     customerService.save(customerContabil);
 

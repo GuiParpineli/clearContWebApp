@@ -42,7 +42,7 @@ public class ComposicaoLancamentosContabeis {
 
     @Setter
     @JsonIgnore
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
+    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinColumn(name = "balancete_id")
     private Balancete balancete;
 

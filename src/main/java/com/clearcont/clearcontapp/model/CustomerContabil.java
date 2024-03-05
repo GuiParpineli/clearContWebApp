@@ -24,15 +24,28 @@ public class CustomerContabil {
     private Double IRRF = 0.0;
     private Double CSRF = 0.0;
     private int diasVencidos = 0;
-    private String status;
+    private StatusConciliacao status;
 
     @ToString.Exclude
-    @OneToOne(mappedBy = "customerContabil", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToOne(mappedBy = "customerContabil", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     private ComposicaoLancamentosContabeis composicaoLancamentosContabeis;
 
     public void calcularDiasVencidos() {
         LocalDate hoje = LocalDate.now();
-        this.diasVencidos = (int) ChronoUnit.DAYS.between(dataVencimento, hoje);
+        if (dataVencimento != null) {
+            this.diasVencidos = (int) ChronoUnit.DAYS.between(dataVencimento, hoje);
+        } else {
+            this.diasVencidos = 0;
+        }
+    }
+
+    public void setDiasVencidos() {
+        calcularDiasVencidos();
+    }
+
+    public int getDiasVencidos() {
+        calcularDiasVencidos();
+        return diasVencidos;
     }
 
     public CustomerContabil(Long id,
@@ -42,7 +55,6 @@ public class CustomerContabil {
                             Double INSS,
                             Double IRRF,
                             Double CSRF,
-                            String status,
                             ComposicaoLancamentosContabeis composicaoLancamentosContabeis) {
         this.id = id;
         this.numNotaFiscal = numNotaFiscal;
@@ -51,7 +63,6 @@ public class CustomerContabil {
         this.INSS = INSS;
         this.IRRF = IRRF;
         this.CSRF = CSRF;
-        this.status = status;
         this.composicaoLancamentosContabeis = composicaoLancamentosContabeis;
         calcularDiasVencidos();
     }
@@ -68,7 +79,7 @@ public class CustomerContabil {
         if (composicaoLancamentosContabeis != null) {
             return composicaoLancamentosContabeis.getDebito();
         } else {
-            return "";
+            return "0";
         }
     }
 
@@ -76,7 +87,7 @@ public class CustomerContabil {
         if (composicaoLancamentosContabeis != null) {
             return composicaoLancamentosContabeis.getCredito();
         } else {
-            return "";
+            return "0";
         }
     }
 
@@ -84,7 +95,47 @@ public class CustomerContabil {
         if (composicaoLancamentosContabeis != null) {
             return composicaoLancamentosContabeis.getHistorico();
         } else {
-            return "";
+            return "0";
         }
     }
+
+    public void setComposicaoHistorico(String composicaoHistorico) {
+        if (composicaoLancamentosContabeis != null) {
+            composicaoLancamentosContabeis.setHistorico(composicaoHistorico);
+        } else {
+            composicaoLancamentosContabeis = new ComposicaoLancamentosContabeis();
+            composicaoLancamentosContabeis.setHistorico(composicaoHistorico);
+        }
+    }
+
+    public void setComposicaoData(LocalDate composicaoData) {
+        if (composicaoLancamentosContabeis == null) {
+            composicaoLancamentosContabeis = new ComposicaoLancamentosContabeis();
+        }
+        composicaoLancamentosContabeis.setData(composicaoData);
+    }
+
+    public void setComposicaoDebito(String composicaoDebito) {
+        if (composicaoLancamentosContabeis == null) {
+            composicaoLancamentosContabeis = new ComposicaoLancamentosContabeis();
+        }
+        composicaoLancamentosContabeis.setDebito(composicaoDebito);
+    }
+
+    public void setComposicaoCredito(String composicaoCredito) {
+        if (composicaoLancamentosContabeis == null) {
+            composicaoLancamentosContabeis = new ComposicaoLancamentosContabeis();
+        }
+        composicaoLancamentosContabeis.setCredito(composicaoCredito);
+    }
+
+    public StatusConciliacao getStatus() {
+        if (composicaoLancamentosContabeis != null) {
+            return composicaoLancamentosContabeis.getStatus();
+        } else {
+            return StatusConciliacao.OPEN;
+        }
+    }
+
+
 }

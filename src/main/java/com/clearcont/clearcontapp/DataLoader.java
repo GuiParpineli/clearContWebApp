@@ -80,7 +80,7 @@ public class DataLoader implements ApplicationRunner {
                             "BANCO ITAU",
                             375,
                             248.36334,
-                            "ATIVO",
+                            TypeCount.ATIVO,
                             "JANEIRO",
                             2024,
                             Collections.emptyList()
@@ -93,7 +93,7 @@ public class DataLoader implements ApplicationRunner {
                             "BANCO ITAU",
                             375,
                             248.36334,
-                            "ATIVO",
+                            TypeCount.PASSIVO,
                             "JANEIRO",
                             2024,
                             Collections.emptyList()
@@ -106,7 +106,7 @@ public class DataLoader implements ApplicationRunner {
                             "BANCO BRADESCO",
                             379,
                             9948.36334,
-                            "ATIVO",
+                            TypeCount.ATIVO,
                             "DEZEMBRO",
                             2023,
                             Collections.emptyList()
@@ -120,7 +120,7 @@ public class DataLoader implements ApplicationRunner {
                             "BANCO SANTANDER",
                             388,
                             928.222,
-                            "ATIVO",
+                            TypeCount.ATIVO,
                             "JANEIRO",
                             2024,
                             Collections.emptyList()
@@ -233,13 +233,12 @@ public class DataLoader implements ApplicationRunner {
             customerContabil = customerContabilRepository.save(
                     new CustomerContabil(
                             0L,
-                            1,
+                            2,
                             LocalDate.now(),
-                            20.0,
                             10.0,
                             313.0,
                             813.0,
-                            "Aberto",
+                            813.0,
                             null
                     )
             );
@@ -252,7 +251,6 @@ public class DataLoader implements ApplicationRunner {
                             889.21,
                             32133.12,
                             813.12,
-                            "Aberto",
                             null
                     )
             );

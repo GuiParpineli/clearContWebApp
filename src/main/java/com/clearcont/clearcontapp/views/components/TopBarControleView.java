@@ -78,7 +78,7 @@ public class TopBarControleView extends FlexLayout {
             Div b3 = TopBarText.make("Resumo Balancete:", "ATIVO:", "PASSIVO:", "PL:", "RESULTADO:");
             Div b4 = new Div(
                     new Paragraph("Valor"),
-                    new Paragraph(controle.getCirculante()),
+                    new Paragraph(controle.getCirculante().name()),
                     new Paragraph(controle.getSaldoAnalise()),
                     new Paragraph(controle.getSaldoBalancete()),
                     new Paragraph(DecimalFormatBR.getDecimalFormat().format(controle.getDoubleSaldoBalancete() - controle.getDoubleSaldoAnalise()))
