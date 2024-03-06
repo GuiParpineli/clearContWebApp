@@ -5,6 +5,7 @@ import com.clearcont.clearcontapp.helpers.MonthAndCompany;
 import com.clearcont.clearcontapp.model.Balancete;
 import com.clearcont.clearcontapp.model.Empresa;
 import com.clearcont.clearcontapp.model.Responsavel;
+import com.clearcont.clearcontapp.model.TypeCount;
 import com.clearcont.clearcontapp.repository.CustomerContabilRepository;
 import com.clearcont.clearcontapp.repository.EmpresaRepository;
 import com.clearcont.clearcontapp.repository.ResponsavelRepository;
@@ -26,6 +27,7 @@ import jakarta.annotation.security.RolesAllowed;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
+import org.jetbrains.annotations.Nullable;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -41,27 +43,29 @@ public class FornecedoresView extends FlexLayout implements MonthAndCompany {
     private String month;
     private Empresa empresa;
 
-    public FornecedoresView(CustomerContabilService customerContabilRepository, EmpresaRepository empresaRepository, BalanceteService balanceteService, ResponsavelRepository responsavelRepository) {
+    public FornecedoresView(CustomerContabilService customerContabilRepository,
+                            EmpresaRepository empresaRepository,
+                            BalanceteService balanceteService,
+                            ResponsavelRepository responsavelRepository) {
         initializeView(customerContabilRepository, empresaRepository, balanceteService, responsavelRepository);
     }
 
-    private void initializeView(CustomerContabilService customerContabilRepository, EmpresaRepository empresaRepository, BalanceteService balanceteService, ResponsavelRepository responsavelRepository) {
+    private void initializeView(CustomerContabilService customerContabilRepository,
+                                EmpresaRepository empresaRepository,
+                                BalanceteService balanceteService,
+                                ResponsavelRepository responsavelRepository) {
         getCompany(empresaRepository, empresa -> getMonth(month -> {
-                    if (empresa == null) {
-                        Notification.show("Selecione uma empresa e periodo");
-                        UI.getCurrent().navigate("/");
-                    }
-
+                    verifySelectedCompanyAndMonthExistAndNavigate(empresa, month);
                     CookieFactory cookieFactory = new CookieFactory(VaadinService.getCurrentResponse());
                     Long responsavelID = cookieFactory.getCookieInteger("responsavel-id");
                     Responsavel responsavel = responsavelRepository.findById(responsavelID).orElseThrow();
                     Long empresaId = empresa.getId();
-                    List<Balancete> balanceteData = balanceteService.getByCompanyAndPeriod(empresaId, month, LocalDate.now().getYear());
+                    List<Balancete> balanceteData = balanceteService.filterClassification(empresaId, month, LocalDate.now().getYear(), TypeCount.PASSIVO);
                     log.info("Empresa selecionada: " + empresa.getNomeEmpresa());
                     GridFornecedores gridCustomer = new GridFornecedores(customerContabilRepository, balanceteData, responsavel);
                     H1 clientes = new H1("Fornecedores");
                     Span span = new Span(empresa.getNomeEmpresa());
-                    Span subtitle = new Span("Selecione um balancete do periodo: " + month + " " + LocalDate.now().getYear());
+                    Span subtitle = new Span("Selecione uma conta do periodo: " + month + " " + LocalDate.now().getYear());
                     VerticalLayout verticalLayout = new VerticalLayout(
                             new VerticalLayout(clientes, span, subtitle),
                             gridCustomer
@@ -69,5 +73,12 @@ public class FornecedoresView extends FlexLayout implements MonthAndCompany {
                     add(verticalLayout);
                 }
         ));
+    }
+
+    private void verifySelectedCompanyAndMonthExistAndNavigate(@Nullable Empresa empresa, @Nullable String month) {
+        if (empresa == null || month == null || empresa.getNomeEmpresa() == null) {
+            Notification.show("Selecione uma empresa e periodo");
+            UI.getCurrent().navigate("/");
+        }
     }
 }

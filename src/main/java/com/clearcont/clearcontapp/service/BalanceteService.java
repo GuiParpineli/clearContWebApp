@@ -1,6 +1,7 @@
 package com.clearcont.clearcontapp.service;
 
 import com.clearcont.clearcontapp.model.Balancete;
+import com.clearcont.clearcontapp.model.TypeCount;
 import com.clearcont.clearcontapp.repository.BalanceteRepository;
 import jakarta.transaction.Transactional;
 import org.jetbrains.annotations.NotNull;
@@ -26,6 +27,11 @@ public class BalanceteService {
 
     public List<Balancete> getByCompanyAndPeriod(Long id, String mes, Integer ano) {
         return repository.findBalanceteByEmpresa_IdAndMesAndAno(id, mes, ano);
+    }
+
+    public List<Balancete> filterClassification(Long id, String mes, Integer ano, TypeCount classification) {
+        return getByCompanyAndPeriod(id, mes, ano).stream().filter(
+                balancete -> balancete.getClassificacao().equals(classification)).toList();
     }
 
     public void delete(@NotNull Balancete balancete) {

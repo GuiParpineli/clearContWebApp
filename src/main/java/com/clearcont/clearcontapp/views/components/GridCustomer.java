@@ -24,9 +24,13 @@ public class GridCustomer extends VerticalLayout {
         GridCrud<CustomerContabil> crud = new GridCrud<>(CustomerContabil.class);
         DefaultCrudFormFactory<CustomerContabil> formFactory = getCustomerContabilDefaultCrudFormFactory();
         ComboBox<Balancete> balancetePicker = new ComboBox<>();
+        crud.setVisible(balancetePicker.getValue() != null);
         balancetePicker.setItems(balancetes);
         balancetePicker.setItemLabelGenerator(Balancete::getNomeConta);
-
+        balancetePicker.addValueChangeListener(event -> {
+            Balancete selectedBalancete = event.getValue();
+            crud.setVisible(selectedBalancete.getId() != null);
+        });
         List<CustomerContabil> contabilCustomers = customerService.findByBalanceteID(balanceteID);
         balancetePicker.addValueChangeListener(event -> {
             Balancete selectedBalancete = event.getValue();
