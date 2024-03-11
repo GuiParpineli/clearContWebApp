@@ -21,7 +21,7 @@ import java.util.stream.Collectors;
 public class GridFornecedores extends VerticalLayout {
     private long balanceteID = 0;
 
-    public GridFornecedores(@NotNull CustomerContabilService customerService, List<Balancete> balancetes, Responsavel responsavel) {
+    public GridFornecedores(@NotNull CustomerContabilService customerService, List<Balancete> balancetes, Responsavel responsavel, int month) {
         GridCrud<CustomerContabil> crud = new GridCrud<>(CustomerContabil.class);
         DefaultCrudFormFactory<CustomerContabil> formFactory = getCustomerContabilDefaultCrudFormFactory();
         ComboBox<Balancete> balancetePicker = new ComboBox<>();
@@ -75,6 +75,8 @@ public class GridFornecedores extends VerticalLayout {
                 "composicaoCredito",
                 "composicaoHistorico"
         );
+        crud.getGrid().addColumn(customer -> customer.getDiasVencidos(month)).setHeader("Dias Vencidos");
+
         crud.setFindAllOperation(() -> contabilCustomers.stream().filter(
                         customerContabil ->
                                 customerContabil.getComposicaoLancamentosContabeis()
@@ -103,6 +105,7 @@ public class GridFornecedores extends VerticalLayout {
                     return customerContabil;
                 }
         );
+        crud.setUpdateOperation(customerService::update);
         add(balancetePicker, crud);
     }
 

@@ -24,4 +24,8 @@ public class CustomerContabilService {
     public List<CustomerContabil> findByBalanceteID(Long id) {
         return repository.findAllByComposicaoLancamentosContabeis_Balancete_Id(id);
     }
+
+    public CustomerContabil update(CustomerContabil customerContabil) {
+        return repository.saveAndFlush(customerContabil);
+    }
 }

@@ -20,7 +20,7 @@ import java.util.stream.Collectors;
 public class GridCustomer extends VerticalLayout {
     private long balanceteID = 0;
 
-    public GridCustomer(@NotNull CustomerContabilService customerService, List<Balancete> balancetes, Responsavel responsavel) {
+    public GridCustomer(@NotNull CustomerContabilService customerService, List<Balancete> balancetes, Responsavel responsavel, int month) {
         GridCrud<CustomerContabil> crud = new GridCrud<>(CustomerContabil.class);
         DefaultCrudFormFactory<CustomerContabil> formFactory = getCustomerContabilDefaultCrudFormFactory();
         ComboBox<Balancete> balancetePicker = new ComboBox<>();
@@ -62,13 +62,13 @@ public class GridCustomer extends VerticalLayout {
                 "INSS",
                 "IRRF",
                 "CSRF",
-                "diasVencidos",
                 "status",
                 "composicaoData",
                 "composicaoDebito",
                 "composicaoCredito",
                 "composicaoHistorico"
         );
+        crud.getGrid().addColumn(customer -> customer.getDiasVencidos(month)).setHeader("Dias Vencidos");
         crud.setFindAllOperation(() -> contabilCustomers.stream().filter(
                         customerContabil ->
                                 customerContabil.getComposicaoLancamentosContabeis()
@@ -97,6 +97,7 @@ public class GridCustomer extends VerticalLayout {
                     return customerContabil;
                 }
         );
+        crud.setUpdateOperation(customerService::update);
         add(balancetePicker, crud);
     }
 

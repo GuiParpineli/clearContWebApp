@@ -2,6 +2,7 @@ package com.clearcont.clearcontapp.views.routes;
 
 import com.clearcont.clearcontapp.helpers.CookieFactory;
 import com.clearcont.clearcontapp.helpers.MonthAndCompany;
+import com.clearcont.clearcontapp.helpers.Periodo;
 import com.clearcont.clearcontapp.model.Balancete;
 import com.clearcont.clearcontapp.model.Empresa;
 import com.clearcont.clearcontapp.model.Responsavel;
@@ -60,7 +61,7 @@ public class CustomersView extends FlexLayout implements MonthAndCompany {
                     Long empresaId = empresa.getId();
                     List<Balancete> balanceteData = balanceteService.filterClassification(empresaId, month, LocalDate.now().getYear(), TypeCount.ATIVO);
                     log.info("Empresa selecionada: " + empresa.getNomeEmpresa());
-                    GridCustomer gridCustomer = new GridCustomer(customerContabilRepository, balanceteData, responsavel);
+                    GridCustomer gridCustomer = new GridCustomer(customerContabilRepository, balanceteData, responsavel, Periodo.getMonthByPeriodoString(month));
                     H1 clientes = new H1("Clientes");
                     Span span = new Span(empresa.getNomeEmpresa());
                     Span subtitle = new Span("Selecione uma conta do periodo: " + month + " " + LocalDate.now().getYear());
