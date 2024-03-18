@@ -1,12 +1,15 @@
 package com.clearcont.clearcontapp.service;
 
+import com.clearcont.clearcontapp.model.Balancete;
 import com.clearcont.clearcontapp.model.ComposicaoLancamentosContabeis;
 import com.clearcont.clearcontapp.model.CustomerContabil;
 import com.clearcont.clearcontapp.model.StatusConciliacao;
 import com.clearcont.clearcontapp.repository.ComposicaoLancamentosContabeisRepository;
 import com.clearcont.clearcontapp.repository.CustomerContabilRepository;
+import jakarta.persistence.EntityManager;
 import jakarta.transaction.Transactional;
 import org.jetbrains.annotations.NotNull;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.vaadin.crudui.crud.impl.GridCrud;
 
@@ -18,10 +21,12 @@ import static com.clearcont.clearcontapp.helpers.DecimalFormatBR.getDecimalForma
 @Service
 public class ComposicaoLancamentosContabeisService {
 
+    private final EntityManager entityManager;
     private final ComposicaoLancamentosContabeisRepository contabeisRepository;
     private final CustomerContabilRepository customerRepository;
 
-    public ComposicaoLancamentosContabeisService(ComposicaoLancamentosContabeisRepository contabeisRepository, CustomerContabilRepository customerRepository) {
+    public ComposicaoLancamentosContabeisService(EntityManager entityManager, ComposicaoLancamentosContabeisRepository contabeisRepository, CustomerContabilRepository customerRepository) {
+        this.entityManager = entityManager;
         this.contabeisRepository = contabeisRepository;
         this.customerRepository = customerRepository;
     }
@@ -101,10 +106,14 @@ public class ComposicaoLancamentosContabeisService {
         return total;
     }
 
+
+
     @Transactional
     public void saveWithCustomer(@NotNull ComposicaoLancamentosContabeis entity, CustomerContabil customer) {
         customerRepository.save(customer);
         entity.setCustomerContabil(customer);
+        Balancete mergedBalancete = entityManager.merge(entity.getBalancete());
+        entity.setBalancete(mergedBalancete);
         contabeisRepository.save(entity);
     }
 }
