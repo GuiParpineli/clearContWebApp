@@ -12,6 +12,7 @@ import com.clearcont.clearcontapp.views.main.MainLayout;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.confirmdialog.ConfirmDialog;
+import com.vaadin.flow.component.html.Anchor;
 import com.vaadin.flow.component.html.H1;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.notification.Notification;
@@ -22,6 +23,8 @@ import com.vaadin.flow.router.BeforeEvent;
 import com.vaadin.flow.router.HasUrlParameter;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
+import com.vaadin.flow.server.InputStreamFactory;
+import com.vaadin.flow.server.StreamResource;
 import com.vaadin.flow.server.VaadinService;
 import jakarta.annotation.security.PermitAll;
 import lombok.extern.slf4j.Slf4j;
@@ -35,7 +38,6 @@ import java.util.List;
 @Slf4j
 @PageTitle("Conciliar")
 public class ConciliarView extends VerticalLayout implements HasUrlParameter<String> {
-
     private final BalanceteService service;
     private final ComposicaoLancamentosContabeisService contabeisService;
     private final AnexoStorageServiceImpl anexoStorageService;
@@ -44,7 +46,8 @@ public class ConciliarView extends VerticalLayout implements HasUrlParameter<Str
     @NotNull Button finishBtn = getFinishBtn();
 
     @Autowired
-    public ConciliarView(BalanceteService service, ComposicaoLancamentosContabeisService contabeisService, AnexoStorageServiceImpl anexoStorageService, ResponsavelRepository responsavelRepository) {
+    public ConciliarView(BalanceteService service, ComposicaoLancamentosContabeisService contabeisService,
+                         AnexoStorageServiceImpl anexoStorageService, ResponsavelRepository responsavelRepository) {
         this.service = service;
         this.contabeisService = contabeisService;
         this.anexoStorageService = anexoStorageService;
@@ -59,7 +62,6 @@ public class ConciliarView extends VerticalLayout implements HasUrlParameter<Str
         log.info("BALANCETE ID: " + balanceteId);
         log.info("BALANCETE NOME DA CONTA: " + balancete.getNomeConta());
 
-        HorizontalLayout btns = new HorizontalLayout(startBtn, finishBtn);
 
         List<ComposicaoLancamentosContabeis> conciliacaoList = contabeisService.getByBalanceteID(balanceteId);
         if (conciliacaoList.isEmpty()) {
@@ -71,6 +73,17 @@ public class ConciliarView extends VerticalLayout implements HasUrlParameter<Str
         ComposicaoLancamentosContabeis conciliacao = conciliacaoList.getLast();
         BalanceteDetailsLayout infoCards = new BalanceteDetailsLayout(balancete, conciliacao, saldoContabil, anexoStorageService);
         GridConciliar crud = new GridConciliar(balancete, contabeisService, balanceteId, responsavelRepository, infoCards);
+        List<ComposicaoLancamentosContabeis> finalConciliacaoList = conciliacaoList;
+        InputStreamFactory isf = () -> crud.exportToExcel(finalConciliacaoList);
+        StreamResource excelStreamResource = new StreamResource("grid_data.xlsx", isf);
+        Anchor downloadLink = new Anchor(excelStreamResource, "");
+        downloadLink.getElement().setAttribute("download", true);
+        Button exportButton = new Button("Exportar para Excel");
+        exportButton.getStyle().setBackground("grey");
+        downloadLink.add(exportButton);
+        HorizontalLayout btns = new HorizontalLayout(startBtn, finishBtn, downloadLink);
+        exportButton.getElement().setAttribute("download", true);
+        exportButton.getElement().setAttribute("href", excelStreamResource);
         checkStatusforDisableorEnableBtn(conciliacao);
 
         crud.setEnabled(!conciliacao.getStatus().equals(StatusConciliacao.OPEN) && !conciliacao.getStatus().equals(StatusConciliacao.CLOSED));
