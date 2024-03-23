@@ -31,6 +31,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.Arrays;
 import java.util.List;
 
 @Route(value = "conciliar", layout = MainLayout.class)
@@ -73,17 +74,14 @@ public class ConciliarView extends VerticalLayout implements HasUrlParameter<Str
         ComposicaoLancamentosContabeis conciliacao = conciliacaoList.getLast();
         BalanceteDetailsLayout infoCards = new BalanceteDetailsLayout(balancete, conciliacao, saldoContabil, anexoStorageService);
         GridConciliar crud = new GridConciliar(balancete, contabeisService, balanceteId, responsavelRepository, infoCards);
+
         List<ComposicaoLancamentosContabeis> finalConciliacaoList = conciliacaoList;
         InputStreamFactory isf = () -> crud.exportToExcel(finalConciliacaoList);
         StreamResource excelStreamResource = new StreamResource("grid_data.xlsx", isf);
-        Anchor downloadLink = new Anchor(excelStreamResource, "");
-        downloadLink.getElement().setAttribute("download", true);
-        Button exportButton = new Button("Exportar para Excel");
-        exportButton.getStyle().setBackground("grey");
-        downloadLink.add(exportButton);
+
+        Anchor downloadLink = generateExcelDownloadLink(excelStreamResource);
+
         HorizontalLayout btns = new HorizontalLayout(startBtn, finishBtn, downloadLink);
-        exportButton.getElement().setAttribute("download", true);
-        exportButton.getElement().setAttribute("href", excelStreamResource);
         checkStatusforDisableorEnableBtn(conciliacao);
 
         crud.setEnabled(!conciliacao.getStatus().equals(StatusConciliacao.OPEN) && !conciliacao.getStatus().equals(StatusConciliacao.CLOSED));
@@ -102,6 +100,19 @@ public class ConciliarView extends VerticalLayout implements HasUrlParameter<Str
         conciliacaoContabil.setAlignItems(Alignment.CENTER);
 
         add(conciliacaoContabil);
+    }
+
+    @NotNull
+    private Anchor generateExcelDownloadLink(StreamResource excelStreamResource) {
+        Anchor downloadLink = new Anchor(excelStreamResource, "");
+        downloadLink.getElement().setAttribute("download", true);
+        Button exportButton = new Button("Exportar para Excel");
+        exportButton.getStyle().setBackground("darkgreen");
+        downloadLink.add(exportButton);
+        exportButton.setIcon(new Icon("download"));
+        exportButton.getElement().setAttribute("download", true);
+        exportButton.getElement().setAttribute("href", excelStreamResource);
+        return downloadLink;
     }
 
     private void checkStatusforDisableorEnableBtn(@NotNull ComposicaoLancamentosContabeis conciliacao) {

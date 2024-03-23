@@ -258,12 +258,12 @@
  },
  "themeJsonContents": {},
  "entryScripts": [
-  "VAADIN/build/indexhtml-370d8b61.js"
+  "VAADIN/build/indexhtml-05e60f65.js"
  ],
  "webComponents": [],
  "cvdlModules": {},
  "packageJsonHash": "080305589f0f2d6e70712400fabb1a4c941c7ca813243abc10232f71779ccf58",
  "indexHtmlGenerated": [
-  "  <script type=\"module\" crossorigin src=\"./VAADIN/build/indexhtml-370d8b61.js\"></script>"
+  "  <script type=\"module\" crossorigin src=\"./VAADIN/build/indexhtml-05e60f65.js\"></script>"
  ]
 }
