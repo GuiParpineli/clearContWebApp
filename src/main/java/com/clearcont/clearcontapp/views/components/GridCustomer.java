@@ -102,13 +102,12 @@ public class GridCustomer extends VerticalLayout {
 
         crud.setAddOperation(
                 customerContabil -> {
-                    ComposicaoLancamentosContabeis composicao;
-                    composicao = new ComposicaoLancamentosContabeis();
-                    composicao.setCustomerContabil(customerContabil);
+                    ComposicaoLancamentosContabeis composicao = new ComposicaoLancamentosContabeis();
                     customerContabil.setComposicaoLancamentosContabeis(composicao);
                     customerContabil.getComposicaoLancamentosContabeis().setBalancete(balancetePicker.getValue());
                     customerContabil.getComposicaoLancamentosContabeis().getBalancete().setClassificacao(TypeCount.ATIVO);
                     customerContabil.getComposicaoLancamentosContabeis().setResponsavel(responsavel);
+                    composicao.setCustomerContabil(customerContabil);
                     customerService.save(customerContabil);
                     List<CustomerContabil> updatedContabilCustomers = customerService.findByBalanceteID(balanceteID);
                     crud.setFindAllOperation(() ->
@@ -209,9 +208,8 @@ public class GridCustomer extends VerticalLayout {
         List<CustomerContabil> updatedContabilCustomers = customerService.findByBalanceteID(balanceteID);
         isf = () -> exportToExcel(
                 updatedContabilCustomers.stream().filter(
-                                customerContabilF ->
-                                        customerContabilF.getComposicaoLancamentosContabeis()
-                                                .getBalancete().getClassificacao().equals(TypeCount.ATIVO))
+                                customerContabilF -> customerContabilF.getComposicaoLancamentosContabeis()
+                                        .getBalancete().getClassificacao().equals(TypeCount.ATIVO))
                         .collect(Collectors.toList())
         );
         crud.refreshGrid();
