@@ -1,5 +1,6 @@
 package com.clearcont.clearcontapp.views.routes;
 
+import com.clearcont.clearcontapp.helpers.DownloadExcel;
 import com.clearcont.clearcontapp.helpers.MonthAndCompany;
 import com.clearcont.clearcontapp.model.ComposicaoLancamentosContabeis;
 import com.clearcont.clearcontapp.model.Controle;
@@ -61,26 +62,13 @@ public class ControleView extends Div implements MonthAndCompany {
 
             InputStreamFactory isf = () -> exportToExcel(controleList);
             StreamResource excelStreamResource = new StreamResource("controle.xlsx", isf);
-            Anchor downloadLink = createExcelDownloadLink(excelStreamResource);
+            Anchor downloadLink = DownloadExcel.generateExcelDownloadLink(excelStreamResource);
 
             add(new VerticalLayout(FlexComponent.Alignment.CENTER, new Div(new H1("Controle")), downloadLink, grid));
         }));
     }
 
-    @NotNull
-    private static Anchor createExcelDownloadLink(StreamResource excelStreamResource) {
-        Anchor downloadLink = new Anchor(excelStreamResource, "");
-        downloadLink.getElement().setAttribute("download", true);
-        Button exportButton = new Button("Exportar para Excel");
-        exportButton.getStyle().setBackground("darkgreen");
-        exportButton.setIcon(new Icon("download"));
-        downloadLink.add(exportButton);
-        exportButton.getElement().setAttribute("download", true);
-        exportButton.getElement().setAttribute("href", excelStreamResource);
-        return downloadLink;
-    }
-
-    public ByteArrayInputStream exportToExcel(List<Controle> itemList) {
+    private ByteArrayInputStream exportToExcel(List<Controle> itemList) {
         Workbook workbook = new XSSFWorkbook();
         Sheet sheet = workbook.createSheet("Data");
 

@@ -1,6 +1,7 @@
 package com.clearcont.clearcontapp.views.routes;
 
 import com.clearcont.clearcontapp.helpers.CookieFactory;
+import com.clearcont.clearcontapp.helpers.DownloadExcel;
 import com.clearcont.clearcontapp.model.*;
 import com.clearcont.clearcontapp.repository.ResponsavelRepository;
 import com.clearcont.clearcontapp.service.AnexoStorageServiceImpl;
@@ -79,7 +80,7 @@ public class ConciliarView extends VerticalLayout implements HasUrlParameter<Str
         InputStreamFactory isf = () -> crud.exportToExcel(finalConciliacaoList);
         StreamResource excelStreamResource = new StreamResource("grid_data.xlsx", isf);
 
-        Anchor downloadLink = generateExcelDownloadLink(excelStreamResource);
+        Anchor downloadLink = DownloadExcel.generateExcelDownloadLink(excelStreamResource);
 
         HorizontalLayout btns = new HorizontalLayout(startBtn, finishBtn, downloadLink);
         checkStatusforDisableorEnableBtn(conciliacao);
@@ -100,19 +101,6 @@ public class ConciliarView extends VerticalLayout implements HasUrlParameter<Str
         conciliacaoContabil.setAlignItems(Alignment.CENTER);
 
         add(conciliacaoContabil);
-    }
-
-    @NotNull
-    private Anchor generateExcelDownloadLink(StreamResource excelStreamResource) {
-        Anchor downloadLink = new Anchor(excelStreamResource, "");
-        downloadLink.getElement().setAttribute("download", true);
-        Button exportButton = new Button("Exportar para Excel");
-        exportButton.getStyle().setBackground("darkgreen");
-        downloadLink.add(exportButton);
-        exportButton.setIcon(new Icon("download"));
-        exportButton.getElement().setAttribute("download", true);
-        exportButton.getElement().setAttribute("href", excelStreamResource);
-        return downloadLink;
     }
 
     private void checkStatusforDisableorEnableBtn(@NotNull ComposicaoLancamentosContabeis conciliacao) {
