@@ -2,7 +2,7 @@ package br.com.clearcont.clearcontwebapp.views.routes
 
 
 import br.com.clearcont.clearcontwebapp.helpers.CookieFactory
-import br.com.clearcont.clearcontwebapp.helpers.DownloadExcel.generateExcelDownloadLink
+import br.com.clearcont.clearcontwebapp.helpers.generateExcelDownloadLink
 import br.com.clearcont.clearcontwebapp.models.Balancete
 import br.com.clearcont.clearcontwebapp.models.ComposicaoLancamentosContabeis
 import br.com.clearcont.clearcontwebapp.models.Responsavel

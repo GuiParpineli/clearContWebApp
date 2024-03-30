@@ -8,16 +8,12 @@ import org.springframework.stereotype.Service
 
 @Service
 class BalanceteService(private val repository: BalanceteRepository) {
-    val all: List<Balancete>
-        get() = repository.findAll()
+    val all: List<Balancete> = repository.findAll()
 
-    fun getById(balanceteId: Long): Balancete {
-        return repository.findById(balanceteId).get()
-    }
+    fun getById(balanceteId: Long): Balancete = repository.findById(balanceteId).get()
 
-    fun getByCompanyAndPeriod(id: Long, mes: String, ano: Int): List<Balancete> {
-        return repository.findBalanceteByEmpresa_IdAndMesAndAno(id, mes, ano)
-    }
+    fun getByCompanyAndPeriod(id: Long, mes: String, ano: Int): List<Balancete> =
+        repository.findBalanceteByEmpresa_IdAndMesAndAno(id, mes, ano)
 
     fun filterClassification(id: Long, mes: String, ano: Int, classification: TypeCount): List<Balancete> {
         return getByCompanyAndPeriod(id, mes, ano).stream()
@@ -25,17 +21,11 @@ class BalanceteService(private val repository: BalanceteRepository) {
             .toList()
     }
 
-    fun delete(balancete: Balancete) {
-        repository.delete(balancete)
-    }
+    fun delete(balancete: Balancete) = repository.delete(balancete)
 
-    fun update(balancete: Balancete): Balancete {
-        return repository.saveAndFlush(balancete)
-    }
+    fun update(balancete: Balancete): Balancete = repository.saveAndFlush(balancete)
 
-    fun save(balancete: Balancete): Balancete {
-        return repository.save(balancete)
-    }
+    fun save(balancete: Balancete): Balancete = repository.save(balancete)
 
     @Transactional
     fun saveAll(id: Long, balancetes: List<Balancete?>) {

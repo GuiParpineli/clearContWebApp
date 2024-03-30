@@ -22,15 +22,14 @@ class MainLayout(private val authenticatedUser: AuthenticatedUser) : AppLayout()
     init {
         createHeader()
         createDrawer()
-        if (authenticatedUser.get().isPresent && authenticatedUser.get().get().roles
-                .contains(Role.ADMIN)
-        ) addToDrawer(
-            VerticalLayout(
-                createHorizontalLayout("Dashboard", DashboardView::class.java, "dashboard"),
-                createHorizontalLayout("Clientes", CustomersView::class.java, "building"),
-                createHorizontalLayout("Fornecedores", FornecedoresView::class.java, "suitcase")
+        if (authenticatedUser.get().isPresent && authenticatedUser.get().get().roles.contains(Role.ADMIN))
+            addToDrawer(
+                VerticalLayout(
+                    createHorizontalLayout("Dashboard", DashboardView::class.java, "dashboard"),
+                    createHorizontalLayout("Clientes", CustomersView::class.java, "building"),
+                    createHorizontalLayout("Fornecedores", FornecedoresView::class.java, "suitcase")
+                )
             )
-        )
     }
 
     private fun createHeader() {
@@ -44,7 +43,7 @@ class MainLayout(private val authenticatedUser: AuthenticatedUser) : AppLayout()
 
         val logoutButton = Button("Logout")
         logoutButton.style.setMargin("10px").setColor("white")
-        logoutButton.addClickListener { e: ClickEvent<Button?>? ->
+        logoutButton.addClickListener {
             val ui = UI.getCurrent()
             val page = ui.page
             page.executeJs("return localStorage.clear()")

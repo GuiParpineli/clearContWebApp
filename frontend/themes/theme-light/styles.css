@@ -4,8 +4,8 @@
     --lumo-primary-color-50pct: #006c00;
     --lumo-primary-color-10pct: #32c932;
     --lumo-primary-color: green;
-    --vaadin-button-text-color: green;
-    --lumo-primary-text-color: black;
+    --vaadin-button-text-color: #000000;
+    --lumo-primary-text-color: #fdfdfd;
 
     vaadin-app-layout::part(navbar) {
         background-color: black;

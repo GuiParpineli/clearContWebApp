@@ -1,6 +1,6 @@
 package br.com.clearcont.clearcontwebapp.views.components
 
-import br.com.clearcont.clearcontwebapp.helpers.DownloadExcel.generateExcelDownloadLink
+import br.com.clearcont.clearcontwebapp.helpers.generateExcelDownloadLink
 import br.com.clearcont.clearcontwebapp.models.*
 import br.com.clearcont.clearcontwebapp.service.CustomerContabilService
 import com.vaadin.flow.component.AbstractField.ComponentValueChangeEvent

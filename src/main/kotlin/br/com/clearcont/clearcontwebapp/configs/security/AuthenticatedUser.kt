@@ -41,18 +41,14 @@ class AuthenticatedUser(
     }
 
     private fun clearCookie(cookieName: String) {
-        val request = VaadinServletRequest.getCurrent()
-            .httpServletRequest
-        val response = VaadinServletResponse.getCurrent()
-            .httpServletResponse
-
-        val k = Cookie(
-            cookieName, null
-        )
-        k.path = getRequestContextPath(request)
-        k.maxAge = 0
-        k.secure = request.isSecure
-        k.isHttpOnly = false
+        val request = VaadinServletRequest.getCurrent().httpServletRequest
+        val response = VaadinServletResponse.getCurrent().httpServletResponse
+        val k = Cookie(cookieName, null).apply {
+            path = getRequestContextPath(request)
+            maxAge = 0
+            secure = request.isSecure
+            isHttpOnly = false
+        }
         response.addCookie(k)
     }
 

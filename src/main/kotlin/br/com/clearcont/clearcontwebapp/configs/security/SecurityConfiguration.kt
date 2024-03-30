@@ -21,21 +21,16 @@ import javax.crypto.spec.SecretKeySpec
 @Configuration
 @EnableWebSecurity
 class SecurityConfiguration : VaadinWebSecurity() {
+
     @Value("\${jwt.auth.secret}")
     private val authSecret: String? = null
 
     @Bean
-    fun passwordEncoder(): PasswordEncoder {
-        return BCryptPasswordEncoder()
-    }
+    fun passwordEncoder(): PasswordEncoder = BCryptPasswordEncoder()
 
     @Bean
-    @Throws(Exception::class)
-    fun authenticationManager(authenticationConfiguration: AuthenticationConfiguration): AuthenticationManager {
-        return authenticationConfiguration.authenticationManager
-    }
+    fun authenticationManager(authenticationConfiguration: AuthenticationConfiguration): AuthenticationManager = authenticationConfiguration.authenticationManager
 
-    @Throws(Exception::class)
     public override fun configure(httpSecurity: HttpSecurity) {
         httpSecurity
             .authorizeHttpRequests { auth ->

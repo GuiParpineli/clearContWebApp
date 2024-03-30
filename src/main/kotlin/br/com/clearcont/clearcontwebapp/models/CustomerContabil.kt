@@ -45,10 +45,8 @@ class CustomerContabil() {
         }
 
     var composicaoCredito: String
-        get() =  composicaoLancamentosContabeis.getCredito()
-        set(composicaoCredito) {
-            composicaoLancamentosContabeis.setCredito(composicaoCredito.toDouble())
-        }
+        get() = composicaoLancamentosContabeis.getCredito()
+        set(composicaoCredito) = composicaoLancamentosContabeis.setCredito(composicaoCredito.toDouble())
 
     var composicaoHistorico: String?
         get() = composicaoLancamentosContabeis.historico

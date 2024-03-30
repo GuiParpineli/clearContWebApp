@@ -11,7 +11,7 @@ import java.io.IOException
 @Component
 @Order(Ordered.HIGHEST_PRECEDENCE)
 class RestSecurityFilter : Filter {
-    @Throws(IOException::class, ServletException::class)
+
     override fun doFilter(req: ServletRequest, res: ServletResponse, chain: FilterChain) {
         val response = res as HttpServletResponse
         val request = req as HttpServletRequest
