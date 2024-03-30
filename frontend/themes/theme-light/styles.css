@@ -1,0 +1,75 @@
+[theme~="light"] {
+    --lumo-base-color: hsl(230, 11%, 11%);
+    font-family: 'Montserrat', sans-serif;
+    --lumo-font-family: 'Montserrat';
+    --lumo-primary-color-50pct: #006c00;
+    --lumo-primary-color-10pct: #32c932;
+    --lumo-primary-color: green;
+    --vaadin-button-text-color: green;
+    --lumo-primary-text-color: black;
+
+    vaadin-app-layout::part(navbar) {
+        background-color: black;
+        color: white;
+        font-weight: bold;
+    }
+
+    .text-header-white {
+        color: white;
+    }
+
+    vaadin-app-layout::part(drawer) {
+        margin: 5px;
+        font-size: large;
+        border-radius: 20px;
+        background-color: black;
+        color: white;
+        text-decoration: none;
+        font-weight: bold;
+    }
+
+    vaadin-drawer-toggle {
+        color: white;
+    }
+
+    .drawer-link {
+        color: white;
+        text-decoration: none;
+    }
+
+    vaadin-combo-box::part(label) {
+        align-self: center;
+    }
+
+    vaadin-grid {
+        padding: 5px;
+        margin: 10px;
+    }
+
+    vaadin-grid::part(header-cell) {
+        background-color: black;
+        color: white;
+    }
+
+    vaadin-grid-sorter::part(indicators) {
+        color: white;
+    }
+
+    .card {
+        background-color: azure;
+        border: solid black 1px;
+        border-radius: 10px;
+        padding: 10px;
+        margin: 5px;
+    }
+
+    .button {
+        background-color: black;
+        color: white;
+        font-weight: bold;
+    }
+
+    .bold-text {
+        font-weight: bold;
+    }
+}

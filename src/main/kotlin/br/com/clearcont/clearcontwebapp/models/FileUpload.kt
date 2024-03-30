@@ -1,0 +1,17 @@
+package br.com.clearcont.clearcontwebapp.models
+
+import jakarta.persistence.*
+import java.sql.Timestamp
+
+@Entity
+class Anexo {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    val id: Long? = null
+    var name: String? = null
+    var ext: String? = null
+    var createdTime: Timestamp? = null
+
+    @ManyToOne
+    var composicaoLancamentosContabeis: ComposicaoLancamentosContabeis? = null
+}
