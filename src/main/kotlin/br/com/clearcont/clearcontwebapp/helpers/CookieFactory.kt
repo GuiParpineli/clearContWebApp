@@ -3,18 +3,17 @@ package br.com.clearcont.clearcontwebapp.helpers
 import com.vaadin.flow.server.VaadinResponse
 import com.vaadin.flow.server.VaadinService
 import jakarta.servlet.http.Cookie
-import lombok.AllArgsConstructor
+import java.util.logging.Logger
 
-@AllArgsConstructor
-@Slf4j
-class CookieFactory {
-    var response: VaadinResponse? = null
-    private val CLASS_NAME: String = CookieFactory::class.java.simpleName
+class CookieFactory(
+    private var response: VaadinResponse
+) {
+    private val log: Logger = Logger.getLogger(javaClass.name)
 
     fun setCookie(cookieName: String?, value: String?) {
         val cookie = Cookie(cookieName, value)
         cookie.maxAge = 60 * 60 * 24
-        response!!.addCookie(cookie)
+        response.addCookie(cookie)
     }
 
     fun getCookieInteger(cookieName: String): Long {
@@ -23,7 +22,7 @@ class CookieFactory {
         for (cookie in cookies) {
             if (cookie.name == cookieName) {
                 id = cookie.value.toLong()
-                log.info(CLASS_NAME, "O valor do cookie é: " + cookie.value)
+                log.info("O valor do cookie é:  ${cookie.value}")
                 break
             }
         }
@@ -36,7 +35,7 @@ class CookieFactory {
         for (cookie in cookies) {
             if (cookie.name == cookieName) {
                 cookieSaved = cookie.value
-                log.info(CLASS_NAME, "O valor do cookie é: " + cookie.value)
+                log.info("O valor do cookie é:  ${cookie.value}")
                 break
             }
         }

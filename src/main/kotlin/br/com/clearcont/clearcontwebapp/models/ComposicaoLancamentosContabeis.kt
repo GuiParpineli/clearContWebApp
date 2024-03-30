@@ -1,60 +1,66 @@
 package br.com.clearcont.clearcontwebapp.models
 
-import com.clearcont.clearcontapp.helpers.DecimalFormatBR
+import br.com.clearcont.clearcontwebapp.helpers.formatCurrencyBR
+import br.com.clearcont.clearcontwebapp.models.StatusConciliacao.PROGRESS
 import com.fasterxml.jackson.annotation.JsonIgnore
 import com.vaadin.flow.component.notification.Notification
 import jakarta.persistence.*
-import jakarta.validation.constraints.NotNull
 import java.text.NumberFormat
 import java.text.ParseException
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.util.*
+import java.util.logging.Logger
 
 @Entity
-@AllArgsConstructor
-@Getter
-@Setter
-@NoArgsConstructor
-@Slf4j
 class ComposicaoLancamentosContabeis {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private val id: Long? = null
-    private var data: LocalDate = LocalDate.now()
-    private var historico: String? = null
-    private var debito: @NotNull Double? = 0.0
-    private var credito: @NotNull Double? = 0.0
-    var doubleSaldoContabil: Double = debito!! - credito!!
-        private set
+    val id: Long? = null
+    var data: LocalDate = LocalDate.now()
+    var historico: String = ""
+    private var debito: Double = 0.0
+    private var credito: Double = 0.0
+    var doubleSaldoContabil: Double = debito - credito
 
     @Enumerated(EnumType.STRING)
-    private var status = StatusConciliacao.OPEN
+    var status = StatusConciliacao.OPEN
 
-    @Setter
     @JsonIgnore
     @ManyToOne(fetch = FetchType.EAGER, cascade = [CascadeType.ALL])
     @JoinColumn(name = "balancete_id")
-    private var balancete: Balancete? = null
+    var balancete: Balancete? = null
 
-    @Setter
     @ManyToOne
-    private var responsavel: Responsavel
+    lateinit var responsavel: Responsavel
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "customer_contabil_id")
-    private val customerContabil: CustomerContabil? = null
+    lateinit var customerContabil: CustomerContabil
 
-    constructor(balancete: Balancete?, responsavel: Responsavel) {
-        this.data = LocalDate.now()
-        this.historico = ""
-        this.debito = 0.0
-        this.credito = 0.0
-        this.doubleSaldoContabil = 0.0
-        this.status = StatusConciliacao.PROGRESS
+    constructor(
+        data: LocalDate,
+        historico: String,
+        debito: Double,
+        credito: Double,
+        doubleSaldoContabil: Double,
+        status: StatusConciliacao,
+        balancete: Balancete?,
+        responsavel: Responsavel,
+        customerContabil: CustomerContabil
+    ) : this() {
+        this.data = data
+        this.historico = historico
+        this.debito = debito
+        this.credito = credito
+        this.doubleSaldoContabil = doubleSaldoContabil
+        this.status = PROGRESS
         this.balancete = balancete
         this.responsavel = responsavel
+        this.customerContabil = customerContabil
     }
+
+    constructor()
 
     constructor(responsavel: Responsavel) {
         this.responsavel = responsavel
@@ -62,8 +68,8 @@ class ComposicaoLancamentosContabeis {
 
     fun contarPontos(texto: String): Int {
         var contador = 0
-        for (i in 0 until texto.length) {
-            if (texto[i] == '.') {
+        for (element in texto) {
+            if (element == '.') {
                 contador++
             }
         }
@@ -78,6 +84,7 @@ class ComposicaoLancamentosContabeis {
 
 
     fun setDebito(debito: String) {
+        val log = Logger.getLogger(javaClass.name)
         val format = NumberFormat.getInstance(Locale.of("pt", "BR"))
         try {
             this.debito = format.parse(debito.replace("R$", "").trim { it <= ' ' }).toDouble()
@@ -87,8 +94,12 @@ class ComposicaoLancamentosContabeis {
             Notification.show("Erro")
         }
     }
+    fun setDebito(value : Double){
+        this.debito = value
+    }
 
     fun setCredito(credito: String) {
+        val log = Logger.getLogger(javaClass.name)
         val format = NumberFormat.getInstance(Locale.of("pt", "BR"))
         try {
             this.credito = format.parse(credito.replace("R$", "").trim { it <= ' ' }).toDouble()
@@ -100,14 +111,18 @@ class ComposicaoLancamentosContabeis {
     }
 
     fun getDebito(): String {
-        return DecimalFormatBR.getDecimalFormat().format(debito)
+        return formatCurrencyBR(debito)
     }
 
     fun getCredito(): String {
-        return DecimalFormatBR.getDecimalFormat().format(credito)
+        return formatCurrencyBR(credito)
     }
 
     fun getSaldoContabil(): String {
-        return DecimalFormatBR.getDecimalFormat().format(doubleSaldoContabil)
+        return formatCurrencyBR(doubleSaldoContabil)
+    }
+
+    fun setCredito(value: Double) {
+        this.credito = value
     }
 }

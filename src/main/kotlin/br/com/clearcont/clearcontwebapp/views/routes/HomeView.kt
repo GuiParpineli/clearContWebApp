@@ -8,8 +8,6 @@ import br.com.clearcont.clearcontwebapp.repository.EmpresaRepository
 import br.com.clearcont.clearcontwebapp.service.EmpresaGroupService
 import br.com.clearcont.clearcontwebapp.views.MainLayout
 import com.vaadin.flow.component.AbstractField.ComponentValueChangeEvent
-import com.vaadin.flow.component.AttachEvent
-import com.vaadin.flow.component.ClickEvent
 import com.vaadin.flow.component.UI
 import com.vaadin.flow.component.button.Button
 import com.vaadin.flow.component.combobox.ComboBox
@@ -24,12 +22,13 @@ import com.vaadin.flow.component.page.Page
 import com.vaadin.flow.dom.Style
 import com.vaadin.flow.router.PageTitle
 import com.vaadin.flow.router.Route
-import com.vaadin.flow.server.VaadinService
+import com.vaadin.flow.server.VaadinResponse
 import jakarta.annotation.security.PermitAll
 import org.springframework.beans.factory.annotation.Value
 import java.time.Month
 import java.time.format.TextStyle
 import java.util.*
+import java.util.logging.Logger
 import java.util.stream.Stream
 
 @Route(value = "", layout = MainLayout::class)
@@ -37,8 +36,10 @@ import java.util.stream.Stream
 @PermitAll
 class HomeView(empresaGroupService: EmpresaGroupService, empresaRepository: EmpresaRepository?) : Div(),
     MonthAndCompany {
-    override var empresa: Empresa? = null
+    var log: Logger = Logger.getLogger(javaClass.name)
+    override lateinit var empresa: Empresa
     override var month: String? = null
+
 
     @Value("\${version}")
     private val version: String? = null
@@ -46,13 +47,13 @@ class HomeView(empresaGroupService: EmpresaGroupService, empresaRepository: Empr
     private fun setComboBoxValues(companyPicker: ComboBox<String>, monthPicker: ComboBox<String>) {
         UI.getCurrent().page.executeJs("return sessionStorage.getItem('month')")
             .then(String::class.java) { savedMonth: String? ->
-                if (savedMonth != null && !savedMonth.isEmpty()) {
+                if (!savedMonth.isNullOrEmpty()) {
                     monthPicker.value = savedMonth
                 }
             }
         UI.getCurrent().page.executeJs("return sessionStorage.getItem('company-name')")
             .then(String::class.java) { savedCompanyName: String? ->
-                if (savedCompanyName != null && !savedCompanyName.isEmpty()) {
+                if (!savedCompanyName.isNullOrEmpty()) {
                     companyPicker.value = savedCompanyName
                 }
             }
@@ -63,26 +64,36 @@ class HomeView(empresaGroupService: EmpresaGroupService, empresaRepository: Empr
         val page = ui.page
         getCompany(empresaRepository!!) { empresa: Empresa? ->
             getMonth { month: String? ->
-                val cookieFactory = CookieFactory(VaadinService.getCurrentResponse())
+                val cookieFactory = CookieFactory(VaadinResponse.getCurrent())
                 val id = cookieFactory.getCookieInteger("company-group-id")
                 val companyList = empresaGroupService.getByID(id)
 
-                log.info("ID COMPANY GROUP RETORNADA: " + companyList.id)
-                log.info("QUANTIDADE DE EMPRESAS NO GRUPO RETORNADA: " + companyList.empresas!!.size)
+                if (companyList != null) {
+                    log.info("ID COMPANY GROUP RETORNADA: " + companyList.id)
+                }
+                if (companyList != null) {
+                    log.info("QUANTIDADE DE EMPRESAS NO GRUPO RETORNADA: " + companyList.empresas!!.size)
+                }
 
                 val h1 = H1("Sistema de Conciliação Contábil")
                 val logo = Image("./images/logo-clear-black.png", "Logo cont")
                 logo.maxHeight = "200px"
 
-                val companyPicker = getCompanyPicker(companyList, page)
-                val monthPicker = getMonthPicker(companyPicker, page)
+                val companyPicker = companyList?.let { getCompanyPicker(it, page) }
+                val monthPicker = companyPicker?.let { getMonthPicker(it, page) }
 
                 UI.getCurrent()
-                    .addAttachListener { event: AttachEvent? -> setComboBoxValues(companyPicker, monthPicker) }
+                    .addAttachListener {
+                        if (companyPicker != null) {
+                            if (monthPicker != null) {
+                                setComboBoxValues(companyPicker, monthPicker)
+                            }
+                        }
+                    }
 
                 if (month != null && empresa!!.nomeEmpresa != null) {
-                    monthPicker.setValue(month)
-                    companyPicker.setValue(empresa.nomeEmpresa)
+                    monthPicker?.value = month
+                    companyPicker?.value = empresa.nomeEmpresa
                 }
 
                 val horizontalLayout = HorizontalLayout(companyPicker, monthPicker)
@@ -132,7 +143,7 @@ class HomeView(empresaGroupService: EmpresaGroupService, empresaRepository: Empr
                 val confirmButton = Button("Confirmar")
                 confirmButton.style.setBackground("green")
                 confirmButton.style["color"] = "white"
-                confirmButton.addClickListener { click: ClickEvent<Button?>? -> UI.getCurrent().navigate("/balancete") }
+                confirmButton.addClickListener { UI.getCurrent().navigate("/balancete") }
                 return confirmButton
             }
 
@@ -147,7 +158,7 @@ class HomeView(empresaGroupService: EmpresaGroupService, empresaRepository: Empr
             companyPicker.addValueChangeListener { event: ComponentValueChangeEvent<ComboBox<String?>?, String> ->
                 page.executeJs("sessionStorage.setItem($1, $1)", "company-name", event.value)
                 page.executeJs("sessionStorage.setItem('company-name', $0)", event.value)
-                log.info("EMPRESA SELECIONADA: " + event.value)
+                println("EMPRESA SELECIONADA: " + event.value)
             }
             return companyPicker
         }

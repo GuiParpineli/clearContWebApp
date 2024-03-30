@@ -1,6 +1,6 @@
 package br.com.clearcont.clearcontwebapp.configs.security
 
-import br.com.clearcont.clearcontwebapp.models.User
+import br.com.clearcont.clearcontwebapp.models.ApplicationUser
 import br.com.clearcont.clearcontwebapp.repository.UserRepository
 import com.vaadin.flow.server.VaadinServletRequest
 import com.vaadin.flow.server.VaadinServletResponse
@@ -25,7 +25,7 @@ class AuthenticatedUser(
                 .filter { authentication: Authentication? -> authentication !is AnonymousAuthenticationToken }
         }
 
-    fun get(): Optional<User> {
+    fun get(): Optional<ApplicationUser> {
         return authentication.map { authentication: Authentication -> userRepository.findByUsername(authentication.name) }
     }
 

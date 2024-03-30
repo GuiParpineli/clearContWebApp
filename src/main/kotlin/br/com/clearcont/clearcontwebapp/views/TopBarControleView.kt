@@ -1,6 +1,6 @@
 package br.com.clearcont.clearcontwebapp.views
 
-import br.com.clearcont.clearcontwebapp.helpers.DecimalFormatBR.decimalFormat
+import br.com.clearcont.clearcontwebapp.helpers.formatCurrencyBR
 import br.com.clearcont.clearcontwebapp.models.Empresa
 import br.com.clearcont.clearcontwebapp.repository.EmpresaRepository
 import br.com.clearcont.clearcontwebapp.service.ControleService
@@ -25,6 +25,8 @@ import java.util.function.Consumer
 class TopBarControleView(controleService: ControleService, empresaRepository: EmpresaRepository) : FlexLayout() {
     var month: String? = null
     var empresa: Empresa? = null
+    private var ui: UI = UI.getCurrent()
+    private var page: Page = ui.page
 
     fun createSeparator(): Div {
         val separator = Div()
@@ -33,13 +35,10 @@ class TopBarControleView(controleService: ControleService, empresaRepository: Em
         return separator
     }
 
-    var ui: UI = UI.getCurrent()
-    var page: Page = ui.page
-
     private fun getCompany(empresaRepository: EmpresaRepository, callback: Consumer<Empresa?>) {
         page.executeJs("return sessionStorage.getItem($0)", "company-name")
             .then { item: JsonValue ->
-                setEmpresa(empresaRepository.findEmpresaByNomeEmpresa(item.asString()).orElseThrow())
+                empresa = empresaRepository.findEmpresaByNomeEmpresa(item.asString()).orElseThrow()
                 println("Valor do sessionStorage para 'company-name': " + item.asString())
                 callback.accept(empresa)
             }
@@ -48,7 +47,7 @@ class TopBarControleView(controleService: ControleService, empresaRepository: Em
     private fun getMonth(callback: Consumer<String?>) {
         page.executeJs("return sessionStorage.getItem($0)", "month")
             .then { item: JsonValue ->
-                setMonth(item.asString())
+                month = item.asString()
                 println("Valor do sessionStorage para 'month': " + item.asString())
                 callback.accept(month)
             }
@@ -60,8 +59,8 @@ class TopBarControleView(controleService: ControleService, empresaRepository: Em
                 val year = LocalDate.now().year
                 val id = empresa!!.id
 
-                val empresaTopBar = controleService.getAllByMonthAndCompanyID(id!!, month!!, year).last.empresa
-                val controle = controleService.getAllByMonthAndCompanyID(id, month, year).first
+                val empresaTopBar = controleService.getAllByMonthAndCompanyID(id!!, month!!, year).last().empresa
+                val controle = controleService.getAllByMonthAndCompanyID(id, month, year).first()
                 val logo = Image("./images/logo-white.png", "Logo")
                 logo.maxHeight = "80px"
                 logo.style.setPadding("50px")
@@ -72,7 +71,7 @@ class TopBarControleView(controleService: ControleService, empresaRepository: Em
                     Paragraph(empresaTopBar.cnpj),
                     Paragraph(
                         controle.dataCompetencia
-                            .format(DateTimeFormatter.ofPattern("dd-MM-yyyy"))
+                            ?.format(DateTimeFormatter.ofPattern("dd-MM-yyyy"))
                     )
                 )
                 val b3 = TopBarText.make("Resumo Balancete:", "ATIVO:", "PASSIVO:", "PL:", "RESULTADO:")
@@ -81,7 +80,7 @@ class TopBarControleView(controleService: ControleService, empresaRepository: Em
                     Paragraph(controle.circulante!!.name),
                     Paragraph(controle.getSaldoAnalise()),
                     Paragraph(controle.getSaldoBalancete()),
-                    Paragraph(decimalFormat.format(controle.doubleSaldoBalancete!! - controle.doubleSaldoAnalise!!))
+                    Paragraph(formatCurrencyBR(controle.doubleSaldoBalancete - controle.doubleSaldoAnalise))
                 )
                 val b5 = Div(
                     VerticalLayout(

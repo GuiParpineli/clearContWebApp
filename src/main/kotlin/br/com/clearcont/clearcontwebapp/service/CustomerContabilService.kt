@@ -13,8 +13,8 @@ class CustomerContabilService(private val repository: CustomerContabilRepository
         repository.save(customer)
     }
 
-    fun findByBalanceteID(id: Long?): List<CustomerContabil> {
-        return repository.findAllByComposicaoLancamentosContabeis_Balancete_Id(id)
+    fun findByBalanceteID(id: Long): List<CustomerContabil> {
+        return repository.findCustomerContabilByBalanceteId(id)
     }
 
     fun update(customerContabil: CustomerContabil): CustomerContabil {

@@ -1,11 +1,10 @@
-package br.com.clearcont.clearcontwebapp.views
+package br.com.clearcont.clearcontwebapp.views.components
 
 import br.com.clearcont.clearcontwebapp.helpers.DownloadExcel.generateExcelDownloadLink
 import br.com.clearcont.clearcontwebapp.models.*
 import br.com.clearcont.clearcontwebapp.service.CustomerContabilService
 import com.vaadin.flow.component.AbstractField.ComponentValueChangeEvent
 import com.vaadin.flow.component.HasValue
-import com.vaadin.flow.component.HasValue.ValueChangeListener
 import com.vaadin.flow.component.combobox.ComboBox
 import com.vaadin.flow.component.datepicker.DatePicker
 import com.vaadin.flow.component.html.Anchor
@@ -29,7 +28,7 @@ import java.util.stream.Collectors
 
 
 @Transactional
-class GridFornecedores(
+open class GridFornecedores(
     customerService: CustomerContabilService,
     balancetes: List<Balancete?>,
     responsavel: Responsavel?,
@@ -116,7 +115,7 @@ class GridFornecedores(
         crud.setFindAllOperation {
             contabilCustomers.stream().filter { customerContabil: CustomerContabil ->
                 customerContabil.composicaoLancamentosContabeis
-                    .balancete!!.classificacao == TypeCount.PASSIVO
+                    ?.balancete!!.classificacao == TypeCount.PASSIVO
             }.toList()
         }
 
@@ -133,7 +132,7 @@ class GridFornecedores(
             crud.setFindAllOperation {
                 updatedContabilCustomers.stream().filter { customerContabilF: CustomerContabil ->
                     customerContabilF.composicaoLancamentosContabeis
-                        .balancete!!.classificacao == TypeCount.PASSIVO
+                        ?.balancete!!.classificacao == TypeCount.PASSIVO
                 }
                     .collect(Collectors.toList())
             }
@@ -218,7 +217,7 @@ class GridFornecedores(
             exportToExcel(
                 updatedContabilCustomers.stream().filter { customerContabilF: CustomerContabil ->
                     customerContabilF.composicaoLancamentosContabeis
-                        .balancete!!.classificacao == TypeCount.PASSIVO
+                        ?.balancete!!.classificacao == TypeCount.PASSIVO
                 }
                     .collect(Collectors.toList())
             )

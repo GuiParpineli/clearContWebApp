@@ -15,11 +15,11 @@ class BalanceteService(private val repository: BalanceteRepository) {
         return repository.findById(balanceteId).get()
     }
 
-    fun getByCompanyAndPeriod(id: Long?, mes: String?, ano: Int?): List<Balancete> {
+    fun getByCompanyAndPeriod(id: Long, mes: String, ano: Int): List<Balancete> {
         return repository.findBalanceteByEmpresa_IdAndMesAndAno(id, mes, ano)
     }
 
-    fun filterClassification(id: Long?, mes: String?, ano: Int?, classification: TypeCount): List<Balancete> {
+    fun filterClassification(id: Long, mes: String, ano: Int, classification: TypeCount): List<Balancete> {
         return getByCompanyAndPeriod(id, mes, ano).stream()
             .filter { balancete: Balancete -> balancete.classificacao == classification }
             .toList()
@@ -38,7 +38,7 @@ class BalanceteService(private val repository: BalanceteRepository) {
     }
 
     @Transactional
-    fun saveAll(id: Long?, balancetes: List<Balancete?>) {
+    fun saveAll(id: Long, balancetes: List<Balancete?>) {
         repository.deleteAllByEmpresa_Id(id)
         repository.saveAll(balancetes)
     }

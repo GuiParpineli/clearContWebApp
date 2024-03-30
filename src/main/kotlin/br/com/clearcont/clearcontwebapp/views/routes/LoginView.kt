@@ -7,9 +7,9 @@ import com.vaadin.flow.component.login.LoginI18n
 import com.vaadin.flow.component.login.LoginOverlay
 import com.vaadin.flow.router.PageTitle
 import com.vaadin.flow.router.Route
-import com.vaadin.flow.server.VaadinService
+import com.vaadin.flow.server.VaadinResponse
 
-@Route(value = "login", layout = MainLayout::class)
+@Route(value = "/login", layout = MainLayout::class)
 @PageTitle("Login")
 class LoginView(service: UserAppService) : LoginOverlay() {
     init {
@@ -28,10 +28,10 @@ class LoginView(service: UserAppService) : LoginOverlay() {
         addLoginListener { e: LoginEvent ->
             val user = service.getUserByUserName(e.username)
             if (user != null) {
-                val cookieFactory = CookieFactory(VaadinService.getCurrentResponse())
+                val cookieFactory = CookieFactory(VaadinResponse.getCurrent())
                 cookieFactory.setCookie("company-group-id", user.empresaGroup.id.toString())
                 cookieFactory.setCookie("username", e.username)
-                cookieFactory.setCookie("responsavel-id", user.responsavel.id.toString())
+                cookieFactory.setCookie("responsavel-id", user.responsavel?.id.toString())
             }
         }
     }

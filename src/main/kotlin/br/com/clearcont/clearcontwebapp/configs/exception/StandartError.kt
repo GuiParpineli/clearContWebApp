@@ -1,3 +1,9 @@
 package br.com.clearcont.clearcontwebapp.configs.exception
 
-data class StandartError()
+import java.io.Serializable
+
+data class StandartError(
+    val code: Int,
+    val error: String,
+    val message: String
+) : Serializable

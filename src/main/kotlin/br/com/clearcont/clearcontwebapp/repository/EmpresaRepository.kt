@@ -6,6 +6,6 @@ import org.springframework.stereotype.Repository
 import java.util.*
 
 @Repository
-interface EmpresaRepository : JpaRepository<Empresa?, Long?> {
-    fun findEmpresaByNomeEmpresa(nome: String?): Optional<Empresa?>?
+interface EmpresaRepository : JpaRepository<Empresa, Long> {
+    fun findEmpresaByNomeEmpresa(nome: String): Optional<Empresa>
 }

@@ -1,5 +1,6 @@
 package br.com.clearcont.clearcontwebapp.service
 
+import br.com.clearcont.clearcontwebapp.helpers.formatCurrencyBR
 import br.com.clearcont.clearcontwebapp.models.ComposicaoLancamentosContabeis
 import br.com.clearcont.clearcontwebapp.models.CustomerContabil
 import br.com.clearcont.clearcontwebapp.models.StatusConciliacao
@@ -9,7 +10,6 @@ import jakarta.persistence.EntityManager
 import jakarta.transaction.Transactional
 import org.springframework.stereotype.Service
 import org.vaadin.crudui.crud.impl.GridCrud
-import java.text.DecimalFormat
 
 @Service
 class ComposicaoLancamentosContabeisService(
@@ -55,15 +55,13 @@ class ComposicaoLancamentosContabeisService(
     }
 
     fun atualizarSaldoContabil(balanceteId: Long?, crud: GridCrud<*>) {
-        val formatter: DecimalFormat = getDecimalFormat()
         val saldoContabil = getSaldoContabil(balanceteId)
         crud.grid.getColumnByKey("saldoContabil")
-            .setFooter("TOTAL SALDO: R$" + formatter.format(saldoContabil))
+            .setFooter("TOTAL SALDO: R$" + formatCurrencyBR(saldoContabil))
     }
 
     fun getTotalOpen(responsavelID: Long?): Int {
-        val contabeisList = contabeisRepository.findComposicaoLancamentosContabeisByResponsavel_Id
-        responsavelID
+        val contabeisList = contabeisRepository.findComposicaoLancamentosContabeisByResponsavel_Id(responsavelID)
         var total = 0
         for (contabeis in contabeisList) {
             if (contabeis.status == StatusConciliacao.OPEN) {

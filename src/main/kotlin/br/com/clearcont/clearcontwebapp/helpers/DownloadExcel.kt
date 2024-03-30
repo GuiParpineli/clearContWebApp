@@ -7,14 +7,16 @@ import com.vaadin.flow.server.StreamResource
 
 object DownloadExcel {
     fun generateExcelDownloadLink(excelStreamResource: StreamResource?): Anchor {
-        val downloadLink = Anchor(excelStreamResource, "")
-        downloadLink.element.setAttribute("download", true)
-        val exportButton = Button("Exportar para Excel")
-        exportButton.style.setBackground("darkgreen")
-        downloadLink.add(exportButton)
-        exportButton.icon = Icon("download")
-        exportButton.element.setAttribute("download", true)
-        exportButton.element.setAttribute("href", excelStreamResource)
+        val exportButton = Button("Exportar para Excel").apply {
+            style.setBackground("darkgreen")
+            icon = Icon("download")
+            element.setAttribute("download", true)
+            element.setAttribute("href", excelStreamResource)
+        }
+        val downloadLink = Anchor(excelStreamResource, "").apply {
+            element.setAttribute("download", true)
+            add(exportButton)
+        }
         return downloadLink
     }
 }

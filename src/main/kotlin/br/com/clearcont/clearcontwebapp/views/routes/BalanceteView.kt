@@ -2,10 +2,7 @@ package br.com.clearcont.clearcontwebapp.views.routes
 
 import br.com.clearcont.clearcontwebapp.helpers.CookieFactory
 import br.com.clearcont.clearcontwebapp.helpers.MonthAndCompany
-import br.com.clearcont.clearcontwebapp.models.Balancete
-import br.com.clearcont.clearcontwebapp.models.ComposicaoLancamentosContabeis
-import br.com.clearcont.clearcontwebapp.models.Empresa
-import br.com.clearcont.clearcontwebapp.models.Responsavel
+import br.com.clearcont.clearcontwebapp.models.*
 import br.com.clearcont.clearcontwebapp.repository.EmpresaRepository
 import br.com.clearcont.clearcontwebapp.repository.ResponsavelRepository
 import br.com.clearcont.clearcontwebapp.service.BalanceteService
@@ -22,7 +19,7 @@ import com.vaadin.flow.component.upload.Upload
 import com.vaadin.flow.component.upload.receivers.MemoryBuffer
 import com.vaadin.flow.router.PageTitle
 import com.vaadin.flow.router.Route
-import com.vaadin.flow.server.VaadinService
+import com.vaadin.flow.server.VaadinResponse
 import jakarta.annotation.security.PermitAll
 import jakarta.transaction.Transactional
 import org.apache.poi.ss.usermodel.Row
@@ -32,7 +29,7 @@ import org.vaadin.crudui.crud.impl.GridCrud
 import org.vaadin.crudui.form.impl.form.factory.DefaultCrudFormFactory
 import java.io.IOException
 import java.time.LocalDate
-import java.util.function.Consumer
+import java.util.logging.Logger
 
 
 @Route(value = "balancete", layout = MainLayout::class)
@@ -45,29 +42,29 @@ class BalanceteView(
     private val responsavelRepository: ResponsavelRepository
 ) : Div(), MonthAndCompany {
     override var month: String? = null
-    override var empresa: Empresa? = null
+    override lateinit var empresa: Empresa
+    val log: Logger = Logger.getLogger(javaClass.name)
 
     init {
         processCompanyAndMonth(empresaRepository, service)
     }
 
     private fun processCompanyAndMonth(empresaRepository: EmpresaRepository, service: BalanceteService) {
-        val cookieFactory = CookieFactory(VaadinService.getCurrentResponse())
-
-        getCompany(empresaRepository, Consumer<Empresa?> { empresa: Empresa ->
+        val cookieFactory = CookieFactory(VaadinResponse.getCurrent())
+        getCompany(empresaRepository) { empresa: Empresa? ->
             getMonth { month: String? ->
                 verifySelectedCompanyAndMonthExistAndNavigate(empresa, month)
                 val responsavelID = cookieFactory.getCookieInteger("responsavel-id")
                 val responsavel = responsavelRepository.findById(responsavelID).orElseThrow()
-                val id = empresa.id
-                val companyName = empresa.nomeEmpresa
+                val id = empresa?.id
+                val companyName = empresa?.nomeEmpresa
                 log.info("MES DO BALANCETE: $month,  PERFIL ID: $id")
                 val balanceteData = service.getByCompanyAndPeriod(id!!, month!!, LocalDate.now().year)
 
                 val totalSize = balanceteData.size
                 log.info("TAMANHO TOTAL DA LISTA BALANCETE: $totalSize")
                 val year =
-                    if (balanceteData.isEmpty()) LocalDate.now().year.toString() else balanceteData.first.ano.toString()
+                    if (balanceteData.isEmpty()) LocalDate.now().year.toString() else balanceteData.first().ano.toString()
 
                 val titleText = H3(getTitle(companyName, month, year))
 
@@ -76,7 +73,7 @@ class BalanceteView(
                 val singleFileUpload = getUpload(service, empresa, month, responsavel)
                 add(title, grid, singleFileUpload)
             }
-        })
+        }
     }
 
     private fun getTitle(companyName: String?, month: String?, year: String): String {
@@ -99,13 +96,13 @@ class BalanceteView(
     private fun getUpload(
         service: BalanceteService,
         empresa: Empresa,
-        month: String?,
+        month: String,
         responsavel: Responsavel
     ): Upload {
         val memoryBuffer = MemoryBuffer()
         val singleFileUpload = Upload(memoryBuffer)
 
-        singleFileUpload.addSucceededListener { event: SucceededEvent? ->
+        singleFileUpload.addSucceededListener {
             try {
                 val workbook: Workbook = XSSFWorkbook(memoryBuffer.inputStream)
                 val sheet = workbook.getSheetAt(0)
@@ -124,16 +121,16 @@ class BalanceteView(
                             TypeCount.valueOf(row.getCell(3).stringCellValue),
                             month,
                             LocalDate.now().year,
-                            java.util.List.of<ComposicaoLancamentosContabeis>(ComposicaoLancamentosContabeis(responsavel))
+                            mutableListOf(ComposicaoLancamentosContabeis(responsavel))
                         )
                     )
                     service.saveAll(empresa.id!!, balancetes)
                     UI.getCurrent().page.reload()
-                    log.info("TAMANHO BALANTE INSERIDO : " + balancetes.size)
+                    log.info("TAMANHO BALANTE INSERIDO : ${balancetes.size}")
                 }
                 workbook.close()
             } catch (e: IOException) {
-                log.error("ERRO: " + e.message)
+                log.info("ERRO: ${e.message}")
             }
         }
         return singleFileUpload
@@ -157,7 +154,7 @@ class BalanceteView(
             grid.setFindAllOperation { balanceteData }
             grid.grid.addComponentColumn { balanceteComp: Balancete ->
                 val editButton = Button("Conciliar")
-                editButton.addClickListener { e: ClickEvent<Button?>? ->
+                editButton.addClickListener {
                     UI.getCurrent().navigate("conciliar/" + balanceteComp.id)
                 }
                 editButton

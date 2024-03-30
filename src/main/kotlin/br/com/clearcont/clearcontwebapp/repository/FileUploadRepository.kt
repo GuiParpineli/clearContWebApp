@@ -5,6 +5,6 @@ import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.stereotype.Repository
 
 @Repository
-interface FileUploadRepository : JpaRepository<FileUpload?, Long?> {
-    fun findAnexoByComposicaoLancamentosContabeis_Id(balanceteID: Long?): List<FileUpload?>?
+interface FileUploadRepository : JpaRepository<FileUpload, Long> {
+    fun findAnexoByComposicaoLancamentosContabeis_Id(balanceteID: Long): List<FileUpload>
 }

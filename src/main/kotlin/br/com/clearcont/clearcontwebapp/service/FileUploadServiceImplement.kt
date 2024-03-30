@@ -2,7 +2,7 @@ package br.com.clearcont.clearcontwebapp.service
 
 import br.com.clearcont.clearcontwebapp.models.FileUpload
 import br.com.clearcont.clearcontwebapp.models.ComposicaoLancamentosContabeis
-import br.com.clearcont.clearcontwebapp.repository.AnexoRepository
+import br.com.clearcont.clearcontwebapp.repository.FileUploadRepository
 import com.amazonaws.AmazonServiceException
 import com.amazonaws.SdkClientException
 import com.amazonaws.services.s3.AmazonS3
@@ -18,8 +18,8 @@ import java.util.logging.Logger
 import java.util.stream.Collectors
 
 @Service
-class AnexoStorageServiceImplement(private val anexoRepository: AnexoRepository, private val space: AmazonS3) :
-    AnexoStorageService {
+class FileUploadServiceImplement(private val fileUploadRepository: FileUploadRepository, private val space: AmazonS3) :
+    FileUploadService {
 
     @Value("\${do.spaces.bucket}")
     private lateinit var doSpaceBucket: String
@@ -42,23 +42,23 @@ class AnexoStorageServiceImplement(private val anexoRepository: AnexoRepository,
         fileUpload.name = fileName
         fileUpload.ext = extension
         fileUpload.createdTime = Timestamp(Date().time)
-        anexoRepository.save(fileUpload)
+        fileUploadRepository.save(fileUpload)
     }
 
-    fun getAnexosByComposicao(composicaoID: Long?): List<FileUpload> {
-        return anexoRepository.findAnexoByComposicaoLancamentosContabeis_Id(composicaoID)
+    fun getAnexosByComposicao(composicaoID: Long): List<FileUpload> {
+        return fileUploadRepository.findAnexoByComposicaoLancamentosContabeis_Id(composicaoID)
     }
 
     override fun deleteFile(fileId: Long?, companyName: String?) {
         val log = Logger.getLogger(javaClass.name)
-        val imageOpt = fileId?.let { anexoRepository.findById(it) }
+        val imageOpt = fileId?.let { fileUploadRepository.findById(it) }
         if (imageOpt != null) {
             if (imageOpt.isPresent) {
                 val anexo = imageOpt.get()
                 val key = "${fileDirectory + companyName + anexo.name}.${anexo.ext}"
                 try {
                     space.deleteObject(DeleteObjectRequest(doSpaceBucket, key))
-                    anexoRepository.delete(anexo)
+                    fileUploadRepository.delete(anexo)
                 } catch (e: AmazonServiceException) {
                     log.info(
                         "Caught an AmazonServiceException, which means your request made it "
@@ -95,7 +95,7 @@ class AnexoStorageServiceImplement(private val anexoRepository: AnexoRepository,
     }
 
     override val fileUpload: List<FileUpload>
-        get() = anexoRepository.findAll()
+        get() = fileUploadRepository.findAll()
 
     val anexoFileNames: List<String>
         get() {

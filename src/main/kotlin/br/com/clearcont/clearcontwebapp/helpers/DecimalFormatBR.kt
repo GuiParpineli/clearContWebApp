@@ -1,16 +1,9 @@
 package br.com.clearcont.clearcontwebapp.helpers
 
-import java.text.DecimalFormat
-import java.text.DecimalFormatSymbols
+import java.text.NumberFormat
+import java.util.*
 
-object DecimalFormatBR {
-    val decimalFormat: DecimalFormat
-        get() {
-            val formatter = DecimalFormat("R$ #,###.##")
-            val s = DecimalFormatSymbols()
-            s.decimalSeparator = ','
-            s.groupingSeparator = '.'
-            formatter.decimalFormatSymbols = s
-            return formatter
-        }
+fun formatCurrencyBR(value: Double): String {
+    val brLocale = Locale.of("pt", "BR")
+    return NumberFormat.getCurrencyInstance(brLocale).format(value)
 }

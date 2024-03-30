@@ -1,21 +1,20 @@
 package br.com.clearcont.clearcontwebapp.models
 
 import jakarta.persistence.Entity
+import jakarta.persistence.GeneratedValue
+import jakarta.persistence.GenerationType
 import jakarta.persistence.Id
-import lombok.Getter
 import java.time.LocalDateTime
 
 @Entity
-@Setter
-@Getter
 class ComposicaoDePendencia {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private val id: Long? = null
-    private val data: LocalDateTime? = null
-    private val descricao: String? = null
-    private val valor: Double? = null
-    private val areaResposavel: String? = null
-    private val observacoes: String? = null
-    private val aging: String? = null
+    val id: Long? = null
+    val data: LocalDateTime? = null
+    val descricao: String? = null
+    val valor: Double? = null
+    val areaResposavel: String? = null
+    val observacoes: String? = null
+    val aging: String? = null
 }

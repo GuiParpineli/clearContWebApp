@@ -5,4 +5,4 @@ import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.stereotype.Repository
 
 @Repository
-interface ComposicaoDePendenciaRepository : JpaRepository<ComposicaoDePendencia?, Long?>
+interface ComposicaoDePendenciaRepository : JpaRepository<ComposicaoDePendencia, Long>

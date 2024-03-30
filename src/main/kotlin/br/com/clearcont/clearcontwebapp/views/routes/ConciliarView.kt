@@ -1,7 +1,6 @@
 package br.com.clearcont.clearcontwebapp.views.routes
 
-import br.com.clearcont.clearcontwebapp.details.BalanceteDetailsLayout
-import br.com.clearcont.clearcontwebapp.details.GridConciliar
+
 import br.com.clearcont.clearcontwebapp.helpers.CookieFactory
 import br.com.clearcont.clearcontwebapp.helpers.DownloadExcel.generateExcelDownloadLink
 import br.com.clearcont.clearcontwebapp.models.Balancete
@@ -12,7 +11,9 @@ import br.com.clearcont.clearcontwebapp.repository.ResponsavelRepository
 import br.com.clearcont.clearcontwebapp.service.BalanceteService
 import br.com.clearcont.clearcontwebapp.service.ComposicaoLancamentosContabeisService
 import br.com.clearcont.clearcontwebapp.service.FileUploadServiceImplement
-import com.vaadin.flow.component.ClickEvent
+import br.com.clearcont.clearcontwebapp.views.MainLayout
+import br.com.clearcont.clearcontwebapp.views.components.GridConciliar
+import br.com.clearcont.clearcontwebapp.views.components.details.BalanceteDetailsLayout
 import com.vaadin.flow.component.UI
 import com.vaadin.flow.component.button.Button
 import com.vaadin.flow.component.confirmdialog.ConfirmDialog
@@ -29,10 +30,9 @@ import com.vaadin.flow.router.PageTitle
 import com.vaadin.flow.router.Route
 import com.vaadin.flow.server.InputStreamFactory
 import com.vaadin.flow.server.StreamResource
-import com.vaadin.flow.server.VaadinService
+import com.vaadin.flow.server.VaadinResponse
 import jakarta.annotation.security.PermitAll
 import org.springframework.beans.factory.annotation.Autowired
-import java.util.List
 import java.util.logging.Logger
 
 @Route(value = "conciliar", layout = MainLayout::class)
@@ -45,11 +45,11 @@ class ConciliarView @Autowired constructor(
     private val responsavelRepository: ResponsavelRepository
 ) : VerticalLayout(), HasUrlParameter<String> {
     var log: Logger = Logger.getLogger(javaClass.name)
-    var startBtn: Button = getStartBtn()
-    var finishBtn: Button = getFinishBtn()
+    private var startBtn: Button = getStartBtn()
+    private var finishBtn: Button = getFinishBtn()
 
     override fun setParameter(event: BeforeEvent, parameter: String) {
-        val cookieFactory = CookieFactory(VaadinService.getCurrentResponse())
+        val cookieFactory = CookieFactory(VaadinResponse.getCurrent())
         val balanceteId = parameter.toLong()
         val balancete = service.getById(balanceteId)
         log.info("BALANCETE ID: $balanceteId")
@@ -58,13 +58,19 @@ class ConciliarView @Autowired constructor(
 
         var conciliacaoList = contabeisService.getByBalanceteID(balanceteId)
         if (conciliacaoList.isEmpty()) {
-            conciliacaoList = List.of(ComposicaoLancamentosContabeis())
-            contabeisService.update(conciliacaoList.first)
+            conciliacaoList = listOf(ComposicaoLancamentosContabeis())
+            contabeisService.update(conciliacaoList.first())
         }
         val saldoContabil = contabeisService.getSaldoContabil(balanceteId)
 
-        val conciliacao = conciliacaoList.last
-        val infoCards = BalanceteDetailsLayout(balancete, conciliacao, saldoContabil, anexoStorageService)
+        val conciliacao = conciliacaoList.last()
+        val infoCards =
+            BalanceteDetailsLayout(
+                balancete,
+                conciliacao,
+                saldoContabil,
+                anexoStorageService
+            )
         val crud = GridConciliar(balancete, contabeisService, balanceteId, responsavelRepository, infoCards)
 
         val finalConciliacaoList = conciliacaoList
@@ -83,8 +89,8 @@ class ConciliarView @Autowired constructor(
         val dialogStart = getConfirmDialogStart(conciliacao, balancete, responsavel)
         val dialogEnd = getConfirmDialogEnd(conciliacao)
 
-        startBtn.addClickListener { click: ClickEvent<Button?>? -> dialogStart.open() }
-        finishBtn.addClickListener { click: ClickEvent<Button?>? -> dialogEnd.open() }
+        startBtn.addClickListener { dialogStart.open() }
+        finishBtn.addClickListener { dialogEnd.open() }
 
         log.info("ID COMPOSICAO LANCAMENTOS CONTABEIS: " + conciliacao.id)
 
@@ -132,13 +138,7 @@ class ConciliarView @Autowired constructor(
         dialog.setCancelable(true)
         dialog.setCancelText("Cancelar")
         dialog.setConfirmText("Confirmar")
-        dialog.addConfirmListener { dialogEvent: ConfirmEvent? ->
-            if (conciliacao.responsavel == null) {
-                contabeisService.saveWithCustomer(
-                    ComposicaoLancamentosContabeis(balancete, responsavel),
-                    CustomerContabil()
-                )
-            }
+        dialog.addConfirmListener {
             checkStatusforDisableorEnableBtn(conciliacao)
             conciliacao.status = StatusConciliacao.PROGRESS
             contabeisService.update(conciliacao)

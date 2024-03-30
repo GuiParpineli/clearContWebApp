@@ -10,7 +10,7 @@ plugins {
 }
 
 group = "br.com.clearcont"
-version = "0.0.1-SNAPSHOT"
+version = "0.9.0-RELEASE_CANDIDATE"
 
 java {
     sourceCompatibility = JavaVersion.VERSION_21
@@ -24,6 +24,15 @@ configurations {
 
 repositories {
     mavenCentral()
+    maven {
+        url = uri("https://maven.vaadin.com/vaadin-addons")
+    }
+    maven {
+        url = uri("https://maven.vaadin.com/vaadin-prereleases")
+    }
+    maven {
+        url = uri("https://mvnrepository.com/artifact/org.vaadin.crudui/crudui")
+    }
 }
 
 extra["springBootAdminVersion"] = "3.2.3"
@@ -33,11 +42,21 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-actuator")
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     implementation("org.springframework.boot:spring-boot-starter-security")
+    implementation("org.springframework.boot:spring-boot-starter-mail:3.2.4")
+    implementation("org.springframework.security:spring-security-oauth2-jose:6.2.3")
+    implementation("org.springframework.security:spring-security-oauth2-resource-server:6.2.1")
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
+    implementation("org.vaadin.crudui:crudui:7.1.0")
+    implementation("com.storedobject.chart:so-charts:3.2.4")
     implementation("com.vaadin:vaadin-spring-boot-starter")
+    implementation("org.apache.poi:poi-ooxml:5.2.5")
+    implementation("jakarta.servlet:jakarta.servlet-api:6.0.0")
     implementation("de.codecentric:spring-boot-admin-starter-client")
+    implementation("commons-io:commons-io:2.15.1")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
+    implementation("com.amazonaws:aws-java-sdk-s3:1.12.689")
+
     developmentOnly("org.springframework.boot:spring-boot-devtools")
     runtimeOnly("com.mysql:mysql-connector-j")
     annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")

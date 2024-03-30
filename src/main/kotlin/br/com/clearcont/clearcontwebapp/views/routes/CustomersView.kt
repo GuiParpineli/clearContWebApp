@@ -9,7 +9,7 @@ import br.com.clearcont.clearcontwebapp.repository.EmpresaRepository
 import br.com.clearcont.clearcontwebapp.repository.ResponsavelRepository
 import br.com.clearcont.clearcontwebapp.service.BalanceteService
 import br.com.clearcont.clearcontwebapp.service.CustomerContabilService
-import br.com.clearcont.clearcontwebapp.views.GridCustomer
+import br.com.clearcont.clearcontwebapp.views.components.GridCustomer
 import br.com.clearcont.clearcontwebapp.views.MainLayout
 import com.vaadin.flow.component.UI
 import com.vaadin.flow.component.html.H1
@@ -19,9 +19,10 @@ import com.vaadin.flow.component.orderedlayout.FlexLayout
 import com.vaadin.flow.component.orderedlayout.VerticalLayout
 import com.vaadin.flow.router.PageTitle
 import com.vaadin.flow.router.Route
-import com.vaadin.flow.server.VaadinService
+import com.vaadin.flow.server.VaadinResponse
 import jakarta.annotation.security.RolesAllowed
 import java.time.LocalDate
+import java.util.logging.Logger
 
 
 @Route(value = "clientes", layout = MainLayout::class)
@@ -34,7 +35,8 @@ class CustomersView(
     responsavelRepository: ResponsavelRepository
 ) : FlexLayout(), MonthAndCompany {
     override var month: String? = null
-    override var empresa: Empresa? = null
+    override lateinit var empresa: Empresa
+    var log: Logger = Logger.getLogger(javaClass.name)
 
     init {
         initializeView(customerContabilRepository, empresaRepository, balanceteService, responsavelRepository)
@@ -51,7 +53,7 @@ class CustomersView(
         ) { empresa: Empresa? ->
             getMonth { month: String? ->
                 verifySelectedCompanyAndMonthExistAndNavigate(empresa, month)
-                val cookieFactory = CookieFactory(VaadinService.getCurrentResponse())
+                val cookieFactory = CookieFactory(VaadinResponse.getCurrent())
                 val responsavelID = cookieFactory.getCookieInteger("responsavel-id")
                 val responsavel = responsavelRepository.findById(responsavelID).orElseThrow()
                 val empresaId = empresa!!.id

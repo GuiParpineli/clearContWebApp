@@ -11,12 +11,12 @@ import java.util.function.Consumer
 @Service
 @Transactional
 class ControleService(private val balanceteService: BalanceteService) {
-    fun getAllByMonthAndCompanyID(id: Long?, month: String?, year: Int?): List<Controle> {
+    fun getAllByMonthAndCompanyID(id: Long, month: String, year: Int): List<Controle> {
         val byCompanyAndPeriod = balanceteService.getByCompanyAndPeriod(id, month, year)
         val controles: MutableList<Controle> = ArrayList()
         byCompanyAndPeriod.forEach(
             Consumer { balancete: Balancete ->
-                if (!balancete.composicaoLancamentosContabeisList.isEmpty()) controles.add(
+                if (balancete.composicaoLancamentosContabeisList.isNotEmpty()) controles.add(
                     Controle(
                         null,
                         null,
@@ -34,7 +34,7 @@ class ControleService(private val balanceteService: BalanceteService) {
                         false,
                         false,
                         LocalDate.now(),
-                        balancete.composicaoLancamentosContabeisList.first.responsavel.nome,
+                        balancete.composicaoLancamentosContabeisList.first().responsavel.nome,
                         balancete.empresa
                     )
                 )

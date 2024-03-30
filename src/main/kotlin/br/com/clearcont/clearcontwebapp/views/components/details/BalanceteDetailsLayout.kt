@@ -1,6 +1,6 @@
 package br.com.clearcont.clearcontwebapp.views.components.details
 
-import br.com.clearcont.clearcontwebapp.helpers.DecimalFormatBR.decimalFormat
+import br.com.clearcont.clearcontwebapp.helpers.formatCurrencyBR
 import br.com.clearcont.clearcontwebapp.models.Balancete
 import br.com.clearcont.clearcontwebapp.models.ComposicaoLancamentosContabeis
 import br.com.clearcont.clearcontwebapp.service.FileUploadServiceImplement
@@ -21,18 +21,18 @@ class BalanceteDetailsLayout(
     saldoContabil: Double,
     anexoStorageService: FileUploadServiceImplement?
 ) : HorizontalLayout() {
-    var diferencaLayout: FlexLayout = FlexLayout()
-    var diferencaValue: Text = Text("0.00")
+    private var diferencaLayout: FlexLayout = FlexLayout()
+    private var diferencaValue: Text = Text("0.00")
 
     init {
         val accountName = createStyledLayout("Nome da conta: ", balancete.nomeConta)
         val accountNumber = createStyledLayout("Numero da conta: ", balancete.numeroConta.toString())
         val conciliationStatusLabel = createStyledLayout("Status conciliação: ", conciliacao.status.value)
         val composicaoSaldoLayout =
-            createStyledLayout("Composição do Saldo Contábil: ", decimalFormat.format(saldoContabil))
+            createStyledLayout("Composição do Saldo Contábil: ", formatCurrencyBR(saldoContabil))
 
         val differenceSpan = Span(
-            decimalFormat.format(
+            formatCurrencyBR(
                 balancete.doubleTotalBalancete!! - saldoContabil
             )
         )
@@ -55,7 +55,11 @@ class BalanceteDetailsLayout(
         documentosAnexadosTitle.style.setTextAlign(Style.TextAlign.CENTER)
         val documentosAnexadosDiv = Div(
             documentosAnexadosTitle,
-            DownloadComponent(anexoStorageService, conciliacao, balancete.empresa!!.nomeEmpresa)
+            anexoStorageService?.let { balancete.empresa!!.nomeEmpresa?.let { it1 ->
+                DownloadComponent(it, conciliacao,
+                    it1
+                )
+            } }
         )
         documentosAnexadosDiv.addClassName("card")
         documentosAnexadosDiv.minWidth = "200px"
@@ -69,7 +73,7 @@ class BalanceteDetailsLayout(
 
     fun updateDiferencaLayout(saldoContabilBalancete: Double, saldoContabilDaGrid: Double) {
         val diferenca = saldoContabilBalancete - saldoContabilDaGrid
-        diferencaValue.text = "R$ " + (decimalFormat.format(diferenca))
+        diferencaValue.text = "R$ " + (formatCurrencyBR(diferenca))
     }
 
     private fun createStyledLayout(label: String, value: String?): FlexLayout {

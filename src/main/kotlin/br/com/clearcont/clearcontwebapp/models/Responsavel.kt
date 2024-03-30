@@ -1,23 +1,27 @@
 package br.com.clearcont.clearcontwebapp.models
 
-import jakarta.persistence.Entity
-import jakarta.persistence.Id
-import jakarta.persistence.ManyToOne
-import jakarta.persistence.OneToOne
+import jakarta.persistence.*
 import jakarta.validation.constraints.Email
-import lombok.AllArgsConstructor
 
 @Entity
-@AllArgsConstructor
-@NoArgsConstructor
-@Getter
-class Responsavel(
-    @field:GeneratedValue(strategy = GenerationType.IDENTITY) @field:Id private val id: Long,
-    private val nome: String,
-    private val email: @Email String?,
-    @field:ManyToOne private val empresa: Empresa
-) {
-    @Setter
+class Responsavel() {
+    constructor(id: Long?, nome: String, email: String, empresa: Empresa) : this(){
+        this.id = id
+        this.nome = nome
+        this.email = email
+        this.empresa = empresa
+    }
+
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
+    var id: Long? = null
+    var nome: String = ""
+    var email: @Email String = ""
+
+    @ManyToOne
+    lateinit var empresa: Empresa
+
     @OneToOne(mappedBy = "responsavel", orphanRemoval = true)
-    private val user: User? = null
+    lateinit var applicationUser: ApplicationUser
+
 }

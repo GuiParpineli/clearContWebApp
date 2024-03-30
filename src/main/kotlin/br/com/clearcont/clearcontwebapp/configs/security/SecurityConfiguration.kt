@@ -38,10 +38,10 @@ class SecurityConfiguration : VaadinWebSecurity() {
     @Throws(Exception::class)
     public override fun configure(httpSecurity: HttpSecurity) {
         httpSecurity
-            .authorizeHttpRequests(Customizer { auth: AuthorizationManagerRequestMatcherRegistry ->
+            .authorizeHttpRequests { auth ->
                 auth.requestMatchers(AntPathRequestMatcher("/images/*.png")).permitAll()
                 auth.requestMatchers(AntPathRequestMatcher("/line-awesome/**/*.svg")).permitAll()
-            })
+            }
         super.configure(httpSecurity)
         setLoginView(httpSecurity, LoginView::class.java)
         setStatelessAuthentication(

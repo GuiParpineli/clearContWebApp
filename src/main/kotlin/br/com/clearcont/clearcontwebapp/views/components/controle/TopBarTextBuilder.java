@@ -1,4 +1,4 @@
-package br.com.clearcont.clearcontwebapp.views.controle;
+package br.com.clearcont.clearcontwebapp.views.components.controle;
 
 import org.jetbrains.annotations.NotNull;
 

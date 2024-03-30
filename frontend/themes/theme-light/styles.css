@@ -1,7 +1,6 @@
 [theme~="light"] {
-    --lumo-base-color: hsl(230, 11%, 11%);
-    font-family: 'Montserrat', sans-serif;
-    --lumo-font-family: 'Montserrat';
+    --lumo-base-color: hsl(0, 0%, 96%);
+    --lumo-font-family: 'Montserrat', 'sans-serif';
     --lumo-primary-color-50pct: #006c00;
     --lumo-primary-color-10pct: #32c932;
     --lumo-primary-color: green;

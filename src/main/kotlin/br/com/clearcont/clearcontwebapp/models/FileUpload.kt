@@ -4,7 +4,7 @@ import jakarta.persistence.*
 import java.sql.Timestamp
 
 @Entity
-class Anexo {
+class FileUpload {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long? = null

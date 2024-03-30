@@ -5,7 +5,7 @@ import java.time.format.TextStyle
 import java.util.*
 
 object Periodo {
-    var locale: Locale = Locale.Builder().setLanguage("pt").setRegion("BR").build()
+    private var locale: Locale = Locale.Builder().setLanguage("pt").setRegion("BR").build()
 
     fun getMonthByPeriodoString(periodo: String): Int {
         return when (periodo) {

@@ -1,45 +1,39 @@
 package br.com.clearcont.clearcontwebapp.models
 
-import com.clearcont.clearcontapp.helpers.DecimalFormatBR
-import jakarta.persistence.Entity
-import jakarta.persistence.Id
-import jakarta.persistence.ManyToOne
+import br.com.clearcont.clearcontwebapp.helpers.formatCurrencyBR
+import jakarta.persistence.*
 import java.time.LocalDate
 
-@AllArgsConstructor
-@NoArgsConstructor
 @Entity
-@Getter
-@Setter
-class Controle {
+class Controle(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private val id: Long? = null
-    private val subGrupo: String? = null
-    private val circulante: TypeCount? = null
-    private val nomeConta: String? = null
-    val doubleSaldoBalancete: Double? = null
-    val doubleSaldoAnalise: Double? = null
-    val doubleValorDiferenca: Double? = null
-    private val statusGeralConciliacao: String? = null
-    private val observacoes: String? = null
-    private val composicaoPreenchida: Boolean? = null
-    private val agingListadaPendencia: Boolean? = null
-    private val dataCompetencia: LocalDate? = null
-    private val nomeResponsavel: String? = null
-
+    val id: Long? = null,
+    val subGrupo: String? = null,
+    val circulante: TypeCount? = null,
+    val nomeConta: String? = null,
+    val doubleSaldoBalancete: Double = 0.0,
+    val doubleSaldoAnalise: Double= 0.0,
+    val doubleValorDiferenca: Double= 0.0,
+    val statusGeralConciliacao: String? = null,
+    val observacoes: String? = null,
+    val composicaoPreenchida: Boolean? = null,
+    val agingListadaPendencia: Boolean? = null,
+    val dataCompetencia: LocalDate? = null,
+    val nomeResponsavel: String? = null,
     @ManyToOne
-    private val empresa: Empresa? = null
+    val empresa: Empresa? = null
+) {
 
     fun getSaldoBalancete(): String {
-        return DecimalFormatBR.getDecimalFormat().format(doubleSaldoBalancete)
+        return formatCurrencyBR(doubleSaldoBalancete)
     }
 
     fun getSaldoAnalise(): String {
-        return DecimalFormatBR.getDecimalFormat().format(doubleSaldoAnalise)
+        return formatCurrencyBR(doubleSaldoAnalise)
     }
 
     fun getValorDiferenca(): String {
-        return DecimalFormatBR.getDecimalFormat().format(doubleValorDiferenca)
+        return formatCurrencyBR(doubleValorDiferenca)
     }
 }

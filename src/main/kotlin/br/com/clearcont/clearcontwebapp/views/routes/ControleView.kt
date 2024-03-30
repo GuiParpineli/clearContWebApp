@@ -24,13 +24,15 @@ import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
 import java.io.IOException
 import java.time.LocalDate
+import java.util.logging.Logger
 
 @Route(value = "controle", layout = MainLayout::class)
 @PageTitle("Controle")
 @PermitAll
 class ControleView(service: ControleService, empresaRepository: EmpresaRepository?) : Div(), MonthAndCompany {
     override var month: String? = null
-    override var empresa: Empresa? = null
+    override lateinit var empresa: Empresa
+    var log: Logger = Logger.getLogger(javaClass.name)
 
     init {
         getCompany(empresaRepository!!) { empresa: Empresa? ->

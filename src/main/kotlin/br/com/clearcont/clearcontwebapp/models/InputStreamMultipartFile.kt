@@ -7,17 +7,19 @@ import java.io.FileOutputStream
 import java.io.IOException
 import java.io.InputStream
 
-@JvmRecord
-data class InputStreamMultipartFile(val inputStream: InputStream, val name: String) : MultipartFile {
+class InputStreamMultipartFile() : MultipartFile {
+    constructor(inputStream: InputStream, FileName: String) : this() {
+    }
+
     override fun getName(): String {
         return name
     }
 
-    override fun getOriginalFilename(): String? {
+    override fun getOriginalFilename(): String {
         return name
     }
 
-    override fun getContentType(): String? {
+    override fun getContentType(): String {
         return "application/octet-stream"
     }
 

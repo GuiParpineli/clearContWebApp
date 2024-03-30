@@ -1,4 +1,4 @@
-package br.com.clearcont.clearcontwebapp.views.details
+package br.com.clearcont.clearcontwebapp.views.components
 
 import br.com.clearcont.clearcontwebapp.helpers.DownloadExcel.generateExcelDownloadLink
 import br.com.clearcont.clearcontwebapp.models.*
@@ -60,17 +60,14 @@ open class GridCustomer(
                 val updatedContabilCustomers = customerService.findByBalanceteID(balanceteID)
                 crud.setFindAllOperation {
                     updatedContabilCustomers.stream().filter { customerContabil: CustomerContabil ->
-                        customerContabil.composicaoLancamentosContabeis
-                            ?.balancete!!.classificacao == TypeCount.ATIVO
+                        customerContabil.composicaoLancamentosContabeis.balancete!!.classificacao == TypeCount.ATIVO
                     }.toList()
                 }
                 isf = InputStreamFactory {
                     exportToExcel(
                         updatedContabilCustomers.stream().filter { customerContabilF: CustomerContabil ->
-                            customerContabilF.composicaoLancamentosContabeis
-                                ?.balancete!!.classificacao == TypeCount.ATIVO
-                        }
-                            .collect(Collectors.toList())
+                            customerContabilF.composicaoLancamentosContabeis.balancete!!.classificacao == TypeCount.ATIVO
+                        }.collect(Collectors.toList())
                     )
                 }
                 updateDownloadLink(crud, customerService, downloadLink)
@@ -86,7 +83,7 @@ open class GridCustomer(
                 selectedDate.format(DateTimeFormatter.ofPattern("dd/MM/yyyy"))
             }
         }
-        crud.setCrudFormFactory(formFactory)
+        crud.crudFormFactory = formFactory
         crud.grid.setColumns(
             "numNotaFiscal",
             "dataVencimento",
@@ -110,16 +107,16 @@ open class GridCustomer(
         crud.setFindAllOperation {
             contabilCustomers.stream().filter { customerContabil: CustomerContabil ->
                 customerContabil.composicaoLancamentosContabeis
-                    ?.balancete!!.classificacao == TypeCount.ATIVO
+                    .balancete!!.classificacao == TypeCount.ATIVO
             }.toList()
         }
 
         crud.setAddOperation { customerContabil: CustomerContabil ->
             val composicao = ComposicaoLancamentosContabeis()
             customerContabil.composicaoLancamentosContabeis = composicao
-            customerContabil.composicaoLancamentosContabeis!!.balancete = balancetePicker.value
-            customerContabil.composicaoLancamentosContabeis!!.balancete!!.classificacao = TypeCount.ATIVO
-            customerContabil.composicaoLancamentosContabeis!!.responsavel = responsavel!!
+            customerContabil.composicaoLancamentosContabeis.balancete = balancetePicker.value
+            customerContabil.composicaoLancamentosContabeis.balancete!!.classificacao = TypeCount.ATIVO
+            customerContabil.composicaoLancamentosContabeis.responsavel = responsavel!!
             composicao.customerContabil = customerContabil
             customerService.save(customerContabil)
 
@@ -129,7 +126,7 @@ open class GridCustomer(
                 updatedContabilCustomers.stream().filter { customerContabilF: CustomerContabil ->
                     customerContabilF
                         .composicaoLancamentosContabeis
-                        ?.balancete
+                        .balancete
                         ?.classificacao == TypeCount.ATIVO
                 }.toList()
             }

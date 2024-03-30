@@ -18,13 +18,11 @@ import com.vaadin.flow.component.orderedlayout.HorizontalLayout
 import com.vaadin.flow.component.orderedlayout.VerticalLayout
 import com.vaadin.flow.router.RouterLink
 
-
-@CssImport("../frontend/themes/theme-light/styles.css")
 class MainLayout(private val authenticatedUser: AuthenticatedUser) : AppLayout() {
     init {
         createHeader()
         createDrawer()
-        if (authenticatedUser.get().isPresent && authenticatedUser.get().get().getRoles()
+        if (authenticatedUser.get().isPresent && authenticatedUser.get().get().roles
                 .contains(Role.ADMIN)
         ) addToDrawer(
             VerticalLayout(

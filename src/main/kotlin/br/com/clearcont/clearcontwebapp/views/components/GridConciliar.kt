@@ -1,4 +1,4 @@
-package br.com.clearcont.clearcontwebapp.views.details
+package br.com.clearcont.clearcontwebapp.views.components
 
 import br.com.clearcont.clearcontwebapp.helpers.CookieFactory
 import br.com.clearcont.clearcontwebapp.models.Balancete
@@ -6,12 +6,13 @@ import br.com.clearcont.clearcontwebapp.models.ComposicaoLancamentosContabeis
 import br.com.clearcont.clearcontwebapp.models.CustomerContabil
 import br.com.clearcont.clearcontwebapp.repository.ResponsavelRepository
 import br.com.clearcont.clearcontwebapp.service.ComposicaoLancamentosContabeisService
+import br.com.clearcont.clearcontwebapp.views.components.details.BalanceteDetailsLayout
 import com.vaadin.flow.component.AbstractField.ComponentValueChangeEvent
 import com.vaadin.flow.component.HasValue
 import com.vaadin.flow.component.datepicker.DatePicker
 import com.vaadin.flow.component.grid.Grid
 import com.vaadin.flow.component.orderedlayout.VerticalLayout
-import com.vaadin.flow.server.VaadinService
+import com.vaadin.flow.server.VaadinResponse
 import org.apache.poi.ss.usermodel.Workbook
 import org.apache.poi.xssf.usermodel.XSSFWorkbook
 import org.vaadin.crudui.crud.impl.GridCrud
@@ -42,7 +43,7 @@ class GridConciliar(
         get() = crud.grid
 
     init {
-        val cookieFactory = CookieFactory(VaadinService.getCurrentResponse())
+        val cookieFactory = CookieFactory(VaadinResponse.getCurrent())
         val crud = GridCrud(
             ComposicaoLancamentosContabeis::class.java
         )

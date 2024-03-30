@@ -1,48 +1,86 @@
 package br.com.clearcont.clearcontwebapp.models
 
-import jakarta.persistence.CascadeType
-import jakarta.persistence.Entity
-import jakarta.persistence.Id
-import jakarta.persistence.OneToOne
-import lombok.*
+import jakarta.persistence.*
+import org.apache.commons.lang3.builder.ToStringExclude
+import org.springframework.data.jpa.domain.AbstractPersistable_.id
+import org.springframework.security.config.Elements.CSRF
 import java.time.LocalDate
+import java.time.Year
 import java.time.format.DateTimeFormatter
+import java.time.temporal.ChronoUnit
+import java.time.temporal.TemporalAdjusters
 
 @Entity
-@NoArgsConstructor
-@AllArgsConstructor
-@Setter
-@Getter
-class CustomerContabil(
-    id: Long,
-    numNotaFiscal: Int,
-    dataVencimento: LocalDate?,
-    ISS: Double,
-    INSS: Double,
-    IRRF: Double,
-    CSRF: Double,
-    composicaoLancamentosContabeis: ComposicaoLancamentosContabeis?
-) {
+class CustomerContabil() {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private var id = 0L
-    private var numNotaFiscal = 0
-    private var dataVencimento: LocalDate? = LocalDate.now()
-    private var ISS = 0.0
-    private var INSS = 0.0
-    private var IRRF = 0.0
-    private var CSRF = 0.0
-    private var diasVencidos = 0
-    private var status: StatusConciliacao? = null
+    var id = 0L
+    var numNotaFiscal = 0
+    var dataVencimento: LocalDate? = LocalDate.now()
+    var ISS = 0.0
+    var INSS = 0.0
+    var IRRF = 0.0
+    var CSRF = 0.0
+    var diasVencidos: Int = 0
+        set(value) {
+            field = if (value == 0) 1 else value
+        }
 
-    @ToString.Exclude
+    var status: StatusConciliacao? = null
+
+    @ToStringExclude
     @OneToOne(mappedBy = "customerContabil", cascade = [CascadeType.ALL], orphanRemoval = true, fetch = FetchType.EAGER)
-    private var composicaoLancamentosContabeis: ComposicaoLancamentosContabeis?
+    lateinit var composicaoLancamentosContabeis: ComposicaoLancamentosContabeis
 
-    fun calcularDiasVencidos(mes: Int) {
-        val anoAtual: Int = Year.now().getValue()
-        val ultimoDiaDoMes = LocalDate.of(anoAtual, mes, 1).with(TemporalAdjusters.lastDayOfMonth())
-        if (dataVencimento != null) {
+    var composicaoData: LocalDate?
+        get() = composicaoLancamentosContabeis.data
+        set(composicaoData) {
+            composicaoLancamentosContabeis.data = composicaoData!!
+        }
+
+    var composicaoDebito: String
+        get() = composicaoLancamentosContabeis.getDebito()
+        set(composicaoDebito) {
+            composicaoLancamentosContabeis.setDebito(composicaoDebito.toDouble())
+        }
+
+    var composicaoCredito: String
+        get() =  composicaoLancamentosContabeis.getCredito()
+        set(composicaoCredito) {
+            composicaoLancamentosContabeis.setCredito(composicaoCredito.toDouble())
+        }
+
+    var composicaoHistorico: String?
+        get() = composicaoLancamentosContabeis.historico
+        set(composicaoHistorico) {
+            if (composicaoHistorico != null) {
+                composicaoLancamentosContabeis.historico = composicaoHistorico
+            }
+        }
+
+    fun getStatus(): String = composicaoLancamentosContabeis.status.name
+
+    init {
+        calcularDiasVencidos(LocalDate.now().month.value)
+    }
+
+    private fun getFixedMonthValue(month: Int): Int = if (month in 1..12) month else 1
+
+    fun getDataVencimento(): String {
+        val formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy")
+        return dataVencimento!!.format(formatter)
+    }
+
+    fun getDiasVencidos(month: Int): Int {
+        calcularDiasVencidos(month)
+        return diasVencidos
+    }
+
+    private fun calcularDiasVencidos(mes: Int) {
+        val fixedMes = getFixedMonthValue(mes)
+        val anoAtual = Year.now().value
+        val ultimoDiaDoMes = LocalDate.of(anoAtual, fixedMes, 1).with(TemporalAdjusters.lastDayOfMonth())
+        dataVencimento?.let {
             this.diasVencidos = ChronoUnit.DAYS.between(ultimoDiaDoMes, dataVencimento).toInt()
 
             if (diasVencidos < 0) {
@@ -53,26 +91,15 @@ class CustomerContabil(
         }
     }
 
-    fun setDiasVencidos(month: Int) {
-        var month = month
-        if (month == 0) month = 1
-        calcularDiasVencidos(month)
-    }
-
-    fun getDiasVencidos(month: Int): Int {
-        calcularDiasVencidos(month)
-        return diasVencidos
-    }
-
-    fun setDataVencimento(dataVencimento: LocalDate?) {
-        this.dataVencimento = dataVencimento
-    }
-
-    fun setStatus(status: StatusConciliacao?) {
-        this.status = status
-    }
-
-    init {
+    constructor(
+        id: Long,
+        numNotaFiscal: Int,
+        dataVencimento: LocalDate?,
+        ISS: Double,
+        INSS: Double,
+        IRRF: Double,
+        CSRF: Double
+    ) : this() {
         this.id = id
         this.numNotaFiscal = numNotaFiscal
         this.dataVencimento = dataVencimento
@@ -80,74 +107,6 @@ class CustomerContabil(
         this.INSS = INSS
         this.IRRF = IRRF
         this.CSRF = CSRF
-        this.composicaoLancamentosContabeis = composicaoLancamentosContabeis
-        calcularDiasVencidos(LocalDate.now().month.value)
     }
 
-    fun getDataVencimento(): String {
-        val formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy")
-        return dataVencimento!!.format(formatter)
-    }
-
-    var composicaoData: LocalDate?
-        get() = if (composicaoLancamentosContabeis != null) {
-            composicaoLancamentosContabeis.getData()
-        } else {
-            LocalDate.now()
-        }
-        set(composicaoData) {
-            if (composicaoLancamentosContabeis == null) {
-                composicaoLancamentosContabeis = ComposicaoLancamentosContabeis()
-            }
-            composicaoLancamentosContabeis.setData(composicaoData)
-        }
-
-    var composicaoDebito: String
-        get() = if (composicaoLancamentosContabeis != null) {
-            composicaoLancamentosContabeis!!.debito
-        } else {
-            "0"
-        }
-        set(composicaoDebito) {
-            if (composicaoLancamentosContabeis == null) {
-                composicaoLancamentosContabeis = ComposicaoLancamentosContabeis()
-            }
-            composicaoLancamentosContabeis!!.debito = composicaoDebito
-        }
-
-    var composicaoCredito: String
-        get() = if (composicaoLancamentosContabeis != null) {
-            composicaoLancamentosContabeis!!.credito
-        } else {
-            "0"
-        }
-        set(composicaoCredito) {
-            if (composicaoLancamentosContabeis == null) {
-                composicaoLancamentosContabeis = ComposicaoLancamentosContabeis()
-            }
-            composicaoLancamentosContabeis!!.credito = composicaoCredito
-        }
-
-    var composicaoHistorico: String?
-        get() = if (composicaoLancamentosContabeis != null) {
-            composicaoLancamentosContabeis.getHistorico()
-        } else {
-            "0"
-        }
-        set(composicaoHistorico) {
-            if (composicaoLancamentosContabeis != null) {
-                composicaoLancamentosContabeis.setHistorico(composicaoHistorico)
-            } else {
-                composicaoLancamentosContabeis = ComposicaoLancamentosContabeis()
-                composicaoLancamentosContabeis.setHistorico(composicaoHistorico)
-            }
-        }
-
-    fun getStatus(): String? {
-        return if (composicaoLancamentosContabeis != null) {
-            composicaoLancamentosContabeis.getStatus().name
-        } else {
-            StatusConciliacao.OPEN.name
-        }
-    }
 }

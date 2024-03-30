@@ -4,7 +4,7 @@ import br.com.clearcont.clearcontwebapp.models.FileUpload
 import br.com.clearcont.clearcontwebapp.models.ComposicaoLancamentosContabeis
 import org.springframework.web.multipart.MultipartFile
 
-interface AnexoStorageService {
+interface FileUploadService {
     fun saveFile(
         multipartFile: MultipartFile?,
         lancamentosContabeis: ComposicaoLancamentosContabeis?,

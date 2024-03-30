@@ -1,4 +1,4 @@
-package br.com.clearcont.clearcontwebapp.views.controle;
+package br.com.clearcont.clearcontwebapp.views.components.controle;
 
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Paragraph;
