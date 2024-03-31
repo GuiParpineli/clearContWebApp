@@ -36,20 +36,10 @@ class GridConciliar(
 ) : VerticalLayout() {
     var log: Logger = Logger.getLogger(javaClass.name)
 
-    private val crud = GridCrud(
-        ComposicaoLancamentosContabeis::class.java
-    )
-
-    val grid: Grid<ComposicaoLancamentosContabeis>
-        get() = crud.grid
-
     init {
         val cookieFactory = CookieFactory(VaadinResponse.getCurrent())
-        val crud = GridCrud(
-            ComposicaoLancamentosContabeis::class.java
-        )
-        val formFactory =
-            DefaultCrudFormFactory(ComposicaoLancamentosContabeis::class.java)
+        val crud = GridCrud(ComposicaoLancamentosContabeis::class.java)
+        val formFactory = DefaultCrudFormFactory(ComposicaoLancamentosContabeis::class.java)
         val formatador = DateTimeFormatter.ofPattern("dd/MM/yyyy").withLocale(Locale.of("pt", "BR"))
 
         formFactory.setVisibleProperties("data", "debito", "credito", "historico")
@@ -57,7 +47,7 @@ class GridConciliar(
         formFactory.setFieldCreationListener("data") { field: HasValue<*, *> ->
             val datePicker = field as DatePicker
             datePicker.locale = Locale.of("pt", "BR")
-            datePicker.addValueChangeListener { event: ComponentValueChangeEvent<DatePicker?, LocalDate> ->
+            datePicker.addValueChangeListener { event ->
                 val selectedDate = event.value
                 selectedDate.format(formatador)
             }
@@ -81,7 +71,7 @@ class GridConciliar(
             contabeisService.saveWithCustomer(lancamentosContabeis, CustomerContabil())
             contabeisService.atualizarSaldoContabil(balanceteId, crud)
             infoCards.updateDiferencaLayout(
-                balancete.doubleTotalBalancete,
+                balancete.getTotalBalanceteDouble(),
                 contabeisService.getSaldoContabil(balanceteId)
             )
             lancamentosContabeis
@@ -90,7 +80,7 @@ class GridConciliar(
             val all = contabeisService.getByBalanceteID(balanceteId)
             contabeisService.atualizarSaldoContabil(balanceteId, crud)
             infoCards.updateDiferencaLayout(
-                balancete.doubleTotalBalancete!!,
+                balancete.getTotalBalanceteDouble(),
                 contabeisService.getSaldoContabil(balanceteId)
             )
             all
@@ -99,7 +89,7 @@ class GridConciliar(
             contabeisService.deleteByID(lancamentosContabeis.id!!)
             contabeisService.atualizarSaldoContabil(balanceteId, crud)
             infoCards.updateDiferencaLayout(
-                balancete.doubleTotalBalancete,
+                balancete.getTotalBalanceteDouble(),
                 contabeisService.getSaldoContabil(balanceteId)
             )
         }
@@ -107,7 +97,7 @@ class GridConciliar(
             contabeisService.update(a)
             contabeisService.atualizarSaldoContabil(balanceteId, crud)
             infoCards.updateDiferencaLayout(
-                balancete.doubleTotalBalancete!!,
+                balancete.getTotalBalanceteDouble(),
                 contabeisService.getSaldoContabil(balanceteId)
             )
             a

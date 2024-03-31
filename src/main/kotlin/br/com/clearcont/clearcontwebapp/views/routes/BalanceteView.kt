@@ -136,35 +136,37 @@ class BalanceteView(
         return singleFileUpload
     }
 
-    companion object {
-        private fun getBalanceteGridCrud(
-            service: BalanceteService,
-            balanceteData: List<Balancete>
-        ): GridCrud<Balancete> {
-            val grid = GridCrud(Balancete::class.java)
-            val formFactory = DefaultCrudFormFactory(Balancete::class.java)
-            formFactory.setVisibleProperties("nomeConta", "numeroConta", "totalBalancete", "classificacao")
-            grid.crudFormFactory = formFactory
-            grid.grid.setColumns("nomeConta", "numeroConta", "totalBalancete", "classificacao")
-            grid.grid.isColumnReorderingAllowed = true
-            grid.style["border-radius"] = "10px"
-            grid.setAddOperation { balancete: Balancete? -> service.save(balancete!!) }
-            grid.setUpdateOperation { balancete: Balancete? -> service.update(balancete!!) }
-            grid.setDeleteOperation { balancete: Balancete? -> service.delete(balancete!!) }
-            grid.setFindAllOperation { balanceteData }
-            grid.grid.addComponentColumn { balanceteComp: Balancete ->
-                val editButton = Button("Conciliar")
-                editButton.addClickListener {
-                    UI.getCurrent().navigate("conciliar/" + balanceteComp.id)
-                }
-                editButton
-            }.setWidth("150px").setFlexGrow(0)
-
-            grid.grid.addItemDoubleClickListener { event: ItemDoubleClickEvent<Balancete> ->
-                val balancete = event.item
-                UI.getCurrent().navigate("conciliar/" + balancete.id)
-            }
-            return grid
+    private fun getBalanceteGridCrud(
+        service: BalanceteService,
+        balanceteData: List<Balancete>
+    ): GridCrud<Balancete> {
+        val grid = GridCrud(Balancete::class.java)
+        val formFactory = DefaultCrudFormFactory(Balancete::class.java)
+        formFactory.setVisibleProperties("nomeConta", "numeroConta", "totalBalancete", "classificacao")
+        grid.crudFormFactory = formFactory
+        grid.grid.setColumns("nomeConta", "numeroConta", "totalBalancete", "classificacao")
+        grid.grid.isColumnReorderingAllowed = true
+        grid.style["border-radius"] = "10px"
+        grid.setAddOperation { balancete ->
+                balancete.empresa = empresa
+                service.save(balancete!!)
+                balancete
         }
+        grid.setUpdateOperation { balancete: Balancete? -> service.update(balancete!!) }
+        grid.setDeleteOperation { balancete: Balancete? -> service.delete(balancete!!) }
+        grid.setFindAllOperation { balanceteData }
+        grid.grid.addComponentColumn { balanceteComp: Balancete ->
+            val editButton = Button("Conciliar")
+            editButton.addClickListener {
+                UI.getCurrent().navigate("conciliar/" + balanceteComp.id)
+            }
+            editButton
+        }.setWidth("150px").setFlexGrow(0)
+
+        grid.grid.addItemDoubleClickListener { event: ItemDoubleClickEvent<Balancete> ->
+            val balancete = event.item
+            UI.getCurrent().navigate("conciliar/" + balancete.id)
+        }
+        return grid
     }
 }

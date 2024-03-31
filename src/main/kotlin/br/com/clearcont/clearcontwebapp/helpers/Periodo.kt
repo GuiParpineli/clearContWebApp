@@ -25,6 +25,23 @@ object Periodo {
         }
     }
 
+    fun getPortugueseMonthName(month: Month): String {
+        return when (month) {
+            Month.JANUARY -> "Janeiro"
+            Month.FEBRUARY -> "Fevereiro"
+            Month.MARCH -> "Março"
+            Month.APRIL -> "Abril"
+            Month.MAY -> "Maio"
+            Month.JUNE -> "Junho"
+            Month.JULY -> "Julho"
+            Month.AUGUST -> "Agosto"
+            Month.SEPTEMBER -> "Setembro"
+            Month.OCTOBER -> "Outubro"
+            Month.NOVEMBER -> "Novembro"
+            Month.DECEMBER -> "Dezembro"
+        }
+    }
+
     fun getMonthByInt(i: Int?): String {
         return Month.of(i!!).getDisplayName(TextStyle.FULL, locale)
     }

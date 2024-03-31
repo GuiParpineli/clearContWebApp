@@ -5,9 +5,11 @@ import br.com.clearcont.clearcontwebapp.models.TypeCount
 import br.com.clearcont.clearcontwebapp.repository.BalanceteRepository
 import jakarta.transaction.Transactional
 import org.springframework.stereotype.Service
+import java.util.logging.Logger
 
 @Service
 class BalanceteService(private val repository: BalanceteRepository) {
+    private val log = Logger.getLogger(javaClass.name)
     val all: List<Balancete> = repository.findAll()
 
     fun getById(balanceteId: Long): Balancete = repository.findById(balanceteId).get()
@@ -25,7 +27,10 @@ class BalanceteService(private val repository: BalanceteRepository) {
 
     fun update(balancete: Balancete): Balancete = repository.saveAndFlush(balancete)
 
-    fun save(balancete: Balancete): Balancete = repository.save(balancete)
+    fun save(balancete: Balancete): Balancete {
+        log.info("Salvando balancete : $balancete")
+        return repository.save(balancete)
+    }
 
     @Transactional
     fun saveAll(id: Long, balancetes: List<Balancete?>) {

@@ -31,7 +31,7 @@ class BalanceteDetailsLayout(
         val composicaoSaldoLayout =
             createStyledLayout("Composição do Saldo Contábil: ", formatCurrencyBR(saldoContabil))
 
-        val differenceSpan = Span( formatCurrencyBR(balancete.doubleTotalBalancete - saldoContabil) )
+        val differenceSpan = Span(formatCurrencyBR(balancete.getTotalBalanceteDouble() - saldoContabil))
         differenceSpan.style.set("font-weight", "800")["padding-left"] = "5px"
         val newC = HorizontalLayout(Span("Diferença: "), differenceSpan)
         diferencaLayout.replace(diferencaValue, newC)

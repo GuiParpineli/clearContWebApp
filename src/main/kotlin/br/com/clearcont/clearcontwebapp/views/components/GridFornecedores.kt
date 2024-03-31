@@ -67,14 +67,14 @@ open class GridFornecedores(
                 crud.setFindAllOperation {
                     updatedContabilCustomers.stream().filter { customerContabil: CustomerContabil ->
                         customerContabil.composicaoLancamentosContabeis
-                            ?.balancete!!.classificacao == TypeCount.PASSIVO
+                            .balancete!!.classificacao == TypeCount.PASSIVO
                     }.toList()
                 }
                 isf = InputStreamFactory {
                     exportToExcel(
                         updatedContabilCustomers.stream().filter { customerContabilF: CustomerContabil ->
                             customerContabilF.composicaoLancamentosContabeis
-                                ?.balancete!!.classificacao == TypeCount.PASSIVO
+                                .balancete!!.classificacao == TypeCount.PASSIVO
                         }
                             .collect(Collectors.toList())
                     )
@@ -122,9 +122,9 @@ open class GridFornecedores(
         crud.setAddOperation { customerContabil: CustomerContabil ->
             val composicao = ComposicaoLancamentosContabeis()
             customerContabil.composicaoLancamentosContabeis = composicao
-            customerContabil.composicaoLancamentosContabeis!!.balancete = balancetePicker.value
-            customerContabil.composicaoLancamentosContabeis!!.balancete!!.classificacao = TypeCount.PASSIVO
-            customerContabil.composicaoLancamentosContabeis!!.responsavel = responsavel!!
+            customerContabil.composicaoLancamentosContabeis.balancete = balancetePicker.value
+            customerContabil.composicaoLancamentosContabeis.balancete!!.classificacao = TypeCount.PASSIVO
+            customerContabil.composicaoLancamentosContabeis.responsavel = responsavel!!
             composicao.customerContabil = customerContabil
             customerService.save(customerContabil)
 
@@ -132,7 +132,7 @@ open class GridFornecedores(
             crud.setFindAllOperation {
                 updatedContabilCustomers.stream().filter { customerContabilF: CustomerContabil ->
                     customerContabilF.composicaoLancamentosContabeis
-                        ?.balancete!!.classificacao == TypeCount.PASSIVO
+                        .balancete!!.classificacao == TypeCount.PASSIVO
                 }
                     .collect(Collectors.toList())
             }

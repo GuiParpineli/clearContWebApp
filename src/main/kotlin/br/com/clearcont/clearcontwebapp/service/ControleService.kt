@@ -22,20 +22,20 @@ class ControleService(private val balanceteService: BalanceteService) {
                         null,
                         balancete.classificacao,
                         balancete.nomeConta,
-                        balancete.doubleTotalBalancete,
+                        balancete.getTotalBalanceteDouble(),
                         balancete.composicaoLancamentosContabeisList.stream().mapToDouble(
                             ComposicaoLancamentosContabeis::doubleSaldoContabil
                         ).sum(),
                         balancete.composicaoLancamentosContabeisList
                             .stream().mapToDouble(ComposicaoLancamentosContabeis::doubleSaldoContabil)
-                            .sum() - balancete.doubleTotalBalancete!!,
+                            .sum() - balancete.getTotalBalanceteDouble(),
                         "ABERTO",
                         "",
-                        false,
-                        false,
-                        LocalDate.now(),
-                        balancete.composicaoLancamentosContabeisList.first().responsavel.nome,
-                        balancete.empresa
+                        composicaoPreenchida = false,
+                        agingListadaPendencia = false,
+                        dataCompetencia = LocalDate.now(),
+                        nomeResponsavel = balancete.composicaoLancamentosContabeisList.first().responsavel.nome,
+                        empresa = balancete.empresa
                     )
                 )
             }
