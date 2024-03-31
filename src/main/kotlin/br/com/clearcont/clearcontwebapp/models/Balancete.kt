@@ -2,6 +2,7 @@ package br.com.clearcont.clearcontwebapp.models
 
 import br.com.clearcont.clearcontwebapp.helpers.formatCurrencyBR
 import jakarta.persistence.*
+import org.springframework.data.jpa.domain.AbstractPersistable_.id
 
 @Entity
 class Balancete(
@@ -18,10 +19,10 @@ class Balancete(
     val mes: String = "JANEIRO",
     val ano: Int = 2020,
     @OneToMany(mappedBy = "balancete", cascade = [CascadeType.ALL], orphanRemoval = true)
-    val composicaoLancamentosContabeisList: MutableList<ComposicaoLancamentosContabeis> = mutableListOf()
-
+    val composicaoLancamentosContabeisList: MutableList<ComposicaoLancamentosContabeis> = mutableListOf(),
+    @Enumerated(EnumType.STRING)
+    var status: StatusConciliacao = StatusConciliacao.OPEN
 ) {
-
     fun addComposicaoLancamentosContabeis(composicaoLancamentosContabeis: ComposicaoLancamentosContabeis) {
         composicaoLancamentosContabeisList.add(composicaoLancamentosContabeis)
         composicaoLancamentosContabeis.balancete = this
@@ -52,7 +53,7 @@ class Balancete(
             totalBalancete.replaceFirst("\\.".toRegex(), "").replaceFirst(",".toRegex(), ".").toDouble()
     }
 
-    fun getTotalBalancete(): String? {
-        return doubleTotalBalancete?.let { formatCurrencyBR(it) }
+    fun getTotalBalancete(): String {
+        return formatCurrencyBR(doubleTotalBalancete)
     }
 }

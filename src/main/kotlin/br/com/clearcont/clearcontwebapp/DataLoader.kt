@@ -65,7 +65,8 @@ class DataLoader(
                     TypeCount.ATIVO,
                     "JANEIRO",
                     2024,
-                    mutableListOf()
+                    mutableListOf(),
+                    StatusConciliacao.OPEN
                 )
             )
 
@@ -79,7 +80,8 @@ class DataLoader(
                     TypeCount.PASSIVO,
                     "JANEIRO",
                     2024,
-                    mutableListOf()
+                    mutableListOf(),
+                    StatusConciliacao.OPEN
                 )
             )
 
@@ -93,7 +95,8 @@ class DataLoader(
                     TypeCount.ATIVO,
                     "DEZEMBRO",
                     2023,
-                    mutableListOf()
+                    mutableListOf(),
+                    StatusConciliacao.OPEN
                 )
             )
 
@@ -107,7 +110,8 @@ class DataLoader(
                     TypeCount.ATIVO,
                     "JANEIRO",
                     2024,
-                    mutableListOf()
+                    mutableListOf(),
+                   StatusConciliacao.OPEN
                 )
             )
         }
@@ -281,7 +285,6 @@ class DataLoader(
                     100.0,
                     200.0,
                     (100.0 - 200.0),
-                    StatusConciliacao.OPEN,
                     balanceteRepository.findAll().first(),
                     responsavel,
                     customerContabil
@@ -294,7 +297,6 @@ class DataLoader(
                     1000.0,
                     0.0,
                     (1000.0),
-                    StatusConciliacao.OPEN,
                     balanceteRepository.findAll().first(),
                     responsavel2,
                     customerContabil2

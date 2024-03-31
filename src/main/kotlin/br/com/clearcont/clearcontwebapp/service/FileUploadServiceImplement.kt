@@ -45,7 +45,7 @@ class FileUploadServiceImplement(private val fileUploadRepository: FileUploadRep
         fileUploadRepository.save(fileUpload)
     }
 
-    fun getAnexosByComposicao(composicaoID: Long): List<FileUpload> {
+    fun getAnexosByComposicao(composicaoID: UUID): List<FileUpload> {
         return fileUploadRepository.findAnexoByComposicaoLancamentosContabeis_Id(composicaoID)
     }
 

@@ -23,7 +23,9 @@ import elemental.json.Json
 import org.springframework.web.multipart.MultipartFile
 import java.io.IOException
 import java.io.UncheckedIOException
+import java.util.*
 import java.util.function.Consumer
+import kotlin.collections.ArrayList
 
 
 class DownloadComponent(
@@ -72,14 +74,14 @@ class DownloadComponent(
             return multiFileUpload
         }
 
-    private fun addDownloadButtons(composicaoId: Long?) {
+    private fun addDownloadButtons(composicaoId: UUID?) {
         downloadButtonsLayout.removeAll()
 
         val downloadButtons = updateFileList(composicaoId)
         downloadButtons.forEach(Consumer { components: HorizontalLayout? -> downloadButtonsLayout.add(components) })
     }
 
-    private fun updateFileList(composicaoId: Long?): List<HorizontalLayout> {
+    private fun updateFileList(composicaoId: UUID?): List<HorizontalLayout> {
         val anexos = anexoStorageService.getAnexosByComposicao(
             composicaoId!!
         )
@@ -102,7 +104,7 @@ class DownloadComponent(
             downloadLink.add(downloadButton)
 
             val removeButton = Button("Remover", Icon(VaadinIcon.TRASH))
-            removeButton.addClickListener { event: ClickEvent<Button?>? ->
+            removeButton.addClickListener {
                 anexoStorageService.deleteFile(anexo.id, companyName)
                 Notification.show("Arquivo removido")
                 addDownloadButtons(composicaoId)

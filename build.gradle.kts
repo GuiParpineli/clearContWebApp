@@ -21,6 +21,9 @@ configurations {
         extendsFrom(configurations.annotationProcessor.get())
     }
 }
+vaadin {
+    productionMode = true
+}
 
 repositories {
     mavenCentral()

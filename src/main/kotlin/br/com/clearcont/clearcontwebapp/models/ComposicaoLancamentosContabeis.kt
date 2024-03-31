@@ -1,6 +1,7 @@
 package br.com.clearcont.clearcontwebapp.models
 
 import br.com.clearcont.clearcontwebapp.helpers.formatCurrencyBR
+import br.com.clearcont.clearcontwebapp.models.StatusConciliacao.OPEN
 import br.com.clearcont.clearcontwebapp.models.StatusConciliacao.PROGRESS
 import com.fasterxml.jackson.annotation.JsonIgnore
 import com.vaadin.flow.component.notification.Notification
@@ -15,21 +16,27 @@ import java.util.logging.Logger
 @Entity
 class ComposicaoLancamentosContabeis {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    val id: Long? = null
+    @GeneratedValue(strategy = GenerationType.UUID)
+    val id: UUID? = null
     var data: LocalDate = LocalDate.now()
-    var historico: String = ""
+    var historico: String? = ""
     private var debito: Double = 0.0
     private var credito: Double = 0.0
     var doubleSaldoContabil: Double = debito - credito
 
-    @Enumerated(EnumType.STRING)
-    var status = StatusConciliacao.OPEN
 
     @JsonIgnore
     @ManyToOne(fetch = FetchType.EAGER, cascade = [CascadeType.ALL])
     @JoinColumn(name = "balancete_id")
     var balancete: Balancete? = null
+
+    @Enumerated(EnumType.STRING)
+    var status: StatusConciliacao? = null
+
+    @PostLoad
+    fun onLoad() {
+        status = balancete?.status ?: StatusConciliacao.OPEN
+    }
 
     @ManyToOne
     lateinit var responsavel: Responsavel
@@ -44,7 +51,6 @@ class ComposicaoLancamentosContabeis {
         debito: Double,
         credito: Double,
         doubleSaldoContabil: Double,
-        status: StatusConciliacao,
         balancete: Balancete?,
         responsavel: Responsavel,
         customerContabil: CustomerContabil
@@ -54,7 +60,6 @@ class ComposicaoLancamentosContabeis {
         this.debito = debito
         this.credito = credito
         this.doubleSaldoContabil = doubleSaldoContabil
-        this.status = PROGRESS
         this.balancete = balancete
         this.responsavel = responsavel
         this.customerContabil = customerContabil
@@ -82,29 +87,27 @@ class ComposicaoLancamentosContabeis {
             return data.format(formatador)
         }
 
+    fun setDebito(value: Double) {
+        this.debito = value
+    }
 
     fun setDebito(debito: String) {
         val log = Logger.getLogger(javaClass.name)
-        val format = NumberFormat.getInstance(Locale.of("pt", "BR"))
         try {
-            this.debito = format.parse(debito.replace("R$", "").trim { it <= ' ' }).toDouble()
-            this.doubleSaldoContabil = this.debito!! - credito!!
-        } catch (e: ParseException) {
+            this.debito = debito.replace("R$", "").replace(".", "").replace(",", ".").trim().toDouble()
+            this.doubleSaldoContabil = this.debito - credito
+        } catch (e: NumberFormatException) {
             log.info(e.message)
             Notification.show("Erro")
         }
     }
-    fun setDebito(value : Double){
-        this.debito = value
-    }
 
     fun setCredito(credito: String) {
         val log = Logger.getLogger(javaClass.name)
-        val format = NumberFormat.getInstance(Locale.of("pt", "BR"))
         try {
-            this.credito = format.parse(credito.replace("R$", "").trim { it <= ' ' }).toDouble()
-            this.doubleSaldoContabil = debito!! - this.credito!!
-        } catch (e: ParseException) {
+            this.credito = credito.replace("R$", "").replace(".", "").replace(",", ".").trim().toDouble()
+            this.doubleSaldoContabil = this.debito - this.credito
+        } catch (e: NumberFormatException) {
             log.info(e.message)
             Notification.show("Erro")
         }

@@ -27,15 +27,11 @@ class BalanceteDetailsLayout(
     init {
         val accountName = createStyledLayout("Nome da conta: ", balancete.nomeConta)
         val accountNumber = createStyledLayout("Numero da conta: ", balancete.numeroConta.toString())
-        val conciliationStatusLabel = createStyledLayout("Status conciliação: ", conciliacao.status.value)
+        val conciliationStatusLabel = createStyledLayout("Status conciliação: ", conciliacao.status?.value)
         val composicaoSaldoLayout =
             createStyledLayout("Composição do Saldo Contábil: ", formatCurrencyBR(saldoContabil))
 
-        val differenceSpan = Span(
-            formatCurrencyBR(
-                balancete.doubleTotalBalancete!! - saldoContabil
-            )
-        )
+        val differenceSpan = Span( formatCurrencyBR(balancete.doubleTotalBalancete - saldoContabil) )
         differenceSpan.style.set("font-weight", "800")["padding-left"] = "5px"
         val newC = HorizontalLayout(Span("Diferença: "), differenceSpan)
         diferencaLayout.replace(diferencaValue, newC)
@@ -55,11 +51,14 @@ class BalanceteDetailsLayout(
         documentosAnexadosTitle.style.setTextAlign(Style.TextAlign.CENTER)
         val documentosAnexadosDiv = Div(
             documentosAnexadosTitle,
-            anexoStorageService?.let { balancete.empresa!!.nomeEmpresa?.let { it1 ->
-                DownloadComponent(it, conciliacao,
-                    it1
-                )
-            } }
+            anexoStorageService?.let {
+                balancete.empresa!!.nomeEmpresa?.let { it1 ->
+                    DownloadComponent(
+                        it, conciliacao,
+                        it1
+                    )
+                }
+            }
         )
         documentosAnexadosDiv.addClassName("card")
         documentosAnexadosDiv.minWidth = "200px"

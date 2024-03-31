@@ -4,6 +4,7 @@ import br.com.clearcont.clearcontwebapp.helpers.CookieFactory
 import br.com.clearcont.clearcontwebapp.models.Balancete
 import br.com.clearcont.clearcontwebapp.models.ComposicaoLancamentosContabeis
 import br.com.clearcont.clearcontwebapp.models.CustomerContabil
+import br.com.clearcont.clearcontwebapp.models.StatusConciliacao
 import br.com.clearcont.clearcontwebapp.repository.ResponsavelRepository
 import br.com.clearcont.clearcontwebapp.service.ComposicaoLancamentosContabeisService
 import br.com.clearcont.clearcontwebapp.views.components.details.BalanceteDetailsLayout
@@ -73,17 +74,17 @@ class GridConciliar(
             crud.grid.getColumnByKey("historico")
         )
 
-        crud.setAddOperation { a: ComposicaoLancamentosContabeis ->
-            a.balancete = balancete
+        crud.setAddOperation { lancamentosContabeis ->
+            lancamentosContabeis.balancete = balancete
             val responsavelID = cookieFactory.getCookieInteger("responsavel-id")
-            a.responsavel = responsavelRepository.findById(responsavelID).orElseThrow()
-            contabeisService.saveWithCustomer(a, CustomerContabil())
+            lancamentosContabeis.responsavel = responsavelRepository.findById(responsavelID).orElseThrow()
+            contabeisService.saveWithCustomer(lancamentosContabeis, CustomerContabil())
             contabeisService.atualizarSaldoContabil(balanceteId, crud)
             infoCards.updateDiferencaLayout(
-                balancete.doubleTotalBalancete!!,
+                balancete.doubleTotalBalancete,
                 contabeisService.getSaldoContabil(balanceteId)
             )
-            a
+            lancamentosContabeis
         }
         crud.setFindAllOperation {
             val all = contabeisService.getByBalanceteID(balanceteId)
@@ -94,11 +95,11 @@ class GridConciliar(
             )
             all
         }
-        crud.setDeleteOperation { a: ComposicaoLancamentosContabeis ->
-            contabeisService.deleteByID(a.id!!)
+        crud.setDeleteOperation { lancamentosContabeis ->
+            contabeisService.deleteByID(lancamentosContabeis.id!!)
             contabeisService.atualizarSaldoContabil(balanceteId, crud)
             infoCards.updateDiferencaLayout(
-                balancete.doubleTotalBalancete!!,
+                balancete.doubleTotalBalancete,
                 contabeisService.getSaldoContabil(balanceteId)
             )
         }

@@ -42,8 +42,10 @@ class ConciliarView @Autowired constructor(
     private val service: BalanceteService,
     private val contabeisService: ComposicaoLancamentosContabeisService,
     private val anexoStorageService: FileUploadServiceImplement,
-    private val responsavelRepository: ResponsavelRepository
+    private val responsavelRepository: ResponsavelRepository,
+    private val balanceteService: BalanceteService
 ) : VerticalLayout(), HasUrlParameter<String> {
+
     var log: Logger = Logger.getLogger(javaClass.name)
     private var startBtn: Button = getStartBtn()
     private var finishBtn: Button = getFinishBtn()
@@ -52,9 +54,9 @@ class ConciliarView @Autowired constructor(
         val cookieFactory = CookieFactory(VaadinResponse.getCurrent())
         val balanceteId = parameter.toLong()
         val balancete = service.getById(balanceteId)
+
         log.info("BALANCETE ID: $balanceteId")
         log.info("BALANCETE NOME DA CONTA: " + balancete.nomeConta)
-
 
         var conciliacaoList = contabeisService.getByBalanceteID(balanceteId)
         if (conciliacaoList.isEmpty()) {
@@ -76,7 +78,6 @@ class ConciliarView @Autowired constructor(
         val finalConciliacaoList = conciliacaoList
         val isf = InputStreamFactory { crud.exportToExcel(finalConciliacaoList) }
         val excelStreamResource = StreamResource("grid_data.xlsx", isf)
-
         val downloadLink = generateExcelDownloadLink(excelStreamResource)
 
         val btns = HorizontalLayout(startBtn, finishBtn, downloadLink)
@@ -87,7 +88,7 @@ class ConciliarView @Autowired constructor(
         val responsavel = responsavelRepository.findById(cookieFactory.getCookieInteger("responsavel-id")).orElseThrow()
         log.info("RESPONSAVEL NOME: " + responsavel.nome)
         val dialogStart = getConfirmDialogStart(conciliacao, balancete, responsavel)
-        val dialogEnd = getConfirmDialogEnd(conciliacao)
+        val dialogEnd = getConfirmDialogEnd(conciliacao, balancete)
 
         startBtn.addClickListener { dialogStart.open() }
         finishBtn.addClickListener { dialogEnd.open() }
@@ -140,15 +141,18 @@ class ConciliarView @Autowired constructor(
         dialog.setConfirmText("Confirmar")
         dialog.addConfirmListener {
             checkStatusforDisableorEnableBtn(conciliacao)
-            conciliacao.status = StatusConciliacao.PROGRESS
-            contabeisService.update(conciliacao)
+            balancete.status = StatusConciliacao.PROGRESS
+            balanceteService.update(balancete)
             Notification.show("CONCIALIAÇÃO EM ANDAMENTO")
             page.reload()
         }
         return dialog
     }
 
-    private fun getConfirmDialogEnd(conciliacao: ComposicaoLancamentosContabeis): ConfirmDialog {
+    private fun getConfirmDialogEnd(
+        conciliacao: ComposicaoLancamentosContabeis,
+        balancete: Balancete,
+    ): ConfirmDialog {
         val dialog = ConfirmDialog()
         val ui = UI.getCurrent()
         val page = ui.page
@@ -159,8 +163,8 @@ class ConciliarView @Autowired constructor(
         dialog.setCancelText("Cancelar")
         dialog.setConfirmText("Confirmar")
         dialog.addConfirmListener { dialogEvent: ConfirmEvent? ->
-            conciliacao.status = StatusConciliacao.CLOSED
-            contabeisService.update(conciliacao)
+            balancete.status = StatusConciliacao.CLOSED
+            balanceteService.update(balancete)
             Notification.show("CONCIALIAÇÃO FINALIZADA")
             page.reload()
         }

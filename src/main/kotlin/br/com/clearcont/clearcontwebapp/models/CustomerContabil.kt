@@ -56,7 +56,7 @@ class CustomerContabil() {
             }
         }
 
-    fun getStatus(): String = composicaoLancamentosContabeis.status.name
+    fun getStatus(): String? = composicaoLancamentosContabeis.status?.name
 
     init {
         calcularDiasVencidos(LocalDate.now().month.value)

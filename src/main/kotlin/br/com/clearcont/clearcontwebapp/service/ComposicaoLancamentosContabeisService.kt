@@ -8,8 +8,11 @@ import br.com.clearcont.clearcontwebapp.repository.ComposicaoLancamentosContabei
 import br.com.clearcont.clearcontwebapp.repository.CustomerContabilRepository
 import jakarta.persistence.EntityManager
 import jakarta.transaction.Transactional
+import org.jboss.logging.Logger
+import org.springframework.data.jpa.domain.AbstractPersistable_.id
 import org.springframework.stereotype.Service
 import org.vaadin.crudui.crud.impl.GridCrud
+import java.util.UUID
 
 @Service
 class ComposicaoLancamentosContabeisService(
@@ -17,22 +20,43 @@ class ComposicaoLancamentosContabeisService(
     private val contabeisRepository: ComposicaoLancamentosContabeisRepository,
     private val customerRepository: CustomerContabilRepository
 ) {
-    val all: List<ComposicaoLancamentosContabeis>
-        get() = contabeisRepository.findAll()
 
-    fun getByID(id: Long): ComposicaoLancamentosContabeis {
+    private val log = Logger.getLogger(javaClass.name)
+
+    val all: List<ComposicaoLancamentosContabeis> = contabeisRepository.findAll()
+
+    fun getByID(id: UUID): ComposicaoLancamentosContabeis {
+        log.info("Obtendo composicao com id: $id")
         return contabeisRepository.findById(id).orElse(ComposicaoLancamentosContabeis())
     }
-
+    @Transactional
     fun save(entity: ComposicaoLancamentosContabeis) {
+        log.info("Saving composicao with id: ${entity.id}")
+        val balancete = entity.balancete
+        if (balancete != null) {
+            val compositeExists = balancete.composicaoLancamentosContabeisList.contains(entity)
+            if (!compositeExists) {
+                balancete.addComposicaoLancamentosContabeis(entity)
+            }
+        }
+
         contabeisRepository.save(entity)
     }
 
-    fun deleteByID(id: Long) {
-        contabeisRepository.deleteById(id)
+    @Transactional
+    fun deleteByID(id: UUID) {
+        log.info("deleting composicao with id: $id")
+
+        val composicao: ComposicaoLancamentosContabeis = contabeisRepository.findById(id).orElse(null)
+
+        val balancete = composicao.balancete
+        balancete?.removeComposicaoLancamentosContabeis(composicao)
+
+        contabeisRepository.delete(composicao)
     }
 
     fun getByBalanceteID(id: Long?): List<ComposicaoLancamentosContabeis> {
+        log.info("obtendo balancete da composicao, balancete id: $id")
         return contabeisRepository.findComposicaoLancamentosContabeisByBalancete_Id(id)
     }
 
