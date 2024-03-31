@@ -2,15 +2,15 @@ package br.com.clearcont.clearcontwebapp.views.routes
 
 import br.com.clearcont.clearcontwebapp.helpers.CookieFactory
 import br.com.clearcont.clearcontwebapp.helpers.MonthAndCompany
-import br.com.clearcont.clearcontwebapp.helpers.Periodo.getMonthByPeriodoString
+import br.com.clearcont.clearcontwebapp.helpers.Period.getMonthByPeriodoString
 import br.com.clearcont.clearcontwebapp.models.Empresa
 import br.com.clearcont.clearcontwebapp.models.TypeCount
 import br.com.clearcont.clearcontwebapp.repository.EmpresaRepository
 import br.com.clearcont.clearcontwebapp.repository.ResponsavelRepository
 import br.com.clearcont.clearcontwebapp.service.BalanceteService
 import br.com.clearcont.clearcontwebapp.service.CustomerContabilService
-import br.com.clearcont.clearcontwebapp.views.components.GridFornecedores
 import br.com.clearcont.clearcontwebapp.views.MainLayout
+import br.com.clearcont.clearcontwebapp.views.components.GridFornecedores
 import com.vaadin.flow.component.UI
 import com.vaadin.flow.component.html.H1
 import com.vaadin.flow.component.html.Span

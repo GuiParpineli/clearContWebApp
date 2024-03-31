@@ -3,7 +3,6 @@ package br.com.clearcont.clearcontwebapp.views.components.details
 import br.com.clearcont.clearcontwebapp.models.ComposicaoLancamentosContabeis
 import br.com.clearcont.clearcontwebapp.models.InputStreamMultipartFile
 import br.com.clearcont.clearcontwebapp.service.FileUploadServiceImplement
-import com.vaadin.flow.component.ClickEvent
 import com.vaadin.flow.component.Text
 import com.vaadin.flow.component.button.Button
 import com.vaadin.flow.component.html.Anchor
@@ -25,7 +24,6 @@ import java.io.IOException
 import java.io.UncheckedIOException
 import java.util.*
 import java.util.function.Consumer
-import kotlin.collections.ArrayList
 
 
 class DownloadComponent(

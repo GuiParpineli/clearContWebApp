@@ -4,7 +4,7 @@ import java.time.Month
 import java.time.format.TextStyle
 import java.util.*
 
-object Periodo {
+object Period {
     private var locale: Locale = Locale.Builder().setLanguage("pt").setRegion("BR").build()
 
     fun getMonthByPeriodoString(periodo: String): Int {
@@ -27,18 +27,18 @@ object Periodo {
 
     fun getPortugueseMonthName(month: Month): String {
         return when (month) {
-            Month.JANUARY -> "Janeiro"
-            Month.FEBRUARY -> "Fevereiro"
-            Month.MARCH -> "Março"
-            Month.APRIL -> "Abril"
-            Month.MAY -> "Maio"
-            Month.JUNE -> "Junho"
-            Month.JULY -> "Julho"
-            Month.AUGUST -> "Agosto"
-            Month.SEPTEMBER -> "Setembro"
-            Month.OCTOBER -> "Outubro"
-            Month.NOVEMBER -> "Novembro"
-            Month.DECEMBER -> "Dezembro"
+            Month.JANUARY -> "JANEIRO"
+            Month.FEBRUARY -> "FEVEREIRO"
+            Month.MARCH -> "MARÇO"
+            Month.APRIL -> "ABRIL"
+            Month.MAY -> "MAIO"
+            Month.JUNE -> "JUNHO"
+            Month.JULY -> "JULHO"
+            Month.AUGUST -> "AGOSTO"
+            Month.SEPTEMBER -> "SETEMBRO"
+            Month.OCTOBER -> "OUTUBRO"
+            Month.NOVEMBER -> "NOVEMBRO"
+            Month.DECEMBER -> "DEZEMBRO"
         }
     }
 

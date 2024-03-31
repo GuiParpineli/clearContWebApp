@@ -56,7 +56,7 @@ class ConciliarView @Autowired constructor(
         val balancete = service.getById(balanceteId)
 
         log.info("BALANCETE ID: $balanceteId")
-        log.info("BALANCETE NOME DA CONTA: " + balancete.nomeConta)
+        log.info("BALANCETE NOME DA CONTA:  ${balancete.nomeConta}")
 
         var conciliacaoList = contabeisService.getByBalanceteID(balanceteId)
         if (conciliacaoList.isEmpty()) {

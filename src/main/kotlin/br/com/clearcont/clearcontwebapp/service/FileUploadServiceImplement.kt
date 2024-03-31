@@ -1,7 +1,7 @@
 package br.com.clearcont.clearcontwebapp.service
 
-import br.com.clearcont.clearcontwebapp.models.FileUpload
 import br.com.clearcont.clearcontwebapp.models.ComposicaoLancamentosContabeis
+import br.com.clearcont.clearcontwebapp.models.FileUpload
 import br.com.clearcont.clearcontwebapp.repository.FileUploadRepository
 import com.amazonaws.AmazonServiceException
 import com.amazonaws.SdkClientException

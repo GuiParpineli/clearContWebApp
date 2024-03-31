@@ -9,10 +9,9 @@ import br.com.clearcont.clearcontwebapp.repository.CustomerContabilRepository
 import jakarta.persistence.EntityManager
 import jakarta.transaction.Transactional
 import org.jboss.logging.Logger
-import org.springframework.data.jpa.domain.AbstractPersistable_.id
 import org.springframework.stereotype.Service
 import org.vaadin.crudui.crud.impl.GridCrud
-import java.util.UUID
+import java.util.*
 
 @Service
 class ComposicaoLancamentosContabeisService(

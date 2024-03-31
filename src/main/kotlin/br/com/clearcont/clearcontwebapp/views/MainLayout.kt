@@ -3,13 +3,11 @@ package br.com.clearcont.clearcontwebapp.views
 import br.com.clearcont.clearcontwebapp.configs.security.AuthenticatedUser
 import br.com.clearcont.clearcontwebapp.models.Role
 import br.com.clearcont.clearcontwebapp.views.routes.*
-import com.vaadin.flow.component.ClickEvent
 import com.vaadin.flow.component.Component
 import com.vaadin.flow.component.UI
 import com.vaadin.flow.component.applayout.AppLayout
 import com.vaadin.flow.component.applayout.DrawerToggle
 import com.vaadin.flow.component.button.Button
-import com.vaadin.flow.component.dependency.CssImport
 import com.vaadin.flow.component.html.Div
 import com.vaadin.flow.component.html.Image
 import com.vaadin.flow.component.icon.Icon

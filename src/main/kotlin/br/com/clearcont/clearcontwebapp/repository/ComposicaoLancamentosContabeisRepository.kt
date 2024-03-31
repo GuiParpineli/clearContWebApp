@@ -4,7 +4,7 @@ import br.com.clearcont.clearcontwebapp.helpers.CNPJ
 import br.com.clearcont.clearcontwebapp.models.ComposicaoLancamentosContabeis
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.stereotype.Repository
-import java.util.UUID
+import java.util.*
 
 @Repository
 interface ComposicaoLancamentosContabeisRepository : JpaRepository<ComposicaoLancamentosContabeis, UUID> {

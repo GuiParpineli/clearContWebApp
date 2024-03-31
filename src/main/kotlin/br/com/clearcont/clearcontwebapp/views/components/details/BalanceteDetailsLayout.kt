@@ -53,10 +53,7 @@ class BalanceteDetailsLayout(
             documentosAnexadosTitle,
             anexoStorageService?.let {
                 balancete.empresa!!.nomeEmpresa?.let { it1 ->
-                    DownloadComponent(
-                        it, conciliacao,
-                        it1
-                    )
+                    DownloadComponent(it, conciliacao, it1)
                 }
             }
         )
@@ -72,7 +69,7 @@ class BalanceteDetailsLayout(
 
     fun updateDiferencaLayout(saldoContabilBalancete: Double, saldoContabilDaGrid: Double) {
         val diferenca = saldoContabilBalancete - saldoContabilDaGrid
-        diferencaValue.text = "R$ " + (formatCurrencyBR(diferenca))
+        diferencaValue.text = "R$ ${formatCurrencyBR(diferenca)}"
     }
 
     private fun createStyledLayout(label: String, value: String?): FlexLayout {

@@ -4,14 +4,11 @@ import br.com.clearcont.clearcontwebapp.helpers.CookieFactory
 import br.com.clearcont.clearcontwebapp.models.Balancete
 import br.com.clearcont.clearcontwebapp.models.ComposicaoLancamentosContabeis
 import br.com.clearcont.clearcontwebapp.models.CustomerContabil
-import br.com.clearcont.clearcontwebapp.models.StatusConciliacao
 import br.com.clearcont.clearcontwebapp.repository.ResponsavelRepository
 import br.com.clearcont.clearcontwebapp.service.ComposicaoLancamentosContabeisService
 import br.com.clearcont.clearcontwebapp.views.components.details.BalanceteDetailsLayout
-import com.vaadin.flow.component.AbstractField.ComponentValueChangeEvent
 import com.vaadin.flow.component.HasValue
 import com.vaadin.flow.component.datepicker.DatePicker
-import com.vaadin.flow.component.grid.Grid
 import com.vaadin.flow.component.orderedlayout.VerticalLayout
 import com.vaadin.flow.server.VaadinResponse
 import org.apache.poi.ss.usermodel.Workbook
@@ -21,7 +18,6 @@ import org.vaadin.crudui.form.impl.form.factory.DefaultCrudFormFactory
 import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
 import java.io.IOException
-import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.util.*
 import java.util.logging.Logger

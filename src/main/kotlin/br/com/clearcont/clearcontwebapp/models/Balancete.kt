@@ -1,9 +1,8 @@
 package br.com.clearcont.clearcontwebapp.models
 
-import br.com.clearcont.clearcontwebapp.helpers.Periodo
+import br.com.clearcont.clearcontwebapp.helpers.Period
 import br.com.clearcont.clearcontwebapp.helpers.formatCurrencyBR
 import jakarta.persistence.*
-import org.springframework.data.jpa.domain.AbstractPersistable_.id
 import java.time.LocalDate
 
 @Entity
@@ -18,7 +17,7 @@ class Balancete(
     private var doubleTotalBalancete: Double = 0.0,
     @Enumerated(EnumType.STRING)
     var classificacao: TypeCount = TypeCount.ATIVO,
-    var mes: String = Periodo.getPortugueseMonthName(LocalDate.now().month),
+    var mes: String = Period.getPortugueseMonthName(LocalDate.now().month),
     val ano: Int = LocalDate.now().year,
     @OneToMany(mappedBy = "balancete", cascade = [CascadeType.ALL], orphanRemoval = true)
     val composicaoLancamentosContabeisList: MutableList<ComposicaoLancamentosContabeis> = mutableListOf(),

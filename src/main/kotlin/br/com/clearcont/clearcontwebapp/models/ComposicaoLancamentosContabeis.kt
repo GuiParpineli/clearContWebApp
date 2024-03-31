@@ -1,13 +1,9 @@
 package br.com.clearcont.clearcontwebapp.models
 
 import br.com.clearcont.clearcontwebapp.helpers.formatCurrencyBR
-import br.com.clearcont.clearcontwebapp.models.StatusConciliacao.OPEN
-import br.com.clearcont.clearcontwebapp.models.StatusConciliacao.PROGRESS
 import com.fasterxml.jackson.annotation.JsonIgnore
 import com.vaadin.flow.component.notification.Notification
 import jakarta.persistence.*
-import java.text.NumberFormat
-import java.text.ParseException
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.util.*

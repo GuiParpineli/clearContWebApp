@@ -5,24 +5,24 @@
  * This file will be overwritten on every run. Any custom changes should be made to vite.config.ts
  */
 import path from 'path';
-import { existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from 'fs';
-import { createHash } from 'crypto';
+import {existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync} from 'fs';
+import {createHash} from 'crypto';
 import * as net from 'net';
 
-import { processThemeResources } from './build/plugins/application-theme-plugin/theme-handle.js';
-import { rewriteCssUrls } from './build/plugins/theme-loader/theme-loader-utils.js';
+import {processThemeResources} from './build/plugins/application-theme-plugin/theme-handle.js';
+import {rewriteCssUrls} from './build/plugins/theme-loader/theme-loader-utils.js';
 import settings from './build/vaadin-dev-server-settings.json';
 import {
-  AssetInfo,
-  ChunkInfo,
-  defineConfig,
-  mergeConfig,
-  OutputOptions,
-  PluginOption,
-  ResolvedConfig,
-  UserConfigFn
+    AssetInfo,
+    ChunkInfo,
+    defineConfig,
+    mergeConfig,
+    OutputOptions,
+    PluginOption,
+    ResolvedConfig,
+    UserConfigFn
 } from 'vite';
-import { getManifest } from 'workbox-build';
+import {getManifest} from 'workbox-build';
 
 import * as rollup from 'rollup';
 import brotli from 'rollup-plugin-brotli';
@@ -30,9 +30,9 @@ import replace from '@rollup/plugin-replace';
 import checker from 'vite-plugin-checker';
 import postcssLit from './build/plugins/rollup-plugin-postcss-lit-custom/rollup-plugin-postcss-lit.js';
 
-import { createRequire } from 'module';
+import {createRequire} from 'module';
 
-import { visualizer } from 'rollup-plugin-visualizer';
+import {visualizer} from 'rollup-plugin-visualizer';
 
 // Make `require` compatible with ES modules
 const require = createRequire(import.meta.url);
@@ -306,7 +306,7 @@ function statsExtracterPlugin(): PluginOption {
 
       const isFrontendResourceCollected = (id: string) =>
           !id.startsWith(themeOptions.frontendGeneratedFolder.replace(/\\/g, '/'))
-          || isThemeComponentsResource(id) 
+          || isThemeComponentsResource(id)
           || isGeneratedWebComponentResource(id);
 
       // collects project's frontend resources in frontend folder, excluding
@@ -343,7 +343,7 @@ function statsExtracterPlugin(): PluginOption {
           const fileKey = line.substring(line.indexOf('jar-resources/') + 14);
           frontendFiles[fileKey] = hash;
         });
-      // collects and hash rest of the Frontend resources excluding files in /generated/ and /themes/ 
+      // collects and hash rest of the Frontend resources excluding files in /generated/ and /themes/
       // and files already in frontendFiles.
       let frontendFolderAlias = "Frontend";
       generatedImports
@@ -358,7 +358,7 @@ function statsExtracterPlugin(): PluginOption {
             const fileBuffer = readFileSync(filePath, { encoding: 'utf-8' }).replace(/\r\n/g, '\n');
             frontendFiles[line] = createHash('sha256').update(fileBuffer, 'utf8').digest('hex');
           }
-        });        
+        });
       // If a index.ts exists hash it to be able to see if it changes.
       if (existsSync(path.resolve(frontendFolder, 'index.ts'))) {
         const fileBuffer = readFileSync(path.resolve(frontendFolder, 'index.ts'), { encoding: 'utf-8' }).replace(

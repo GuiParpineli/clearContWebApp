@@ -65,18 +65,15 @@ open class GridFornecedores(
                 balanceteID = selectedBalancete.id!!
                 val updatedContabilCustomers = customerService.findByBalanceteID(balanceteID)
                 crud.setFindAllOperation {
-                    updatedContabilCustomers.stream().filter { customerContabil: CustomerContabil ->
-                        customerContabil.composicaoLancamentosContabeis
-                            .balancete!!.classificacao == TypeCount.PASSIVO
+                    updatedContabilCustomers.stream().filter { customerContabil ->
+                        customerContabil.composicaoLancamentosContabeis.balancete!!.classificacao == TypeCount.PASSIVO
                     }.toList()
                 }
                 isf = InputStreamFactory {
                     exportToExcel(
-                        updatedContabilCustomers.stream().filter { customerContabilF: CustomerContabil ->
-                            customerContabilF.composicaoLancamentosContabeis
-                                .balancete!!.classificacao == TypeCount.PASSIVO
-                        }
-                            .collect(Collectors.toList())
+                        updatedContabilCustomers.stream().filter { customerContabilF ->
+                            customerContabilF.composicaoLancamentosContabeis.balancete!!.classificacao == TypeCount.PASSIVO
+                        }.collect(Collectors.toList())
                     )
                 }
                 updateDownloadLink(crud, customerService, downloadLink)
@@ -86,12 +83,13 @@ open class GridFornecedores(
         formFactory.setFieldCreationListener("data") { field: HasValue<*, *> ->
             val datePicker = field as DatePicker
             datePicker.locale = Locale.of("pt", "BR")
-            datePicker.addValueChangeListener { event: ComponentValueChangeEvent<DatePicker?, LocalDate> ->
+            datePicker.addValueChangeListener { event ->
                 val selectedDate = event.value
                 selectedDate.format(DateTimeFormatter.ofPattern("dd/MM/yyyy"))
             }
         }
-        crud.setCrudFormFactory(formFactory)
+        crud.crudFormFactory = formFactory
+
         crud.grid.setColumns(
             "numNotaFiscal",
             "dataVencimento",
@@ -113,9 +111,8 @@ open class GridFornecedores(
         }).setHeader("Dias Vencidos")
 
         crud.setFindAllOperation {
-            contabilCustomers.stream().filter { customerContabil: CustomerContabil ->
-                customerContabil.composicaoLancamentosContabeis
-                    ?.balancete!!.classificacao == TypeCount.PASSIVO
+            contabilCustomers.stream().filter { customerContabil ->
+                customerContabil.composicaoLancamentosContabeis.balancete!!.classificacao == TypeCount.PASSIVO
             }.toList()
         }
 
@@ -130,11 +127,9 @@ open class GridFornecedores(
 
             val updatedContabilCustomers = customerService.findByBalanceteID(balanceteID)
             crud.setFindAllOperation {
-                updatedContabilCustomers.stream().filter { customerContabilF: CustomerContabil ->
-                    customerContabilF.composicaoLancamentosContabeis
-                        .balancete!!.classificacao == TypeCount.PASSIVO
-                }
-                    .collect(Collectors.toList())
+                updatedContabilCustomers.stream().filter { customerContabilF ->
+                    customerContabilF.composicaoLancamentosContabeis.balancete!!.classificacao == TypeCount.PASSIVO
+                }.collect(Collectors.toList())
             }
             updateDownloadLink(crud, customerService, downloadLink)
             customerContabil
@@ -215,11 +210,9 @@ open class GridFornecedores(
         val updatedContabilCustomers = customerService.findByBalanceteID(balanceteID)
         isf = InputStreamFactory {
             exportToExcel(
-                updatedContabilCustomers.stream().filter { customerContabilF: CustomerContabil ->
-                    customerContabilF.composicaoLancamentosContabeis
-                        ?.balancete!!.classificacao == TypeCount.PASSIVO
-                }
-                    .collect(Collectors.toList())
+                updatedContabilCustomers.stream().filter { customerContabilF ->
+                    customerContabilF.composicaoLancamentosContabeis.balancete!!.classificacao == TypeCount.PASSIVO
+                }.collect(Collectors.toList())
             )
         }
         crud.refreshGrid()
@@ -227,27 +220,24 @@ open class GridFornecedores(
         downloadLink.setHref(excelStreamResource)
     }
 
-    companion object {
-        private val customerContabilDefaultCrudFormFactory: DefaultCrudFormFactory<CustomerContabil>
-            get() {
-                val formFactory = DefaultCrudFormFactory(
-                    CustomerContabil::class.java
-                )
-                formFactory.setVisibleProperties(
-                    "numNotaFiscal",
-                    "dataVencimento",
-                    "ISS",
-                    "INSS",
-                    "IRRF",
-                    "CSRF",
-                    "diasVencidos",
-                    "status",
-                    "composicaoData",
-                    "composicaoDebito",
-                    "composicaoCredito",
-                    "composicaoHistorico"
-                )
-                return formFactory
-            }
-    }
+    private val customerContabilDefaultCrudFormFactory: DefaultCrudFormFactory<CustomerContabil>
+        get() {
+            val formFactory = DefaultCrudFormFactory(CustomerContabil::class.java)
+
+            formFactory.setVisibleProperties(
+                "numNotaFiscal",
+                "dataVencimento",
+                "ISS",
+                "INSS",
+                "IRRF",
+                "CSRF",
+                "diasVencidos",
+                "status",
+                "composicaoData",
+                "composicaoDebito",
+                "composicaoCredito",
+                "composicaoHistorico"
+            )
+            return formFactory
+        }
 }

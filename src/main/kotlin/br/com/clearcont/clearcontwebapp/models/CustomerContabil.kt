@@ -2,8 +2,6 @@ package br.com.clearcont.clearcontwebapp.models
 
 import jakarta.persistence.*
 import org.apache.commons.lang3.builder.ToStringExclude
-import org.springframework.data.jpa.domain.AbstractPersistable_.id
-import org.springframework.security.config.Elements.CSRF
 import java.time.LocalDate
 import java.time.Year
 import java.time.format.DateTimeFormatter
