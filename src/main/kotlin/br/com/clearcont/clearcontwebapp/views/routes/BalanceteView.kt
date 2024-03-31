@@ -20,6 +20,7 @@ import com.vaadin.flow.component.upload.receivers.MemoryBuffer
 import com.vaadin.flow.router.PageTitle
 import com.vaadin.flow.router.Route
 import com.vaadin.flow.server.VaadinResponse
+import com.vaadin.flow.server.VaadinService
 import jakarta.annotation.security.PermitAll
 import jakarta.transaction.Transactional
 import org.apache.poi.ss.usermodel.Row
@@ -148,9 +149,11 @@ class BalanceteView(
         grid.grid.isColumnReorderingAllowed = true
         grid.style["border-radius"] = "10px"
         grid.setAddOperation { balancete ->
-                balancete.empresa = empresa
-                service.save(balancete!!)
-                balancete
+            balancete.empresa = empresa
+            balancete.mes = month.toString()
+            service.save(balancete!!)
+            UI.getCurrent().page.reload()
+            balancete
         }
         grid.setUpdateOperation { balancete: Balancete? -> service.update(balancete!!) }
         grid.setDeleteOperation { balancete: Balancete? -> service.delete(balancete!!) }

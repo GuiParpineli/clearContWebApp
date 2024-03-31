@@ -18,7 +18,7 @@ class Balancete(
     private var doubleTotalBalancete: Double = 0.0,
     @Enumerated(EnumType.STRING)
     var classificacao: TypeCount = TypeCount.ATIVO,
-    val mes: String = Periodo.getPortugueseMonthName(LocalDate.now().month),
+    var mes: String = Periodo.getPortugueseMonthName(LocalDate.now().month),
     val ano: Int = LocalDate.now().year,
     @OneToMany(mappedBy = "balancete", cascade = [CascadeType.ALL], orphanRemoval = true)
     val composicaoLancamentosContabeisList: MutableList<ComposicaoLancamentosContabeis> = mutableListOf(),
