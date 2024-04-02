@@ -38,7 +38,7 @@ open class GridFornecedores(
     private var isf: InputStreamFactory? = null
     private var downloadLink: Anchor = Anchor()
     private var excelStreamResource: StreamResource = StreamResource("fornecedores.xlsx", isf)
-    val log: Logger = Logger.getLogger(javaClass.name)
+    private val log: Logger = Logger.getLogger(javaClass.name)
 
     init {
         val crud = GridCrud(CustomerContabil::class.java)
@@ -54,7 +54,7 @@ open class GridFornecedores(
             }
         }
 
-        if (balancetes == null || balancetes.isEmpty()) {
+        if (balancetes.isEmpty()) {
             crud.grid.isEnabled = false
         }
 
@@ -104,11 +104,7 @@ open class GridFornecedores(
             "composicaoCredito",
             "composicaoHistorico"
         )
-        crud.grid.addColumn(ValueProvider<CustomerContabil, Any> { customer: CustomerContabil ->
-            customer.getDiasVencidos(
-                month
-            )
-        }).setHeader("Dias Vencidos")
+        crud.grid.addColumn({ customer -> customer.getDiasVencidos(month) }).setHeader("Dias Vencidos")
 
         crud.setFindAllOperation {
             contabilCustomers.stream().filter { customerContabil ->
@@ -119,11 +115,8 @@ open class GridFornecedores(
         crud.setAddOperation { customerContabil: CustomerContabil ->
             val composicao = ComposicaoLancamentosContabeis()
             customerContabil.composicaoLancamentosContabeis = composicao
-            customerContabil.composicaoLancamentosContabeis.balancete = balancetePicker.value
-            customerContabil.composicaoLancamentosContabeis.balancete!!.classificacao = TypeCount.PASSIVO
-            customerContabil.composicaoLancamentosContabeis.responsavel = responsavel!!
             composicao.customerContabil = customerContabil
-            customerService.save(customerContabil)
+            customerService.save(customerContabil, balancetePicker.value.id!!, responsavel!!,TypeCount.PASSIVO )
 
             val updatedContabilCustomers = customerService.findByBalanceteID(balanceteID)
             crud.setFindAllOperation {

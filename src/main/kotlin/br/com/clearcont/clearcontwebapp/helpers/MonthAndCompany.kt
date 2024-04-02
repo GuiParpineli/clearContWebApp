@@ -17,7 +17,7 @@ interface MonthAndCompany {
         val page = ui.page
         page.executeJs("return sessionStorage.getItem($0)", "company-name")
             .then { item: JsonValue ->
-                empresa = empresaRepository.findEmpresaByNomeEmpresa(item.asString())?.orElse(Empresa())!!
+                empresa = empresaRepository.findEmpresaByNomeEmpresa(item.asString()).orElse(Empresa())!!
                 callback.accept(empresa)
             }
     }

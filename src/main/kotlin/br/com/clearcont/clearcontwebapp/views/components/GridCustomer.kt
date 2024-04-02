@@ -2,6 +2,7 @@ package br.com.clearcont.clearcontwebapp.views.components
 
 import br.com.clearcont.clearcontwebapp.helpers.generateExcelDownloadLink
 import br.com.clearcont.clearcontwebapp.models.*
+import br.com.clearcont.clearcontwebapp.service.BalanceteService
 import br.com.clearcont.clearcontwebapp.service.CustomerContabilService
 import com.vaadin.flow.component.AbstractField.ComponentValueChangeEvent
 import com.vaadin.flow.component.HasValue
@@ -30,12 +31,16 @@ import java.util.stream.Collectors
 @Transactional
 open class GridCustomer(
     customerService: CustomerContabilService,
-    balancetes: List<Balancete?>, responsavel: Responsavel?, month: Int
+    balancetes: List<Balancete?>,
+    responsavel: Responsavel?,
+    month: Int,
+    balanceteService: BalanceteService
 ) : VerticalLayout() {
     private var balanceteID: Long = 0
     private var isf: InputStreamFactory? = null
     private var downloadLink: Anchor = Anchor()
     private var excelStreamResource: StreamResource = StreamResource("clientes.xlsx", isf)
+    lateinit var balancete: Balancete
     var log: Logger = Logger.getLogger(javaClass.name)
 
     init {
@@ -54,6 +59,7 @@ open class GridCustomer(
         val contabilCustomers = customerService.findByBalanceteID(balanceteID)
 
         balancetePicker.addValueChangeListener { event: ComponentValueChangeEvent<ComboBox<Balancete?>?, Balancete?> ->
+            balancete = balanceteService.getById(balancetePicker.value.id!!)
             val selectedBalancete = event.value
             if (selectedBalancete != null) {
                 balanceteID = selectedBalancete.id!!
@@ -104,6 +110,22 @@ open class GridCustomer(
             )
         }).setHeader("Dias Vencidos")
 
+        crudMethods(crud, contabilCustomers, balanceteService, balancetePicker, responsavel, customerService)
+
+        downloadLink = generateExcelDownloadLink(excelStreamResource)
+
+        add(balancetePicker, downloadLink, crud)
+    }
+
+    @Transactional
+    open fun crudMethods(
+        crud: GridCrud<CustomerContabil>,
+        contabilCustomers: List<CustomerContabil>,
+        balanceteService: BalanceteService,
+        balancetePicker: ComboBox<Balancete>,
+        responsavel: Responsavel?,
+        customerService: CustomerContabilService
+    ) {
         crud.setFindAllOperation {
             contabilCustomers.stream().filter { customerContabil: CustomerContabil ->
                 customerContabil.composicaoLancamentosContabeis
@@ -114,20 +136,15 @@ open class GridCustomer(
         crud.setAddOperation { customerContabil: CustomerContabil ->
             val composicao = ComposicaoLancamentosContabeis()
             customerContabil.composicaoLancamentosContabeis = composicao
-            customerContabil.composicaoLancamentosContabeis.balancete = balancetePicker.value
-            customerContabil.composicaoLancamentosContabeis.balancete!!.classificacao = TypeCount.ATIVO
-            customerContabil.composicaoLancamentosContabeis.responsavel = responsavel!!
             composicao.customerContabil = customerContabil
-            customerService.save(customerContabil)
+            customerService.save(customerContabil, balancetePicker.value.id!!, responsavel!!, TypeCount.ATIVO)
 
             val updatedContabilCustomers = customerService.findByBalanceteID(balanceteID)
 
             crud.setFindAllOperation {
                 updatedContabilCustomers.stream().filter { customerContabilF: CustomerContabil ->
                     customerContabilF
-                        .composicaoLancamentosContabeis
-                        .balancete
-                        ?.classificacao == TypeCount.ATIVO
+                        .composicaoLancamentosContabeis.balancete?.classificacao == TypeCount.ATIVO
                 }.toList()
             }
 
@@ -140,10 +157,6 @@ open class GridCustomer(
                 customerContabil!!
             )
         }
-
-        downloadLink = generateExcelDownloadLink(excelStreamResource)
-
-        add(balancetePicker, downloadLink, crud)
     }
 
     private fun exportToExcel(itemList: List<CustomerContabil>): ByteArrayInputStream {

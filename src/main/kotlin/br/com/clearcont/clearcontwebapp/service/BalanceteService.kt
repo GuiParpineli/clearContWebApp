@@ -3,14 +3,16 @@ package br.com.clearcont.clearcontwebapp.service
 import br.com.clearcont.clearcontwebapp.models.Balancete
 import br.com.clearcont.clearcontwebapp.models.TypeCount
 import br.com.clearcont.clearcontwebapp.repository.BalanceteRepository
+import jakarta.persistence.EntityManager
 import jakarta.transaction.Transactional
 import org.springframework.stereotype.Service
 import java.util.logging.Logger
 
 @Service
-class BalanceteService(private val repository: BalanceteRepository) {
+class BalanceteService(private val repository: BalanceteRepository, private val entityManager: EntityManager) {
     private val log = Logger.getLogger(javaClass.name)
-    val all: List<Balancete> = repository.findAll()
+
+    fun getAll(): List<Balancete> = repository.findAll()
 
     fun getById(balanceteId: Long): Balancete = repository.findById(balanceteId).get()
 
@@ -36,5 +38,9 @@ class BalanceteService(private val repository: BalanceteRepository) {
     fun saveAll(id: Long, balancetes: List<Balancete?>) {
         repository.deleteAllByEmpresa_Id(id)
         repository.saveAll(balancetes)
+    }
+
+    fun merge(balancete: Balancete): Balancete {
+        return entityManager.merge(balancete)
     }
 }

@@ -61,9 +61,11 @@ class CustomersView(
                     balanceteService.filterClassification(empresaId!!, month!!, LocalDate.now().year, TypeCount.ATIVO)
                 log.info("Empresa selecionada: " + empresa.nomeEmpresa)
                 val gridCustomer = GridCustomer(
-                    customerContabilRepository, balanceteData, responsavel, getMonthByPeriodoString(
-                        month
-                    )
+                    customerContabilRepository,
+                    balanceteData,
+                    responsavel,
+                    getMonthByPeriodoString(month),
+                    balanceteService
                 )
                 val clientes = H1("Clientes")
                 val span = Span(empresa.nomeEmpresa)
