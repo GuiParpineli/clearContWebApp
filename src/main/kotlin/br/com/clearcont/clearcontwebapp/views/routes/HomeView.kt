@@ -6,7 +6,7 @@ import br.com.clearcont.clearcontwebapp.models.Empresa
 import br.com.clearcont.clearcontwebapp.models.EmpresaGroup
 import br.com.clearcont.clearcontwebapp.repository.EmpresaRepository
 import br.com.clearcont.clearcontwebapp.service.EmpresaGroupService
-import br.com.clearcont.clearcontwebapp.views.MainLayout
+import br.com.clearcont.clearcontwebapp.views.components.MainLayout
 import com.vaadin.flow.component.AbstractField.ComponentValueChangeEvent
 import com.vaadin.flow.component.UI
 import com.vaadin.flow.component.button.Button
@@ -77,7 +77,7 @@ class HomeView(empresaGroupService: EmpresaGroupService, empresaRepository: Empr
 
                 val h1 = H1("Sistema de Conciliação Contábil")
                 val logo = Image("./images/logo-clear-black.png", "Logo cont")
-                logo.maxHeight = "200px"
+                logo.maxHeight = "150px"
 
                 val companyPicker = companyList?.let { getCompanyPicker(it, page) }
                 val monthPicker = companyPicker?.let { getMonthPicker(it, page) }
@@ -109,9 +109,10 @@ class HomeView(empresaGroupService: EmpresaGroupService, empresaRepository: Empr
 
     private val versionFooter: Span
         get() {
-            val versionFooter = Span("Versão $version - Todos direitos reservados.")
-            versionFooter.style.setTextAlign(Style.TextAlign.CENTER).setPadding("30px")
-            versionFooter.style.setPosition(Style.Position.ABSOLUTE).setBottom("0")
+            val versionFooter = Span("Versão $version - Todos direitos reservados.").apply {
+                style.setTextAlign(Style.TextAlign.CENTER).setPadding("30px")
+                style.setPosition(Style.Position.ABSOLUTE).setBottom("0")
+            }
             return versionFooter
         }
 
@@ -124,8 +125,8 @@ class HomeView(empresaGroupService: EmpresaGroupService, empresaRepository: Empr
                 .map { months: Month -> months.getDisplayName(TextStyle.FULL, locale).uppercase(Locale.getDefault()) }
                 .toList())
         monthPicker.style.setPadding("30px")
-        monthPicker.addValueChangeListener { value: ComponentValueChangeEvent<ComboBox<String?>?, String?>? -> monthPicker.getValue() }
-        monthPicker.addValueChangeListener { value: ComponentValueChangeEvent<ComboBox<String?>?, String?>? -> companyPicker.getValue() }
+        monthPicker.addValueChangeListener { monthPicker.getValue() }
+        monthPicker.addValueChangeListener { companyPicker.getValue() }
 
         monthPicker.style.setTextAlign(Style.TextAlign.CENTER)
 
@@ -137,46 +138,44 @@ class HomeView(empresaGroupService: EmpresaGroupService, empresaRepository: Empr
         return monthPicker
     }
 
-    companion object {
-        private val confirmButton: Button
-            get() {
-                val confirmButton = Button("Confirmar")
-                confirmButton.style.setBackground("green")
-                confirmButton.style["color"] = "white"
-                confirmButton.addClickListener { UI.getCurrent().navigate("/balancete") }
-                return confirmButton
-            }
-
-        private fun getCompanyPicker(companyList: EmpresaGroup, page: Page): ComboBox<String> {
-            val companyPicker = ComboBox<String>("Seleciona a Empresa: ")
-            companyPicker.setItems(companyList.empresas!!.stream().map(Empresa::nomeEmpresa).toList())
-
-            companyPicker.addValueChangeListener { event: ComponentValueChangeEvent<ComboBox<String?>?, String?> ->
-                page.executeJs("sessionStorage.setItem($1, $1)", "company-name", event.value)
-                page.executeJs("sessionStorage.setItem('company-name', $0)", event.value)
-            }
-            companyPicker.addValueChangeListener { event: ComponentValueChangeEvent<ComboBox<String?>?, String> ->
-                page.executeJs("sessionStorage.setItem($1, $1)", "company-name", event.value)
-                page.executeJs("sessionStorage.setItem('company-name', $0)", event.value)
-                println("EMPRESA SELECIONADA: " + event.value)
-            }
-            return companyPicker
+    private val confirmButton: Button
+        get() {
+            val confirmButton = Button("Confirmar")
+            confirmButton.style.setBackground("green")
+            confirmButton.style["color"] = "white"
+            confirmButton.addClickListener { UI.getCurrent().navigate("/balancete") }
+            return confirmButton
         }
 
-        private fun getFlexLayout(
-            h1: H1,
-            logo: Image,
-            horizontalLayout: HorizontalLayout,
-            confirmButton: Button,
-            versionFooter: Span
-        ): FlexLayout {
-            val verticalLayout = FlexLayout(h1, logo, horizontalLayout, confirmButton, versionFooter)
-            verticalLayout.flexDirection = FlexLayout.FlexDirection.COLUMN
-            verticalLayout.alignItems = FlexComponent.Alignment.CENTER
-            verticalLayout.flexWrap = FlexLayout.FlexWrap.WRAP
-            verticalLayout.style.setMargin("20px")
-            verticalLayout.height = "100vh"
-            return verticalLayout
+    private fun getCompanyPicker(companyList: EmpresaGroup, page: Page): ComboBox<String> {
+        val companyPicker = ComboBox<String>("Seleciona a Empresa: ")
+        companyPicker.setItems(companyList.empresas!!.stream().map(Empresa::nomeEmpresa).toList())
+
+        companyPicker.addValueChangeListener { event: ComponentValueChangeEvent<ComboBox<String?>?, String?> ->
+            page.executeJs("sessionStorage.setItem($1, $1)", "company-name", event.value)
+            page.executeJs("sessionStorage.setItem('company-name', $0)", event.value)
         }
+        companyPicker.addValueChangeListener { event: ComponentValueChangeEvent<ComboBox<String?>?, String> ->
+            page.executeJs("sessionStorage.setItem($1, $1)", "company-name", event.value)
+            page.executeJs("sessionStorage.setItem('company-name', $0)", event.value)
+            println("EMPRESA SELECIONADA: " + event.value)
+        }
+        return companyPicker
+    }
+
+    private fun getFlexLayout(
+        h1: H1,
+        logo: Image,
+        horizontalLayout: HorizontalLayout,
+        confirmButton: Button,
+        versionFooter: Span
+    ): FlexLayout {
+        val verticalLayout = FlexLayout(h1, logo, horizontalLayout, confirmButton, versionFooter)
+        verticalLayout.flexDirection = FlexLayout.FlexDirection.COLUMN
+        verticalLayout.alignItems = FlexComponent.Alignment.CENTER
+        verticalLayout.flexWrap = FlexLayout.FlexWrap.WRAP
+        verticalLayout.style.setMargin("20px")
+        verticalLayout.height = "100vh"
+        return verticalLayout
     }
 }

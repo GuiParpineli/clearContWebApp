@@ -11,7 +11,7 @@ import br.com.clearcont.clearcontwebapp.repository.ResponsavelRepository
 import br.com.clearcont.clearcontwebapp.service.BalanceteService
 import br.com.clearcont.clearcontwebapp.service.ComposicaoLancamentosContabeisService
 import br.com.clearcont.clearcontwebapp.service.FileUploadServiceImplement
-import br.com.clearcont.clearcontwebapp.views.MainLayout
+import br.com.clearcont.clearcontwebapp.views.components.MainLayout
 import br.com.clearcont.clearcontwebapp.views.components.GridConciliar
 import br.com.clearcont.clearcontwebapp.views.components.details.BalanceteDetailsLayout
 import com.vaadin.flow.component.UI

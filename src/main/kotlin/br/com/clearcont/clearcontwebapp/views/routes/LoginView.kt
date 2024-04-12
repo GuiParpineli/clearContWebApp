@@ -2,7 +2,7 @@ package br.com.clearcont.clearcontwebapp.views.routes
 
 import br.com.clearcont.clearcontwebapp.helpers.CookieFactory
 import br.com.clearcont.clearcontwebapp.service.UserAppService
-import br.com.clearcont.clearcontwebapp.views.MainLayout
+import br.com.clearcont.clearcontwebapp.views.components.MainLayout
 import com.vaadin.flow.component.login.LoginI18n
 import com.vaadin.flow.component.login.LoginOverlay
 import com.vaadin.flow.router.PageTitle

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg width="100%" height="100%" viewBox="0 0 605 129" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
+    <g transform="matrix(1,0,0,1,-111.958,-437.555)">
+        <g transform="matrix(1,0,0,1,0,496.849)">
+            <path d="M172.898,34.55C172.898,34.55 152.621,48.313 137.145,49.377C122.663,50.372 111.958,47.169 111.958,47.169C129.652,63.876 158.528,48.566 172.898,34.55" style="fill:rgb(3,178,18);"/>
+        </g>
+        <g transform="matrix(1,0,0,1,0,410.749)">
+            <path d="M133.061,142.381C133.061,142.381 159.443,141.078 180.098,116.315C200.754,91.553 199.626,84.247 199.195,84.385L179.703,90.644L227.451,37.999L248.344,106.205L230.69,89.104C230.373,88.796 210.265,136.651 167.855,143.763C164.498,144.79 138.314,146.528 133.061,142.381" style="fill:rgb(3,178,18);"/>
+        </g>
+        <g transform="matrix(1,0,0,1,0,361.871)">
+            <path d="M204.472,89.741L192.128,103.088C192.128,103.088 170.322,82.285 145.069,101.616C119.816,120.946 135.616,158.216 158.991,162.806L139.177,174.704C136.24,173.153 133.629,171.396 131.315,169.469C115.504,156.297 112.451,135.143 115.241,117.308C120.438,84.087 161.338,58.701 204.472,89.741" style="fill:white;"/>
+        </g>
+        <g transform="matrix(1,0,0,1,170.303,201.427)">
+            <text x="239.043px" y="364.169px" style="font-family:'Akkurat-Light';font-size:32.152px;fill:white;">Consulto<tspan x="369.001px 381.251px 398.581px " y="364.169px 364.169px 364.169px ">res</tspan></text>
+        </g>
+        <g transform="matrix(1,0,0,1,118.055,159.407)">
+            <text x="133.687px" y="366.837px" style="font-family:'Akkurat-Bold';font-size:96.683px;fill:white;">Cl<tspan x="223.119px 276.971px " y="366.837px 366.837px ">ea</tspan>r Cont</text>
+        </g>
+    </g>
+</svg>

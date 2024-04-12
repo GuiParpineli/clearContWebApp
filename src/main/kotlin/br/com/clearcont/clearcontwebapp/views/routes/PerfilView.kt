@@ -1,6 +1,6 @@
 package br.com.clearcont.clearcontwebapp.views.routes
 
-import br.com.clearcont.clearcontwebapp.views.MainLayout
+import br.com.clearcont.clearcontwebapp.views.components.MainLayout
 import com.vaadin.flow.component.html.Div
 import com.vaadin.flow.component.login.LoginForm
 import com.vaadin.flow.component.orderedlayout.FlexComponent

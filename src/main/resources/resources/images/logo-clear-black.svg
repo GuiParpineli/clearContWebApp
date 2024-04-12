@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg width="100%" height="100%" viewBox="0 0 605 129" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
+    <g transform="matrix(1,0,0,1,-113.103,-210.766)">
+        <g id="Layer-1" serif:id="Layer 1">
+            <g transform="matrix(1,0,0,1,0,42.4567)">
+                <path d="M173.815,261.801C173.815,261.801 153.613,275.513 138.195,276.573C123.768,277.564 113.104,274.373 113.104,274.373C130.731,291.018 159.498,275.765 173.815,261.801" style="fill:rgb(3,178,18);"/>
+            </g>
+            <g transform="matrix(1,0,0,1,0,-43.3207)">
+                <path d="M134.127,369.228C134.127,369.228 160.41,367.929 180.988,343.26C201.566,318.59 200.443,311.311 200.013,311.449L180.594,317.685L228.163,265.237L248.977,333.187L231.39,316.15C231.073,315.844 211.042,363.519 168.79,370.605C165.446,371.628 139.36,373.359 134.127,369.228" style="fill:rgb(3,178,18);"/>
+            </g>
+            <g transform="matrix(1,0,0,1,0,-92.0154)">
+                <path d="M205.27,316.785L192.972,330.082C192.972,330.082 171.248,309.357 146.09,328.615C120.932,347.874 136.673,385.003 159.959,389.577L140.22,401.429C137.295,399.885 134.693,398.134 132.388,396.215C116.636,383.091 113.594,362.017 116.373,344.249C121.551,311.152 162.297,285.862 205.27,316.785"/>
+            </g>
+            <g transform="matrix(1,0,0,1,161.785,-9.00418)">
+                <text x="238.758px" y="347.828px" style="font-family:'Akkurat-Light';font-size:32.032px;">Consulto<tspan x="368.231px 380.435px 397.701px " y="347.828px 347.828px 347.828px ">res</tspan></text>
+            </g>
+            <g transform="matrix(1,0,0,1,-465.796,-46.3794)">
+                <text x="720.513px" y="341.825px" style="font-family:'Akkurat-Bold';font-size:96.321px;">Cl<tspan x="809.609px 863.26px " y="341.825px 341.825px ">ea</tspan>r Cont</text>
+            </g>
+        </g>
+    </g>
+</svg>
