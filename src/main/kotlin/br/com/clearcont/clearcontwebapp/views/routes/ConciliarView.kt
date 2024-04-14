@@ -6,7 +6,7 @@ import br.com.clearcont.clearcontwebapp.helpers.generateExcelDownloadLink
 import br.com.clearcont.clearcontwebapp.models.Balancete
 import br.com.clearcont.clearcontwebapp.models.ComposicaoLancamentosContabeis
 import br.com.clearcont.clearcontwebapp.models.Responsavel
-import br.com.clearcont.clearcontwebapp.models.StatusConciliacao
+import br.com.clearcont.clearcontwebapp.models.enums.StatusConciliacao
 import br.com.clearcont.clearcontwebapp.repository.ResponsavelRepository
 import br.com.clearcont.clearcontwebapp.service.BalanceteService
 import br.com.clearcont.clearcontwebapp.service.ComposicaoLancamentosContabeisService

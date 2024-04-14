@@ -2,7 +2,7 @@ package br.com.clearcont.clearcontwebapp.service
 
 import br.com.clearcont.clearcontwebapp.models.CustomerContabil
 import br.com.clearcont.clearcontwebapp.models.Responsavel
-import br.com.clearcont.clearcontwebapp.models.TypeCount
+import br.com.clearcont.clearcontwebapp.models.enums.TipoConta
 import br.com.clearcont.clearcontwebapp.repository.CustomerContabilRepository
 import jakarta.transaction.Transactional
 import org.springframework.stereotype.Service
@@ -14,9 +14,9 @@ class CustomerContabilService(
     private val balanceteService: BalanceteService
 ) {
     @Transactional
-    fun save(customerContabil: CustomerContabil, balanceteId: Long, responsavel: Responsavel, typeCount: TypeCount) {
+    fun save(customerContabil: CustomerContabil, balanceteId: Long, responsavel: Responsavel, tipoConta: TipoConta) {
         customerContabil.composicaoLancamentosContabeis.balancete = balanceteService.getById(balanceteId)
-        customerContabil.composicaoLancamentosContabeis.balancete!!.classificacao =  typeCount
+        customerContabil.composicaoLancamentosContabeis.balancete!!.tipo =  tipoConta
         customerContabil.composicaoLancamentosContabeis.responsavel = responsavel
         repository.save(customerContabil)
     }

@@ -4,7 +4,8 @@ import br.com.clearcont.clearcontwebapp.helpers.CookieFactory
 import br.com.clearcont.clearcontwebapp.helpers.MonthAndCompany
 import br.com.clearcont.clearcontwebapp.helpers.Period.getMonthByPeriodoString
 import br.com.clearcont.clearcontwebapp.models.Empresa
-import br.com.clearcont.clearcontwebapp.models.TypeCount
+import br.com.clearcont.clearcontwebapp.models.enums.TipoConta
+import br.com.clearcont.clearcontwebapp.models.enums.TipoConta.*
 import br.com.clearcont.clearcontwebapp.repository.EmpresaRepository
 import br.com.clearcont.clearcontwebapp.repository.ResponsavelRepository
 import br.com.clearcont.clearcontwebapp.service.BalanceteService
@@ -48,18 +49,17 @@ class CustomersView(
         balanceteService: BalanceteService,
         responsavelRepository: ResponsavelRepository
     ) {
-        getCompany(
-            empresaRepository
-        ) { empresa: Empresa? ->
-            getMonth { month: String? ->
-                verifySelectedCompanyAndMonthExistAndNavigate(empresa, month)
+        getCompany(empresaRepository) { empresa: Empresa? ->
+            getMonth { month: String? -> verifySelectedCompanyAndMonthExistAndNavigate(empresa, month)
+
                 val cookieFactory = CookieFactory(VaadinResponse.getCurrent())
                 val responsavelID = cookieFactory.getCookieInteger("responsavel-id")
                 val responsavel = responsavelRepository.findById(responsavelID).orElseThrow()
                 val empresaId = empresa!!.id
-                val balanceteData =
-                    balanceteService.filterClassification(empresaId!!, month!!, LocalDate.now().year, TypeCount.ATIVO)
+                val balanceteData = balanceteService.filterClassification(empresaId!!, month!!, LocalDate.now().year, CLIENTE)
+
                 log.info("Empresa selecionada: " + empresa.nomeEmpresa)
+
                 val gridCustomer = GridCustomer(
                     customerContabilRepository,
                     balanceteData,
@@ -67,10 +67,12 @@ class CustomersView(
                     getMonthByPeriodoString(month),
                     balanceteService
                 )
+
                 val clientes = H1("Clientes")
                 val span = Span(empresa.nomeEmpresa)
                 val subtitle = Span("Selecione uma conta do periodo: " + month + " " + LocalDate.now().year)
                 val verticalLayout = VerticalLayout(VerticalLayout(clientes, span, subtitle), gridCustomer)
+
                 add(verticalLayout)
             }
         }

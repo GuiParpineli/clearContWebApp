@@ -2,6 +2,9 @@ package br.com.clearcont.clearcontwebapp.models
 
 import br.com.clearcont.clearcontwebapp.helpers.Period
 import br.com.clearcont.clearcontwebapp.helpers.formatCurrencyBR
+import br.com.clearcont.clearcontwebapp.models.enums.StatusConciliacao
+import br.com.clearcont.clearcontwebapp.models.enums.TipoConta
+import br.com.clearcont.clearcontwebapp.models.enums.TypeCount
 import jakarta.persistence.*
 import java.time.LocalDate
 
@@ -14,15 +17,16 @@ class Balancete(
     var empresa: Empresa? = null,
     var nomeConta: String = "",
     var numeroConta: Int = 0,
-    private var doubleTotalBalancete: Double = 0.0,
+    private var totalBalancete: Double = 0.0,
     @Enumerated(EnumType.STRING)
     var classificacao: TypeCount = TypeCount.ATIVO,
     var mes: String = Period.getPortugueseMonthName(LocalDate.now().month),
     val ano: Int = LocalDate.now().year,
-    @OneToMany(mappedBy = "balancete", cascade = [CascadeType.ALL], orphanRemoval = true)
+    @OneToMany(mappedBy = "balancete", cascade = [CascadeType.REMOVE], orphanRemoval = true)
     val composicaoLancamentosContabeisList: MutableList<ComposicaoLancamentosContabeis> = mutableListOf(),
     @Enumerated(EnumType.STRING)
-    var status: StatusConciliacao = StatusConciliacao.OPEN
+    var status: StatusConciliacao = StatusConciliacao.OPEN,
+    var tipo: TipoConta = TipoConta.INDEFINIDO
 ) {
     fun addComposicaoLancamentosContabeis(composicaoLancamentosContabeis: ComposicaoLancamentosContabeis) {
         composicaoLancamentosContabeisList.add(composicaoLancamentosContabeis)
@@ -35,30 +39,14 @@ class Balancete(
     }
 
     override fun toString(): String {
-        return "Balancete{id=$id, empresa=$empresa, nomeConta='$nomeConta', numeroConta=$numeroConta, totalBalancete=$doubleTotalBalancete, classificacao='$classificacao', mes='$mes', ano=$ano}"
+        return "Balancete{id=$id, empresa=$empresa, nomeConta='$nomeConta', numeroConta=$numeroConta, totalBalancete=$totalBalancete, classificacao='$classificacao', mes='$mes', ano=$ano}"
     }
-
-    private fun contarPontos(texto: String): Int {
-        var contador = 0
-        for (element in texto) {
-            if (element == '.') {
-                contador++
-            }
-        }
-        return contador
-    }
-
-//    fun setTotalBalancete(totalBalancete: String) {
-//        if (contarPontos(totalBalancete) < 1) this.doubleTotalBalancete = totalBalancete.replace(",", ".").toDouble()
-//        else this.doubleTotalBalancete =
-//            totalBalancete.replaceFirst("\\.".toRegex(), "").replaceFirst(",".toRegex(), ".").toDouble()
-//    }
 
     fun getTotalBalancete(): String {
-        return formatCurrencyBR(doubleTotalBalancete)
+        return formatCurrencyBR(totalBalancete)
     }
 
     fun getTotalBalanceteDouble(): Double {
-        return doubleTotalBalancete
+        return totalBalancete
     }
 }

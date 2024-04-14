@@ -1,5 +1,6 @@
 package br.com.clearcont.clearcontwebapp.models
 
+import br.com.clearcont.clearcontwebapp.models.enums.StatusConciliacao
 import jakarta.persistence.*
 import org.apache.commons.lang3.builder.ToStringExclude
 import java.time.LocalDate
@@ -36,26 +37,26 @@ class CustomerContabil() {
             composicaoLancamentosContabeis.data = composicaoData!!
         }
 
-var composicaoDebito: String
-    get() = composicaoLancamentosContabeis?.getDebito().toString()
-    set(composicaoDebito) {
-        val cleanedComposicaoDebito = composicaoDebito.replace('\u00A0', ' ').trim()
-        if (cleanedComposicaoDebito.contains("R$")) {
-            val valor = cleanedComposicaoDebito.replace("R$", "").replace(".", "").replace(",", ".")
-            composicaoLancamentosContabeis.setDebito(valor.toDouble())
-        } else
-            composicaoLancamentosContabeis.setDebito(cleanedComposicaoDebito.toDouble())
-    }
+    var composicaoDebito: String
+        get() = composicaoLancamentosContabeis?.getDebito().toString()
+        set(composicaoDebito) {
+            val cleanedComposicaoDebito = composicaoDebito.replace('\u00A0', ' ').trim()
+            if (cleanedComposicaoDebito.contains("R$")) {
+                val valor = cleanedComposicaoDebito.replace("R$", "").replace(".", "").replace(",", ".")
+                composicaoLancamentosContabeis.setDebito(valor.toDouble())
+            } else
+                composicaoLancamentosContabeis.setDebito(cleanedComposicaoDebito.toDouble())
+        }
 
-var composicaoCredito: String
-    get() = composicaoLancamentosContabeis.getCredito()
-    set(value) {
-        val cleanedValue = value.replace('\u00A0', ' ').trim()
-        if (cleanedValue.contains("R$")) {
-            val valor = cleanedValue.replace("R$", "").replace(".", "").replace(",", ".")
-            composicaoLancamentosContabeis.setCredito(valor.toDouble())
-        } else composicaoLancamentosContabeis.setCredito(cleanedValue.toDouble())
-    }
+    var composicaoCredito: String
+        get() = composicaoLancamentosContabeis.getCredito()
+        set(value) {
+            val cleanedValue = value.replace('\u00A0', ' ').trim()
+            if (cleanedValue.contains("R$")) {
+                val valor = cleanedValue.replace("R$", "").replace(".", "").replace(",", ".")
+                composicaoLancamentosContabeis.setCredito(valor.toDouble())
+            } else composicaoLancamentosContabeis.setCredito(cleanedValue.toDouble())
+        }
 
     var composicaoHistorico: String?
         get() = composicaoLancamentosContabeis.historico

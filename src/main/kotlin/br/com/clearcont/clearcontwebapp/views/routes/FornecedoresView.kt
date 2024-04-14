@@ -4,7 +4,9 @@ import br.com.clearcont.clearcontwebapp.helpers.CookieFactory
 import br.com.clearcont.clearcontwebapp.helpers.MonthAndCompany
 import br.com.clearcont.clearcontwebapp.helpers.Period.getMonthByPeriodoString
 import br.com.clearcont.clearcontwebapp.models.Empresa
-import br.com.clearcont.clearcontwebapp.models.TypeCount
+import br.com.clearcont.clearcontwebapp.models.enums.TipoConta
+import br.com.clearcont.clearcontwebapp.models.enums.TipoConta.*
+import br.com.clearcont.clearcontwebapp.models.enums.TypeCount
 import br.com.clearcont.clearcontwebapp.repository.EmpresaRepository
 import br.com.clearcont.clearcontwebapp.repository.ResponsavelRepository
 import br.com.clearcont.clearcontwebapp.service.BalanceteService
@@ -56,18 +58,23 @@ class FornecedoresView(
                 val responsavel = responsavelRepository.findById(responsavelID).orElseThrow()
                 val empresaId = empresa!!.id
                 val balanceteData =
-                    balanceteService.filterClassification(empresaId!!, month!!, LocalDate.now().year, TypeCount.PASSIVO)
-                log.info("Empresa selecionada: " + empresa.nomeEmpresa)
+                    balanceteService.filterClassification(empresaId!!, month!!, LocalDate.now().year, FORNECEDOR)
+                log.info("Empresa selecionada: ${empresa.nomeEmpresa}")
+                log.info("Tamanho balancete: $balanceteData")
 
                 val gridCustomer = GridFornecedores(
-                    customerContabilRepository, balanceteData, responsavel, getMonthByPeriodoString(
-                        month
-                    )
+                    customerContabilRepository,
+                    balanceteData,
+                    responsavel,
+                    getMonthByPeriodoString(month),
+                    balanceteService
                 )
+
                 val clientes = H1("Fornecedores")
                 val span = Span(empresa.nomeEmpresa)
                 val subtitle = Span("Selecione uma conta do periodo: " + month + " " + LocalDate.now().year)
                 val verticalLayout = VerticalLayout(VerticalLayout(clientes, span, subtitle), gridCustomer)
+
                 add(verticalLayout)
             }
         }

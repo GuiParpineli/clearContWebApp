@@ -1,7 +1,7 @@
 package br.com.clearcont.clearcontwebapp.service
 
 import br.com.clearcont.clearcontwebapp.models.ApplicationUser
-import br.com.clearcont.clearcontwebapp.models.Role
+import br.com.clearcont.clearcontwebapp.models.enums.Role
 import br.com.clearcont.clearcontwebapp.repository.UserRepository
 import org.springframework.security.core.GrantedAuthority
 import org.springframework.security.core.authority.SimpleGrantedAuthority

@@ -1,5 +1,6 @@
 package br.com.clearcont.clearcontwebapp.models
 
+import br.com.clearcont.clearcontwebapp.models.enums.Role
 import com.fasterxml.jackson.annotation.JsonIgnore
 import jakarta.persistence.*
 

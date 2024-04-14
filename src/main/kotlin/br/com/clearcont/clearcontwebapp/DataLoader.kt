@@ -1,7 +1,12 @@
 package br.com.clearcont.clearcontwebapp
 
 import br.com.clearcont.clearcontwebapp.models.*
+import br.com.clearcont.clearcontwebapp.models.enums.Role
+import br.com.clearcont.clearcontwebapp.models.enums.StatusConciliacao
+import br.com.clearcont.clearcontwebapp.models.enums.TipoConta
+import br.com.clearcont.clearcontwebapp.models.enums.TypeCount
 import br.com.clearcont.clearcontwebapp.repository.*
+import br.com.clearcont.clearcontwebapp.service.ComposicaoLancamentosContabeisService
 import jakarta.transaction.Transactional
 import org.springframework.boot.ApplicationArguments
 import org.springframework.boot.ApplicationRunner
@@ -15,7 +20,7 @@ class DataLoader(
     private val balanceteRepository: BalanceteRepository,
     private val empresaRepository: EmpresaRepository, controleRepository: ControleRepository?,
     private val empresaGroupRepository: EmpresaGroupRepository,
-    private val composicaoLancamentosContabeisRepository: ComposicaoLancamentosContabeisRepository,
+    private val composicaoLancamentosContabeisRepository: ComposicaoLancamentosContabeisService,
     private val responsavelRepository: ResponsavelRepository,
     private val userRepository: UserRepository,
     private val customerContabilRepository: CustomerContabilRepository
@@ -57,61 +62,62 @@ class DataLoader(
         if (balanceteRepository.findAll().isEmpty()) {
             balanceteRepository.save(
                 Balancete(
-                    null,
-                    empresa,
-                    "BANCO ITAU",
-                    375,
-                    248.36334,
-                    TypeCount.ATIVO,
-                    "JANEIRO",
-                    2024,
-                    mutableListOf(),
-                    StatusConciliacao.OPEN
+                    id = null,
+                    empresa = empresa,
+                    nomeConta = "BANCO ITAU",
+                    numeroConta = 375,
+                    totalBalancete = 248.36334,
+                    classificacao = TypeCount.ATIVO,
+                    mes = "JANEIRO",
+                    ano = 2024,
+                    composicaoLancamentosContabeisList = mutableListOf(),
+                    status = StatusConciliacao.OPEN,
+                    tipo = TipoConta.CLIENTE
                 )
             )
 
             balanceteRepository.save(
                 Balancete(
-                    null,
-                    empresa,
-                    "BANCO ITAU",
-                    375,
-                    248.36334,
-                    TypeCount.PASSIVO,
-                    "JANEIRO",
-                    2024,
-                    mutableListOf(),
-                    StatusConciliacao.OPEN
+                    id = null,
+                    empresa = empresa,
+                    nomeConta = "BANCO ITAU",
+                    numeroConta = 375,
+                    totalBalancete = 248.36334,
+                    classificacao = TypeCount.PASSIVO,
+                    mes = "JANEIRO",
+                    ano = 2024,
+                    status = StatusConciliacao.OPEN,
+                    tipo = TipoConta.CLIENTE
                 )
             )
 
             balanceteRepository.save(
                 Balancete(
-                    null,
-                    empresa2,
-                    "BANCO BRADESCO",
-                    379,
-                    9948.36334,
-                    TypeCount.ATIVO,
-                    "DEZEMBRO",
-                    2023,
-                    mutableListOf(),
-                    StatusConciliacao.OPEN
+                    id = null,
+                    empresa = empresa2,
+                    nomeConta = "BANCO BRADESCO",
+                    numeroConta = 379,
+                    totalBalancete = 9948.36334,
+                    classificacao = TypeCount.ATIVO,
+                    mes = "DEZEMBRO",
+                    ano = 2023,
+                    status = StatusConciliacao.OPEN,
+                    tipo = TipoConta.CLIENTE
                 )
             )
 
             balanceteRepository.save(
                 Balancete(
-                    null,
-                    empresa3,
-                    "BANCO SANTANDER",
-                    388,
-                    928.222,
-                    TypeCount.ATIVO,
-                    "JANEIRO",
-                    2024,
-                    mutableListOf(),
-                   StatusConciliacao.OPEN
+                    id = null,
+                    empresa = empresa3,
+                    nomeConta = "BANCO SANTANDER",
+                    numeroConta = 388,
+                    totalBalancete = 928.222,
+                    classificacao = TypeCount.ATIVO,
+                    mes = "JANEIRO",
+                    ano = 2024,
+                    status = StatusConciliacao.OPEN,
+                    tipo = TipoConta.CLIENTE
                 )
             )
         }
@@ -277,7 +283,7 @@ class DataLoader(
             )
         }
 
-        if (composicaoLancamentosContabeisRepository.findAll().isEmpty()) {
+        if (composicaoLancamentosContabeisRepository.all.isEmpty()) {
             composicaoLancamentosContabeisRepository.save(
                 ComposicaoLancamentosContabeis(
                     LocalDate.now(),

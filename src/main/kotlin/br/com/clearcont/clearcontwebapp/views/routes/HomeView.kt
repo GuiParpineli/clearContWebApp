@@ -76,8 +76,10 @@ class HomeView(empresaGroupService: EmpresaGroupService, empresaRepository: Empr
                 }
 
                 val h1 = H1("Sistema de Conciliação Contábil")
-                val logo = Image("./images/logo-clear-black.png", "Logo cont")
-                logo.maxHeight = "150px"
+                val logo = Image("./images/logo-clear-black.png", "Logo cont").apply {
+                    maxHeight = "150px"
+                    style.setPadding("10px")
+                }
 
                 val companyPicker = companyList?.let { getCompanyPicker(it, page) }
                 val monthPicker = companyPicker?.let { getMonthPicker(it, page) }

@@ -1,6 +1,7 @@
 package br.com.clearcont.clearcontwebapp.models
 
 import br.com.clearcont.clearcontwebapp.helpers.formatCurrencyBR
+import br.com.clearcont.clearcontwebapp.models.enums.StatusConciliacao
 import com.fasterxml.jackson.annotation.JsonIgnore
 import com.vaadin.flow.component.notification.Notification
 import jakarta.persistence.*
@@ -18,7 +19,7 @@ class ComposicaoLancamentosContabeis {
     var historico: String? = ""
     private var debito: Double = 0.0
     private var credito: Double = 0.0
-    var doubleSaldoContabil: Double = debito - credito
+    var saldoContabil: Double = 0.0
 
 
     @JsonIgnore
@@ -32,6 +33,7 @@ class ComposicaoLancamentosContabeis {
     @PostLoad
     fun onLoad() {
         status = balancete?.status ?: StatusConciliacao.OPEN
+        saldoContabil = debito - credito
     }
 
     @ManyToOne
@@ -55,7 +57,7 @@ class ComposicaoLancamentosContabeis {
         this.historico = historico
         this.debito = debito
         this.credito = credito
-        this.doubleSaldoContabil = doubleSaldoContabil
+        this.saldoContabil = doubleSaldoContabil
         this.balancete = balancete
         this.responsavel = responsavel
         this.customerContabil = customerContabil
@@ -91,7 +93,7 @@ class ComposicaoLancamentosContabeis {
         val log = Logger.getLogger(javaClass.name)
         try {
             this.debito = debito.replace("R$", "").replace(".", "").replace(",", ".").trim().toDouble()
-            this.doubleSaldoContabil = this.debito - credito
+            this.saldoContabil = this.debito - credito
         } catch (e: NumberFormatException) {
             log.info(e.message)
             Notification.show("Erro")
@@ -102,7 +104,7 @@ class ComposicaoLancamentosContabeis {
         val log = Logger.getLogger(javaClass.name)
         try {
             this.credito = credito.replace("R$", "").replace(".", "").replace(",", ".").trim().toDouble()
-            this.doubleSaldoContabil = this.debito - this.credito
+            this.saldoContabil = this.debito - this.credito
         } catch (e: NumberFormatException) {
             log.info(e.message)
             Notification.show("Erro")
@@ -118,7 +120,7 @@ class ComposicaoLancamentosContabeis {
     }
 
     fun getSaldoContabil(): String {
-        return formatCurrencyBR(doubleSaldoContabil)
+        return formatCurrencyBR(saldoContabil)
     }
 
     fun setCredito(value: Double) {

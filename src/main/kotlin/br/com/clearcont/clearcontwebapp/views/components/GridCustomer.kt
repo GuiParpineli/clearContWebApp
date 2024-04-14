@@ -2,6 +2,8 @@ package br.com.clearcont.clearcontwebapp.views.components
 
 import br.com.clearcont.clearcontwebapp.helpers.generateExcelDownloadLink
 import br.com.clearcont.clearcontwebapp.models.*
+import br.com.clearcont.clearcontwebapp.models.enums.TipoConta
+import br.com.clearcont.clearcontwebapp.models.enums.TypeCount
 import br.com.clearcont.clearcontwebapp.service.BalanceteService
 import br.com.clearcont.clearcontwebapp.service.CustomerContabilService
 import com.vaadin.flow.component.AbstractField.ComponentValueChangeEvent
@@ -51,7 +53,7 @@ open class GridCustomer(
         crud.isVisible = balancetePicker.value != null
         balancetePicker.setItems(balancetes)
         balancetePicker.setItemLabelGenerator(Balancete::nomeConta)
-        balancetePicker.addValueChangeListener { event: ComponentValueChangeEvent<ComboBox<Balancete?>?, Balancete> ->
+        balancetePicker.addValueChangeListener { event ->
             val selectedBalancete = event.value
             crud.setVisible(selectedBalancete.id != null)
         }
@@ -66,13 +68,13 @@ open class GridCustomer(
                 val updatedContabilCustomers = customerService.findByBalanceteID(balanceteID)
                 crud.setFindAllOperation {
                     updatedContabilCustomers.stream().filter { customerContabil: CustomerContabil ->
-                        customerContabil.composicaoLancamentosContabeis.balancete!!.classificacao == TypeCount.ATIVO
+                        customerContabil.composicaoLancamentosContabeis.balancete!!.tipo == TipoConta.CLIENTE
                     }.toList()
                 }
                 isf = InputStreamFactory {
                     exportToExcel(
                         updatedContabilCustomers.stream().filter { customerContabilF: CustomerContabil ->
-                            customerContabilF.composicaoLancamentosContabeis.balancete!!.classificacao == TypeCount.ATIVO
+                            customerContabilF.composicaoLancamentosContabeis.balancete!!.tipo == TipoConta.CLIENTE
                         }.collect(Collectors.toList())
                     )
                 }
@@ -129,7 +131,7 @@ open class GridCustomer(
         crud.setFindAllOperation {
             contabilCustomers.stream().filter { customerContabil: CustomerContabil ->
                 customerContabil.composicaoLancamentosContabeis
-                    .balancete!!.classificacao == TypeCount.ATIVO
+                    .balancete!!.tipo == TipoConta.CLIENTE
             }.toList()
         }
 
@@ -137,14 +139,14 @@ open class GridCustomer(
             val composicao = ComposicaoLancamentosContabeis()
             customerContabil.composicaoLancamentosContabeis = composicao
             composicao.customerContabil = customerContabil
-            customerService.save(customerContabil, balancetePicker.value.id!!, responsavel!!, TypeCount.ATIVO)
+            customerService.save(customerContabil, balancetePicker.value.id!!, responsavel!!, TipoConta.CLIENTE)
 
             val updatedContabilCustomers = customerService.findByBalanceteID(balanceteID)
 
             crud.setFindAllOperation {
                 updatedContabilCustomers.stream().filter { customerContabilF: CustomerContabil ->
                     customerContabilF
-                        .composicaoLancamentosContabeis.balancete?.classificacao == TypeCount.ATIVO
+                        .composicaoLancamentosContabeis.balancete?.tipo == TipoConta.CLIENTE
                 }.toList()
             }
 
@@ -226,8 +228,7 @@ open class GridCustomer(
         isf = InputStreamFactory {
             exportToExcel(
                 updatedContabilCustomers.stream().filter { customerContabilF: CustomerContabil ->
-                    customerContabilF.composicaoLancamentosContabeis
-                        ?.balancete!!.classificacao == TypeCount.ATIVO
+                    customerContabilF.composicaoLancamentosContabeis.balancete!!.tipo == TipoConta.CLIENTE
                 }
                     .collect(Collectors.toList())
             )

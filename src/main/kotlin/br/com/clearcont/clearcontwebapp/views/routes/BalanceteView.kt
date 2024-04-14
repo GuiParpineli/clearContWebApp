@@ -3,6 +3,8 @@ package br.com.clearcont.clearcontwebapp.views.routes
 import br.com.clearcont.clearcontwebapp.helpers.CookieFactory
 import br.com.clearcont.clearcontwebapp.helpers.MonthAndCompany
 import br.com.clearcont.clearcontwebapp.models.*
+import br.com.clearcont.clearcontwebapp.models.enums.TipoConta
+import br.com.clearcont.clearcontwebapp.models.enums.TypeCount
 import br.com.clearcont.clearcontwebapp.repository.EmpresaRepository
 import br.com.clearcont.clearcontwebapp.repository.ResponsavelRepository
 import br.com.clearcont.clearcontwebapp.service.BalanceteService
@@ -107,66 +109,77 @@ class BalanceteView(
                 val rowIterator: Iterator<Row> = sheet.iterator()
                 if (rowIterator.hasNext()) rowIterator.next()
                 val balancetes: MutableList<Balancete?> = ArrayList()
+
                 while (rowIterator.hasNext()) {
+
                     val row = rowIterator.next()
+
                     balancetes.add(
                         Balancete(
-                            0L,
-                            empresa,
-                            row.getCell(1).stringCellValue,
-                            row.getCell(0).numericCellValue.toInt(),
-                            row.getCell(2).numericCellValue,
-                            TypeCount.valueOf(row.getCell(3).stringCellValue),
-                            month,
-                            LocalDate.now().year,
-                            mutableListOf(ComposicaoLancamentosContabeis(responsavel))
+                            id = 0L,
+                            empresa = empresa,
+                            nomeConta = row.getCell(1).stringCellValue,
+                            numeroConta = row.getCell(0).numericCellValue.toInt(),
+                            totalBalancete = row.getCell(2).numericCellValue,
+                            classificacao = TypeCount.valueOf(row.getCell(3).stringCellValue),
+                            mes = month,
+                            ano = LocalDate.now().year,
+                            composicaoLancamentosContabeisList = mutableListOf(
+                                ComposicaoLancamentosContabeis(responsavel)
+                            ),
+                            tipo = row.getCell(4)?.stringCellValue?.uppercase()?.let { it1 -> TipoConta.valueOf(it1) }
+                                ?: TipoConta.INDEFINIDO
                         )
                     )
+
                     service.saveAll(empresa.id!!, balancetes)
                     UI.getCurrent().page.reload()
                     log.info("TAMANHO BALANTE INSERIDO : ${balancetes.size}")
                 }
+
                 workbook.close()
+
             } catch (e: IOException) {
                 log.info("ERRO: ${e.message}")
             }
         }
+
         return singleFileUpload
     }
 
-    private fun getBalanceteGridCrud(
-        service: BalanceteService,
-        balanceteData: List<Balancete>
-    ): GridCrud<Balancete> {
-        val grid = GridCrud(Balancete::class.java)
+    private fun getBalanceteGridCrud(service: BalanceteService, balanceteData: List<Balancete>): GridCrud<Balancete> {
         val formFactory = DefaultCrudFormFactory(Balancete::class.java)
-        formFactory.setVisibleProperties("nomeConta", "numeroConta", "totalBalancete", "classificacao")
-        grid.crudFormFactory = formFactory
-        grid.grid.setColumns("nomeConta", "numeroConta", "totalBalancete", "classificacao")
-        grid.grid.isColumnReorderingAllowed = true
-        grid.style["border-radius"] = "10px"
-        grid.setAddOperation { balancete ->
-            balancete.empresa = empresa
-            balancete.mes = month.toString()
-            service.save(balancete!!)
-            UI.getCurrent().page.reload()
-            balancete
-        }
-        grid.setUpdateOperation { balancete: Balancete? -> service.update(balancete!!) }
-        grid.setDeleteOperation { balancete: Balancete? -> service.delete(balancete!!) }
-        grid.setFindAllOperation { balanceteData }
-        grid.grid.addComponentColumn { balanceteComp: Balancete ->
-            val editButton = Button("Conciliar")
-            editButton.addClickListener {
-                UI.getCurrent().navigate("conciliar/" + balanceteComp.id)
-            }
-            editButton
-        }.setWidth("150px").setFlexGrow(0)
+        formFactory.setVisibleProperties("nomeConta", "numeroConta", "totalBalancete", "classificacao", "tipo")
 
-        grid.grid.addItemDoubleClickListener { event: ItemDoubleClickEvent<Balancete> ->
-            val balancete = event.item
-            UI.getCurrent().navigate("conciliar/" + balancete.id)
+        val grid = GridCrud(Balancete::class.java).apply {
+            crudFormFactory = formFactory
+            grid.setColumns("nomeConta", "numeroConta", "totalBalancete", "classificacao", "tipo")
+            grid.isColumnReorderingAllowed = true
+            style["border-radius"] = "10px"
+            setAddOperation { balancete ->
+                balancete.empresa = empresa
+                balancete.mes = month.toString()
+                service.save(balancete!!)
+                UI.getCurrent().page.reload()
+                balancete
+            }
+            setUpdateOperation { balancete: Balancete? -> service.update(balancete!!) }
+            setDeleteOperation { balancete: Balancete? -> service.delete(balancete!!) }
+            setFindAllOperation { balanceteData }
+            grid.addComponentColumn { balanceteComp: Balancete ->
+                val editButton = Button("Conciliar")
+                editButton.addClickListener {
+                    UI.getCurrent().navigate("conciliar/" + balanceteComp.id)
+                }
+                editButton
+            }.setWidth("150px").setFlexGrow(0)
+
+            grid.addItemDoubleClickListener { event: ItemDoubleClickEvent<Balancete> ->
+                val balancete = event.item
+                UI.getCurrent().navigate("conciliar/" + balancete.id)
+            }
         }
+
         return grid
     }
 }

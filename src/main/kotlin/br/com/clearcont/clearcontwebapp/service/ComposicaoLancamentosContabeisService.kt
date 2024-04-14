@@ -3,7 +3,7 @@ package br.com.clearcont.clearcontwebapp.service
 import br.com.clearcont.clearcontwebapp.helpers.formatCurrencyBR
 import br.com.clearcont.clearcontwebapp.models.ComposicaoLancamentosContabeis
 import br.com.clearcont.clearcontwebapp.models.CustomerContabil
-import br.com.clearcont.clearcontwebapp.models.StatusConciliacao
+import br.com.clearcont.clearcontwebapp.models.enums.StatusConciliacao
 import br.com.clearcont.clearcontwebapp.repository.ComposicaoLancamentosContabeisRepository
 import br.com.clearcont.clearcontwebapp.repository.CustomerContabilRepository
 import jakarta.persistence.EntityManager
@@ -56,7 +56,7 @@ class ComposicaoLancamentosContabeisService(
 
     fun getByBalanceteID(id: Long?): List<ComposicaoLancamentosContabeis> {
         log.info("obtendo balancete da composicao, balancete id: $id")
-        return contabeisRepository.findComposicaoLancamentosContabeisByBalancete_Id(id)
+        return contabeisRepository.findByBalanceteId(id)
     }
 
     fun getByYearMonthAndCnpj(cnpj: String?, year: Int?, month: String?): List<ComposicaoLancamentosContabeis> {
@@ -73,8 +73,8 @@ class ComposicaoLancamentosContabeisService(
 
 
     fun getSaldoContabil(balanceteId: Long?): Double {
-        return contabeisRepository.findComposicaoLancamentosContabeisByBalancete_Id(balanceteId)
-            .stream().mapToDouble((ComposicaoLancamentosContabeis::doubleSaldoContabil)).sum()
+        return contabeisRepository.findByBalanceteId(balanceteId)
+            .stream().mapToDouble((ComposicaoLancamentosContabeis::saldoContabil)).sum()
     }
 
     fun atualizarSaldoContabil(balanceteId: Long?, crud: GridCrud<*>) {

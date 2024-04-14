@@ -1,6 +1,7 @@
 package br.com.clearcont.clearcontwebapp.models
 
 import br.com.clearcont.clearcontwebapp.helpers.formatCurrencyBR
+import br.com.clearcont.clearcontwebapp.models.enums.TypeCount
 import jakarta.persistence.*
 import java.time.LocalDate
 

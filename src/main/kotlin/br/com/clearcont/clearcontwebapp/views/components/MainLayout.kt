@@ -1,7 +1,7 @@
 package br.com.clearcont.clearcontwebapp.views.components
 
 import br.com.clearcont.clearcontwebapp.configs.security.AuthenticatedUser
-import br.com.clearcont.clearcontwebapp.models.Role
+import br.com.clearcont.clearcontwebapp.models.enums.Role
 import br.com.clearcont.clearcontwebapp.views.routes.*
 import com.vaadin.flow.component.Component
 import com.vaadin.flow.component.UI
@@ -11,9 +11,11 @@ import com.vaadin.flow.component.button.Button
 import com.vaadin.flow.component.html.Div
 import com.vaadin.flow.component.html.Image
 import com.vaadin.flow.component.icon.Icon
+import com.vaadin.flow.component.icon.VaadinIcon
 import com.vaadin.flow.component.orderedlayout.FlexComponent
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout
 import com.vaadin.flow.component.orderedlayout.VerticalLayout
+import com.vaadin.flow.component.textfield.TextField
 import com.vaadin.flow.router.RouterLink
 
 class MainLayout(private val authenticatedUser: AuthenticatedUser) : AppLayout() {
@@ -25,7 +27,8 @@ class MainLayout(private val authenticatedUser: AuthenticatedUser) : AppLayout()
                 VerticalLayout(
                     createHorizontalLayout("Dashboard", DashboardView::class.java, "dashboard"),
                     createHorizontalLayout("Clientes", CustomersView::class.java, "building"),
-                    createHorizontalLayout("Fornecedores", FornecedoresView::class.java, "suitcase")
+                    createHorizontalLayout("Fornecedores", FornecedoresView::class.java, "suitcase"),
+                    createHorizontalLayout("Painel Administrativo", AdminPanelView::class.java, "cog")
                 )
             )
     }
@@ -37,9 +40,16 @@ class MainLayout(private val authenticatedUser: AuthenticatedUser) : AppLayout()
         val routerLink = RouterLink("", HomeView::class.java)
         routerLink.add(logo)
 
+        val search = TextField().apply {
+            placeholder = "Buscar"
+            prefixComponent = VaadinIcon.SEARCH.create()
+        }
+
         val container = Div(routerLink)
 
         val logoutButton = Button("Logout")
+        val notificationButton = Button(Icon("bell").apply { color = "white" })
+
         logoutButton.style.setMargin("10px").setColor("white")
         logoutButton.addClickListener {
             val ui = UI.getCurrent()
@@ -49,12 +59,14 @@ class MainLayout(private val authenticatedUser: AuthenticatedUser) : AppLayout()
             authenticatedUser.logout()
         }
 
-        val header = HorizontalLayout(container, logoutButton)
-        header.expand(container)
-        header.defaultVerticalComponentAlignment = FlexComponent.Alignment.CENTER
-        header.justifyContentMode = FlexComponent.JustifyContentMode.BETWEEN
-        header.width = "100%"
-        header.isSpacing = true
+
+        val header = HorizontalLayout(container, notificationButton, logoutButton).apply {
+            expand(container)
+            defaultVerticalComponentAlignment = FlexComponent.Alignment.CENTER
+            justifyContentMode = FlexComponent.JustifyContentMode.BETWEEN
+            width = "100%"
+            isSpacing = true
+        }
 
         addToNavbar(DrawerToggle(), header)
     }

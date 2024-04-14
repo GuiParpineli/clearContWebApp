@@ -1,7 +1,7 @@
 package br.com.clearcont.clearcontwebapp.service
 
 import br.com.clearcont.clearcontwebapp.models.Balancete
-import br.com.clearcont.clearcontwebapp.models.TypeCount
+import br.com.clearcont.clearcontwebapp.models.enums.TipoConta
 import br.com.clearcont.clearcontwebapp.repository.BalanceteRepository
 import jakarta.persistence.EntityManager
 import jakarta.transaction.Transactional
@@ -19,9 +19,9 @@ class BalanceteService(private val repository: BalanceteRepository, private val 
     fun getByCompanyAndPeriod(id: Long, mes: String, ano: Int): List<Balancete> =
         repository.findBalanceteByEmpresa_IdAndMesAndAno(id, mes, ano)
 
-    fun filterClassification(id: Long, mes: String, ano: Int, classification: TypeCount): List<Balancete> {
+    fun filterClassification(id: Long, mes: String, ano: Int, tipoConta: TipoConta): List<Balancete> {
         return getByCompanyAndPeriod(id, mes, ano).stream()
-            .filter { balancete: Balancete -> balancete.classificacao == classification }
+            .filter { balancete: Balancete -> balancete.tipo == tipoConta }
             .toList()
     }
 
