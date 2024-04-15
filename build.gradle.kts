@@ -10,7 +10,7 @@ plugins {
 }
 
 group = "br.com.clearcont"
-version = "0.9.0-RELEASE_CANDIDATE"
+version = "0.8.9-RELEASE_CANDIDATE"
 
 java {
     sourceCompatibility = JavaVersion.VERSION_21
