@@ -118,8 +118,8 @@ class BalanceteView(
                         Balancete(
                             id = 0L,
                             empresa = empresa,
-                            nomeConta = row.getCell(1).stringCellValue,
-                            numeroConta = row.getCell(0).numericCellValue.toInt(),
+                            nomeConta = row.getCell(0).stringCellValue,
+                            numeroConta = row.getCell(1).numericCellValue.toInt(),
                             totalBalancete = row.getCell(2).numericCellValue,
                             classificacao = TypeCount.valueOf(row.getCell(3).stringCellValue.uppercase()),
                             mes = month,

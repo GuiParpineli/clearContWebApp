@@ -1,3 +1,4 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat&display=swap');
 [theme~="light"] {
     --lumo-base-color: hsl(0, 0%, 96%);
     --lumo-font-family: 'Montserrat', 'sans-serif';

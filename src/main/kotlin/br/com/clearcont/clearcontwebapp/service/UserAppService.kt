@@ -20,7 +20,7 @@ class UserAppService(private val userRepository: UserRepository) : UserDetailsSe
             throw UsernameNotFoundException("No applicationUser present with username: $username")
         } else {
             return org.springframework.security.core.userdetails.User(
-                user.username, user.hashedPassword,
+                user.username, user.password,
                 getAuthorities(user)
             )
         }
@@ -28,6 +28,22 @@ class UserAppService(private val userRepository: UserRepository) : UserDetailsSe
 
     fun getUserByUserName(username: String): ApplicationUser? {
         return userRepository.findByUsername(username)
+    }
+
+    fun getAll(): MutableList<ApplicationUser> {
+        return userRepository.findAll()
+    }
+
+    fun delete(user: ApplicationUser) {
+        userRepository.delete(user)
+    }
+
+    fun update(user: ApplicationUser): ApplicationUser {
+        return userRepository.saveAndFlush(user)
+    }
+
+    fun save(user: ApplicationUser): ApplicationUser {
+        return userRepository.save(user)
     }
 
     companion object {

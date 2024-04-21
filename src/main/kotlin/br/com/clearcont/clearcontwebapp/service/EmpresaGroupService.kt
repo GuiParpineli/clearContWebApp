@@ -10,4 +10,5 @@ class EmpresaGroupService(private val repository: EmpresaGroupRepository) {
     fun getByID(id: Long): EmpresaGroup? {
         return repository.findById(id).orElse(null)
     }
+
 }

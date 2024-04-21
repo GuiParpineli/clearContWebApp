@@ -1,6 +1,6 @@
 package br.com.clearcont.clearcontwebapp.models.enums
 
 
-enum class Role(private val roleName: String) {
-    USER("applicationUser"), ADMIN("admin"), SUPER_ADMIN("superAdmin")
+enum class Role(val roleName: String) {
+    USER("user"), ADMIN("admin"), SUPER_ADMIN("superAdmin")
 }

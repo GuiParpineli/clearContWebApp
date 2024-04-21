@@ -10,9 +10,9 @@ class ApplicationUser(
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id val id: Long? = null,
     @Column(unique = true) var username: String,
-    val name: String,
-    @JsonIgnore val hashedPassword: String,
-    @ElementCollection(fetch = FetchType.EAGER) @Enumerated(EnumType.STRING) val roles: Set<Role>,
+    var name: String,
+    @JsonIgnore var password: String,
+    @ElementCollection(fetch = FetchType.EAGER) @Enumerated(EnumType.STRING) var roles: MutableSet<Role>,
     @Column(length = 1000000) @Lob var profilePicture: ByteArray?,
     @ManyToOne var empresaGroup: EmpresaGroup,
     @JoinColumn(name = "responsavel_id", unique = true)

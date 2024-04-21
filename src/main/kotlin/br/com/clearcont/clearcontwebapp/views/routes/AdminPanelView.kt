@@ -1,20 +1,225 @@
 package br.com.clearcont.clearcontwebapp.views.routes
 
+import br.com.clearcont.clearcontwebapp.helpers.CookieFactory
+import br.com.clearcont.clearcontwebapp.helpers.MonthAndCompany
+import br.com.clearcont.clearcontwebapp.models.*
+import br.com.clearcont.clearcontwebapp.models.enums.Role
+import br.com.clearcont.clearcontwebapp.models.enums.StatusConciliacao
+import br.com.clearcont.clearcontwebapp.repository.ResponsavelRepository
+import br.com.clearcont.clearcontwebapp.service.ComposicaoLancamentosContabeisService
+import br.com.clearcont.clearcontwebapp.service.EmpresaGroupService
+import br.com.clearcont.clearcontwebapp.service.UserAppService
 import br.com.clearcont.clearcontwebapp.views.components.MainLayout
+import com.vaadin.flow.component.Component
+import com.vaadin.flow.component.button.Button
+import com.vaadin.flow.component.datepicker.DatePicker
+import com.vaadin.flow.component.formlayout.FormLayout
 import com.vaadin.flow.component.html.Div
 import com.vaadin.flow.component.html.H1
+import com.vaadin.flow.component.notification.Notification
+import com.vaadin.flow.component.orderedlayout.FlexComponent
+import com.vaadin.flow.component.orderedlayout.HorizontalLayout
+import com.vaadin.flow.component.orderedlayout.VerticalLayout
+import com.vaadin.flow.component.select.Select
+import com.vaadin.flow.component.textfield.EmailField
+import com.vaadin.flow.component.textfield.NumberField
+import com.vaadin.flow.component.textfield.PasswordField
+import com.vaadin.flow.component.textfield.TextField
 import com.vaadin.flow.router.PageTitle
 import com.vaadin.flow.router.Route
+import com.vaadin.flow.server.VaadinResponse
 import jakarta.annotation.security.RolesAllowed
+import org.vaadin.crudui.crud.CrudOperation
+import org.vaadin.crudui.crud.impl.GridCrud
+import org.vaadin.crudui.form.impl.form.factory.DefaultCrudFormFactory
+import org.vaadin.crudui.layout.impl.HorizontalSplitCrudLayout
+import java.util.logging.Logger
 
 @Route(value = "admin", layout = MainLayout::class)
 @PageTitle("ADMIN PANEL")
-@RolesAllowed("ADMIN")
-class AdminPanelView : Div() {
+@RolesAllowed("SUPER_ADMIN")
+class AdminPanelView(
+    private val userService: UserAppService,
+    private val composicaoService: ComposicaoLancamentosContabeisService,
+    private val responsavelRepository: ResponsavelRepository,
+    private val empresaGroupService: EmpresaGroupService
+) : Div(), MonthAndCompany {
+    override var month: String? = null
+    override lateinit var empresa: Empresa
+    val log: Logger = Logger.getLogger(javaClass.name)
+
+    private val addUserForm: FormLayout by lazy { setupAddUserForm() }
+    private val removeUserForm: GridCrud<ApplicationUser> by lazy { setupRemoveUpdateUserForm() }
+
     init {
-        create()
-        add(H1("Hello world"))
+
+        val addCard = Button("Adicionar Usuário").apply {
+            addClickListener { showForm(addUserForm) }
+        }
+        val removeCard = Button("Remover Usuário / Atualizar Usuário ").apply {
+            addClickListener { showForm(removeUserForm) }
+        }
+
+        val title = H1("Admin Panel")
+        val cardLayout = HorizontalLayout(addCard, removeCard)
+
+        this.add(
+            VerticalLayout(
+                title,
+                cardLayout,
+                addUserForm,
+                removeUserForm,
+            ).apply { justifyContentMode = FlexComponent.JustifyContentMode.CENTER })
     }
 
-    fun create(){ }
+    private fun showForm(component: Component) {
+        addUserForm.isVisible = false
+        removeUserForm.isVisible = false
+
+        component.isVisible = true
+        log.info("Showing form")
+    }
+
+    private fun setupRemoveUpdateUserForm(): GridCrud<ApplicationUser> {
+        val formFactory = DefaultCrudFormFactory(ApplicationUser::class.java)
+        formFactory.setVisibleProperties("username", "name", "roles")
+
+        val userCrud: GridCrud<ApplicationUser> =
+            GridCrud(ApplicationUser::class.java, HorizontalSplitCrudLayout()).apply {
+                crudFormFactory = formFactory
+                grid.setColumns("username", "name", "roles")
+
+                setFindAllOperation { userService.getAll().filter { !(it.roles.contains(Role.ADMIN)) } }
+                setAddOperationVisible(false)
+                setUpdateOperation { userService.update(it) }
+                setDeleteOperation { userService.delete(it) }
+
+                crudFormFactory.setVisibleProperties(CrudOperation.ADD, "username", "name", "password", "roles")
+                crudFormFactory.setVisibleProperties(CrudOperation.UPDATE, "name", "password", "roles")
+                crudFormFactory.setVisibleProperties(CrudOperation.DELETE, "username", "name")
+
+                crudFormFactory.setFieldProvider("password") { PasswordField() }
+                crudFormFactory.setFieldProvider("roles") { Select<Role>().apply { setItems(Role.entries) } }
+            }
+
+        add(userCrud)
+        userCrud.isVisible = false
+        return userCrud
+    }
+
+    private fun setupAddUserForm(): FormLayout {
+        val cookieFactory = CookieFactory(VaadinResponse.getCurrent())
+        val userForm = FormLayout()
+        val id = cookieFactory.getCookieInteger("company-group-id")
+
+        val usernameField = TextField("Username")
+        val nameField = TextField("Name")
+        val passwordField = PasswordField("Password")
+        val rolesField = Select<Role>().apply {
+            label = "Roles"
+            setItems(Role.entries.filter { it != Role.SUPER_ADMIN })
+            setItemLabelGenerator { it.roleName }
+        }
+        val empresaGroup = empresaGroupService.getByID(id)
+        val empresaPicker = Select<Empresa>().apply {
+            label = "Empresa"
+            setItems(empresaGroup?.empresas)
+            setItemLabelGenerator { it.nomeEmpresa.toString() }
+        }
+        val email = EmailField("Email")
+
+        val saveButton = Button("Save").apply {
+            addClickListener {
+                val user = ApplicationUser(
+                    username = usernameField.value,
+                    name = nameField.value,
+                    password = passwordField.value,
+                    roles = mutableSetOf(rolesField.value),
+                    profilePicture = null,
+                    empresaGroup = empresaGroup!!,
+                    responsavel = null
+                )
+                userService.save(user)
+                responsavelRepository.save(Responsavel(email.value, user, empresaPicker.value))
+                Notification.show("Usuario salvo com sucesso!")
+
+                cleanInputs(usernameField, nameField, passwordField, rolesField, empresaPicker, email)
+            }
+            style.setBackgroundColor("green").setColor("white")
+        }
+
+        val horizontalLayout = HorizontalLayout(saveButton).apply {
+            justifyContentMode = FlexComponent.JustifyContentMode.END
+        }
+
+        userForm.add(
+            usernameField,
+            nameField,
+            passwordField,
+            rolesField,
+            empresaPicker,
+            email,
+            horizontalLayout
+        )
+
+        return userForm
+    }
+
+    private fun cleanInputs(
+        usernameField: TextField,
+        nameField: TextField,
+        passwordField: PasswordField,
+        rolesField: Select<Role>,
+        empresaPicker: Select<Empresa>,
+        email: EmailField
+    ) {
+        usernameField.clear()
+        nameField.clear()
+        passwordField.clear()
+        rolesField.clear()
+        empresaPicker.clear()
+        email.clear()
+    }
+
+    private fun setupComposicaoForm(): FormLayout {
+        val composicaoForm = FormLayout()
+
+        val dataField = DatePicker("Data")
+        val historicoField = TextField("Historico")
+        val debitoField = NumberField("Debito")
+        val creditoField = NumberField("Credito")
+        val saldoContabilField = NumberField("Saldo Contabil")
+        val statusField = Select<StatusConciliacao>().apply {
+            label = "Status"
+            setItems(StatusConciliacao.entries)
+        }
+
+        val saveButton = Button("Save").apply {
+            addClickListener {
+                val composicao = ComposicaoLancamentosContabeis(
+                    data = dataField.value,
+                    historico = historicoField.value,
+                    debito = debitoField.value,
+                    credito = creditoField.value,
+                    doubleSaldoContabil = saldoContabilField.value,
+                    balancete = null,
+                    responsavel = Responsavel(),
+                    customerContabil = CustomerContabil()
+                )
+                composicaoService.save(composicao)
+            }
+        }
+
+        composicaoForm.add(
+            dataField,
+            historicoField,
+            debitoField,
+            creditoField,
+            saldoContabilField,
+            statusField,
+            saveButton
+        )
+
+        return composicaoForm
+    }
 }

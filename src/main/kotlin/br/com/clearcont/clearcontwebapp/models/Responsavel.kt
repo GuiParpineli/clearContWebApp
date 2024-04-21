@@ -12,6 +12,12 @@ class Responsavel() {
         this.empresa = empresa
     }
 
+    constructor(email: String, user: ApplicationUser, empresa: Empresa) : this(){
+        this.email = email
+        this.applicationUser = user
+        this.empresa = empresa
+    }
+
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
     var id: Long? = null
