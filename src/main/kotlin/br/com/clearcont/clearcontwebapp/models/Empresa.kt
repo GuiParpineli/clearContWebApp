@@ -13,8 +13,8 @@ class Empresa(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long? = null,
-    val nomeEmpresa: String? = null,
+    var nomeEmpresa: String? = null,
     @CNPJ
-    val cnpj: String? = null,
-    val email: @Email String? = null
+    var cnpj: String? = null,
+    var email: @Email String? = null
 )

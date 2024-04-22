@@ -34,7 +34,7 @@ class MainLayout(private val authenticatedUser: AuthenticatedUser) : AppLayout()
     }
 
     private fun createHeader() {
-        val logo = Image("./images/logo-clear-white.svg", "Logo")
+        val logo = Image("./images/logo-clear-white.png", "Logo")
         logo.maxHeight = "25px"
 
         val routerLink = RouterLink("", HomeView::class.java)

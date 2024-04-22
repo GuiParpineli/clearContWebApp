@@ -5,9 +5,11 @@ import br.com.clearcont.clearcontwebapp.helpers.MonthAndCompany
 import br.com.clearcont.clearcontwebapp.models.*
 import br.com.clearcont.clearcontwebapp.models.enums.Role
 import br.com.clearcont.clearcontwebapp.models.enums.StatusConciliacao
+import br.com.clearcont.clearcontwebapp.repository.EmpresaRepository
 import br.com.clearcont.clearcontwebapp.repository.ResponsavelRepository
 import br.com.clearcont.clearcontwebapp.service.ComposicaoLancamentosContabeisService
 import br.com.clearcont.clearcontwebapp.service.EmpresaGroupService
+import br.com.clearcont.clearcontwebapp.service.EmpresaService
 import br.com.clearcont.clearcontwebapp.service.UserAppService
 import br.com.clearcont.clearcontwebapp.views.components.MainLayout
 import com.vaadin.flow.component.Component
@@ -42,7 +44,8 @@ class AdminPanelView(
     private val userService: UserAppService,
     private val composicaoService: ComposicaoLancamentosContabeisService,
     private val responsavelRepository: ResponsavelRepository,
-    private val empresaGroupService: EmpresaGroupService
+    private val empresaGroupService: EmpresaGroupService,
+    private val empresaService: EmpresaService
 ) : Div(), MonthAndCompany {
     override var month: String? = null
     override lateinit var empresa: Empresa
@@ -50,34 +53,65 @@ class AdminPanelView(
 
     private val addUserForm: FormLayout by lazy { setupAddUserForm() }
     private val removeUserForm: GridCrud<ApplicationUser> by lazy { setupRemoveUpdateUserForm() }
+    private val setupCompany: GridCrud<Empresa> by lazy { setupEmpresa() }
 
     init {
 
         val addCard = Button("Adicionar Usuário").apply {
             addClickListener { showForm(addUserForm) }
         }
+
         val removeCard = Button("Remover Usuário / Atualizar Usuário ").apply {
             addClickListener { showForm(removeUserForm) }
         }
+        val empresaCard = Button("Adicionar Empresa").apply {
+            addClickListener { showForm(setupCompany) }
+        }
 
         val title = H1("Admin Panel")
-        val cardLayout = HorizontalLayout(addCard, removeCard)
+        val cardLayout = HorizontalLayout(addCard, removeCard, empresaCard)
 
         this.add(
-            VerticalLayout(
-                title,
-                cardLayout,
-                addUserForm,
-                removeUserForm,
-            ).apply { justifyContentMode = FlexComponent.JustifyContentMode.CENTER })
+            VerticalLayout(title, cardLayout, addUserForm, removeUserForm).apply {
+                justifyContentMode = FlexComponent.JustifyContentMode.CENTER
+            })
     }
 
     private fun showForm(component: Component) {
         addUserForm.isVisible = false
         removeUserForm.isVisible = false
+        setupCompany.isVisible = false
 
         component.isVisible = true
         log.info("Showing form")
+    }
+
+    private fun setupEmpresa(): GridCrud<Empresa> {
+        val cookieFactory = CookieFactory(VaadinResponse.getCurrent())
+        val empresaGroupID = cookieFactory.getCookieInteger("responsavel-id")
+
+        val formFactory = DefaultCrudFormFactory(Empresa::class.java)
+        formFactory.setVisibleProperties("nomeEmpresa", "cnpj", "email")
+        val empresaGroup: EmpresaGroup = empresaGroupService.getByID(empresaGroupID)
+        val userCrud: GridCrud<Empresa> =
+            GridCrud(Empresa::class.java, HorizontalSplitCrudLayout()).apply {
+                crudFormFactory = formFactory
+                grid.setColumns("nomeEmpresa", "cnpj", "email")
+
+                setFindAllOperation { empresaService.getAll() }
+                setAddOperation {
+                    empresaService.save(it)
+                    empresaGroup.addEmpresa(it)
+                    empresaGroupService.update(empresaGroup)
+                    return@setAddOperation it
+                }
+                setUpdateOperation { empresaService.update(it) }
+                setDeleteOperation { empresaService.delete(it) }
+            }
+
+        add(userCrud)
+        userCrud.isVisible = false
+        return userCrud
     }
 
     private fun setupRemoveUpdateUserForm(): GridCrud<ApplicationUser> {
@@ -161,6 +195,8 @@ class AdminPanelView(
             email,
             horizontalLayout
         )
+
+        userForm.isVisible  = false
 
         return userForm
     }

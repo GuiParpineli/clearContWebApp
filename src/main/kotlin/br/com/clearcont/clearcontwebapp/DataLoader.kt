@@ -126,13 +126,13 @@ class DataLoader(
             empresaGroupRepository.save(
                 EmpresaGroup(
                     0L,
-                    listOf(empresaRepository.findById(1L).get(), empresaRepository.findById(2L).get())
+                    mutableListOf(empresaRepository.findById(1L).get(), empresaRepository.findById(2L).get())
                 )
             )
             empresaGroupRepository.save(
                 EmpresaGroup(
                     0L,
-                    listOf(empresaRepository.findById(3L).get())
+                    mutableListOf(empresaRepository.findById(3L).get())
                 )
             )
         }
