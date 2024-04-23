@@ -15,3 +15,5 @@ services:
     depends_on:
       - mysql
     restart: on-failure
+    volumes:
+      - '/logs:/logs'

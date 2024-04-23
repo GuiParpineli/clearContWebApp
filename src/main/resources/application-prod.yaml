@@ -34,6 +34,6 @@ server:
       tracking-modes: cookie
 logging:
   file:
-    path: /home/logsJava
+    path: /logs
 
-version: 0.8.9
+version: 0.9.9

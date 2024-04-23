@@ -81,8 +81,7 @@ class AdminPanelView(
         addUserForm.isVisible = false
         removeUserForm.isVisible = false
         setupCompany.isVisible = false
-
-        component.isVisible = true
+component.isVisible = true
         log.info("Showing form")
     }
 
@@ -103,6 +102,7 @@ class AdminPanelView(
                     empresaService.save(it)
                     empresaGroup.addEmpresa(it)
                     empresaGroupService.update(empresaGroup)
+                    log.info("Empresa adicionada com sucesso, EMPRESA GROUP: $empresaGroup")
                     return@setAddOperation it
                 }
                 setUpdateOperation { empresaService.update(it) }
@@ -196,7 +196,7 @@ class AdminPanelView(
             horizontalLayout
         )
 
-        userForm.isVisible  = false
+        userForm.isVisible = false
 
         return userForm
     }

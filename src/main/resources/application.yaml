@@ -29,6 +29,6 @@ server:
 
 logging:
   file:
-    path: ./logsJava
+    path: /logs
 
-version: 0.8.9
+version: 0.9.9

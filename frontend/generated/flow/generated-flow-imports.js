@@ -1,8 +1,13 @@
+import { injectGlobalCss } from 'Frontend/generated/jar-resources/theme-util.js';
+
+import { css, unsafeCSS, registerStyles } from '@vaadin/vaadin-themable-mixin';
+import $cssFromFile_0 from 'Frontend/styles/login-view.css?inline';
+
+injectGlobalCss($cssFromFile_0.toString(), 'CSSImport end', document);
 import '@vaadin/polymer-legacy-adapter/style-modules.js';
 import '@vaadin/vertical-layout/theme/lumo/vaadin-vertical-layout.js';
 import '@vaadin/app-layout/theme/lumo/vaadin-app-layout.js';
 import '@vaadin/horizontal-layout/theme/lumo/vaadin-horizontal-layout.js';
-import '@vaadin/login/theme/lumo/vaadin-login-overlay.js';
 import 'Frontend/generated/jar-resources/so/chart/chart.js';
 import '@vaadin/common-frontend/ConnectionIndicator.js';
 import '@vaadin/accordion/theme/lumo/vaadin-accordion.js';
@@ -46,6 +51,7 @@ import '@vaadin/icons/vaadin-iconset.js';
 import '@vaadin/list-box/theme/lumo/vaadin-list-box.js';
 import '@vaadin/item/theme/lumo/vaadin-item.js';
 import '@vaadin/login/theme/lumo/vaadin-login-form.js';
+import '@vaadin/login/theme/lumo/vaadin-login-overlay.js';
 import 'Frontend/generated/jar-resources/menubarConnector.js';
 import '@vaadin/menu-bar/theme/lumo/vaadin-menu-bar.js';
 import '@vaadin/message-input/theme/lumo/vaadin-message-input.js';
