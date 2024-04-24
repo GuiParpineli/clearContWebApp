@@ -7,8 +7,10 @@ import br.com.clearcont.clearcontwebapp.repository.ResponsavelRepository
 import br.com.clearcont.clearcontwebapp.service.ComposicaoLancamentosContabeisService
 import br.com.clearcont.clearcontwebapp.views.components.MainLayout
 import com.storedobject.chart.*
+import com.vaadin.flow.component.UI
 import com.vaadin.flow.component.combobox.ComboBox
 import com.vaadin.flow.component.html.Div
+import com.vaadin.flow.component.notification.Notification
 import com.vaadin.flow.component.orderedlayout.FlexComponent
 import com.vaadin.flow.component.orderedlayout.FlexLayout
 import com.vaadin.flow.component.orderedlayout.VerticalLayout
@@ -23,7 +25,7 @@ import java.util.logging.Logger
 @RolesAllowed("ADMIN")
 class DashboardView(
     responsavelRepository: ResponsavelRepository,
-    empresaRepository: EmpresaRepository?,
+    empresaRepository: EmpresaRepository,
     cLContabeisService: ComposicaoLancamentosContabeisService
 ) : FlexLayout(), MonthAndCompany {
     override var month: String? = null
@@ -34,7 +36,8 @@ class DashboardView(
     var log: Logger = Logger.getLogger(javaClass.name)
 
     init {
-        getCompany(empresaRepository!!) { empresa: Empresa? ->
+        getCompany(empresaRepository) { empresa: Empresa? ->
+            verifySelectedCompanyAndMonthExistAndNavigate(empresa)
             val responsaveisList = responsavelRepository.findResponsavelByEmpresa_Id(
                 empresa!!.id
             )
@@ -108,6 +111,13 @@ class DashboardView(
                 }
             }
             add(horizontalLayout)
+        }
+    }
+
+    private fun verifySelectedCompanyAndMonthExistAndNavigate(empresa: Empresa?) {
+        if (empresa?.nomeEmpresa == null) {
+            Notification.show("Selecione uma empresa e periodo")
+            UI.getCurrent().navigate("/")
         }
     }
 }

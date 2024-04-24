@@ -2,7 +2,11 @@ package br.com.clearcont.clearcontwebapp.views.routes
 
 import br.com.clearcont.clearcontwebapp.helpers.CookieFactory
 import br.com.clearcont.clearcontwebapp.helpers.MonthAndCompany
-import br.com.clearcont.clearcontwebapp.models.*
+import br.com.clearcont.clearcontwebapp.models.Balancete
+import br.com.clearcont.clearcontwebapp.models.ComposicaoLancamentosContabeis
+import br.com.clearcont.clearcontwebapp.models.Empresa
+import br.com.clearcont.clearcontwebapp.models.Responsavel
+import br.com.clearcont.clearcontwebapp.models.enums.StatusConciliacao.*
 import br.com.clearcont.clearcontwebapp.models.enums.TipoConta
 import br.com.clearcont.clearcontwebapp.models.enums.TypeCount
 import br.com.clearcont.clearcontwebapp.repository.EmpresaRepository
@@ -14,6 +18,7 @@ import com.vaadin.flow.component.button.Button
 import com.vaadin.flow.component.grid.ItemDoubleClickEvent
 import com.vaadin.flow.component.html.Div
 import com.vaadin.flow.component.html.H3
+import com.vaadin.flow.component.html.Span
 import com.vaadin.flow.component.notification.Notification
 import com.vaadin.flow.component.upload.Upload
 import com.vaadin.flow.component.upload.receivers.MemoryBuffer
@@ -70,8 +75,8 @@ class BalanceteView(
 
                 val title = getTitleDiv(titleText)
                 val grid = getBalanceteGridCrud(service, balanceteData)
-                val singleFileUpload = getUpload(service, empresa, month, responsavel)
-                add(title, grid, singleFileUpload)
+                val singleFileUpload = getUpload(service, empresa, month, responsavel).apply { style.setMargin("10px") }
+                add(title, singleFileUpload, grid)
             }
         }
     }
@@ -153,7 +158,7 @@ class BalanceteView(
 
         val grid = GridCrud(Balancete::class.java).apply {
             crudFormFactory = formFactory
-            grid.setColumns("nomeConta", "numeroConta", "totalBalancete", "classificacao", "tipo")
+            grid.setColumns("nomeConta", "numeroConta", "totalBalancete", "tipo")
             grid.isColumnReorderingAllowed = true
             style["border-radius"] = "10px"
             setAddOperation { balancete ->
@@ -166,6 +171,10 @@ class BalanceteView(
             setUpdateOperation { balancete: Balancete? -> service.update(balancete!!) }
             setDeleteOperation { balancete: Balancete? -> service.delete(balancete!!) }
             setFindAllOperation { balanceteData }
+
+            grid.addComponentColumn { balancete -> createStatusBadge(balancete.classificacao) }
+                .setHeader("Classificação")
+
             grid.addComponentColumn { balanceteComp: Balancete ->
                 val editButton = Button("Conciliar")
                 editButton.addClickListener {
@@ -178,8 +187,19 @@ class BalanceteView(
                 val balancete = event.item
                 UI.getCurrent().navigate("conciliar/" + balancete.id)
             }
+
         }
 
         return grid
+    }
+
+    private fun createStatusBadge(status: TypeCount): Span {
+        val theme = when (status) {
+            TypeCount.ATIVO -> "badge primary"
+            TypeCount.PASSIVO -> "badge error primary"
+        }
+        val badge = Span(status.name)
+        badge.element.themeList.add(theme)
+        return badge
     }
 }

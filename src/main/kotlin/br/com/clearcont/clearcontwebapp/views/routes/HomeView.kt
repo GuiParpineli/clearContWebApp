@@ -72,13 +72,13 @@ class HomeView(empresaGroupService: EmpresaGroupService, empresaRepository: Empr
                     log.info("ID COMPANY GROUP RETORNADA: " + companyList.id)
                 }
                 if (companyList != null) {
-                    log.info("QUANTIDADE DE EMPRESAS NO GRUPO RETORNADA: " + companyList.empresas!!.size)
+                    log.info("QUANTIDADE DE EMPRESAS NO GRUPO RETORNADA: " + companyList.empresas.size)
                 }
 
                 val h1 = H1("Sistema de Conciliação Contábil")
                 val logo = Image("./images/logo-clear-black.png", "Logo cont").apply {
-                    maxHeight = "150px"
-                    style.setPadding("10px")
+                    maxHeight = "120px"
+                    style.setPadding("20px")
                 }
 
                 val companyPicker = companyList?.let { getCompanyPicker(it, page) }
@@ -151,7 +151,7 @@ class HomeView(empresaGroupService: EmpresaGroupService, empresaRepository: Empr
 
     private fun getCompanyPicker(companyList: EmpresaGroup, page: Page): ComboBox<String> {
         val companyPicker = ComboBox<String>("Seleciona a Empresa: ")
-        companyPicker.setItems(companyList.empresas!!.stream().map(Empresa::nomeEmpresa).toList())
+        companyPicker.setItems(companyList.empresas.stream().map(Empresa::nomeEmpresa).toList())
 
         companyPicker.addValueChangeListener { event: ComponentValueChangeEvent<ComboBox<String?>?, String?> ->
             page.executeJs("sessionStorage.setItem($1, $1)", "company-name", event.value)

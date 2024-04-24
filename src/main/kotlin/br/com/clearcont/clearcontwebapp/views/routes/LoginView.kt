@@ -52,9 +52,11 @@ class LoginView(service: UserAppService) : VerticalLayout(), BeforeEnterObserver
                 Notification.show("Senha incorreta", 2000, Notification.Position.MIDDLE)
             }
         }
-        val logo = Image("./images/logo-clear-black.png", "Logo")
-        logo.maxWidth = "450px"
-        logo.maxHeight = "100px"
+        val logo = Image("./images/logo-clear-black.png", "Logo").apply {
+            maxWidth = "450px"
+            maxHeight = "100px"
+            style.setPadding("10px")
+        }
 
         val content = HorizontalLayout().apply {
             addClassName("login-content")
@@ -65,8 +67,10 @@ class LoginView(service: UserAppService) : VerticalLayout(), BeforeEnterObserver
         val layout = HorizontalLayout().apply {
             justifyContentMode = FlexComponent.JustifyContentMode.CENTER
             alignItems = FlexComponent.Alignment.CENTER
+            isPadding = true
             add(content)
         }
+        style.setBackground(" linear-gradient(to right, #99f2c8, #1f4037)")
         add(layout)
     }
 

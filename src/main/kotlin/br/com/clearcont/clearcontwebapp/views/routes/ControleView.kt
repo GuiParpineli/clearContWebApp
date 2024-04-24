@@ -7,9 +7,11 @@ import br.com.clearcont.clearcontwebapp.models.Empresa
 import br.com.clearcont.clearcontwebapp.repository.EmpresaRepository
 import br.com.clearcont.clearcontwebapp.service.ControleService
 import br.com.clearcont.clearcontwebapp.views.components.MainLayout
+import com.vaadin.flow.component.UI
 import com.vaadin.flow.component.grid.Grid
 import com.vaadin.flow.component.html.Div
 import com.vaadin.flow.component.html.H1
+import com.vaadin.flow.component.notification.Notification
 import com.vaadin.flow.component.orderedlayout.FlexComponent
 import com.vaadin.flow.component.orderedlayout.VerticalLayout
 import com.vaadin.flow.function.ValueProvider
@@ -37,6 +39,7 @@ class ControleView(service: ControleService, empresaRepository: EmpresaRepositor
     init {
         getCompany(empresaRepository!!) { empresa: Empresa? ->
             getMonth { month: String? ->
+                verifySelectedCompanyAndMonthExistAndNavigate(empresa, month)
                 val year = LocalDate.now().year
                 val controleList = service.getAllByMonthAndCompanyID(empresa!!.id!!, month!!, year)
                 val grid = Grid(
@@ -97,5 +100,12 @@ class ControleView(service: ControleService, empresaRepository: EmpresaRepositor
         }
 
         return ByteArrayInputStream(bos.toByteArray())
+    }
+
+    private fun verifySelectedCompanyAndMonthExistAndNavigate(empresa: Empresa?, month: String?) {
+        if (empresa == null || month == null || empresa.nomeEmpresa == null) {
+            Notification.show("Selecione uma empresa e periodo")
+            UI.getCurrent().navigate("/")
+        }
     }
 }

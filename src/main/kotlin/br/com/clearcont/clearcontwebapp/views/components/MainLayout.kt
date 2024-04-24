@@ -19,6 +19,8 @@ import com.vaadin.flow.component.textfield.TextField
 import com.vaadin.flow.router.RouterLink
 
 class MainLayout(private val authenticatedUser: AuthenticatedUser) : AppLayout() {
+    private var darkThemeEnabled = false
+
     init {
         createHeader()
         createDrawer()
@@ -48,7 +50,7 @@ class MainLayout(private val authenticatedUser: AuthenticatedUser) : AppLayout()
         val container = Div(routerLink)
 
         val logoutButton = Button("Logout")
-        val notificationButton = Button(Icon("bell").apply { color = "white" })
+//        val notificationButton = Button(Icon("bell").apply { color = "white" })
 
         logoutButton.style.setMargin("10px").setColor("white")
         logoutButton.addClickListener {
@@ -60,7 +62,7 @@ class MainLayout(private val authenticatedUser: AuthenticatedUser) : AppLayout()
         }
 
 
-        val header = HorizontalLayout(container, notificationButton, logoutButton).apply {
+        val header = HorizontalLayout(container, logoutButton).apply {
             expand(container)
             defaultVerticalComponentAlignment = FlexComponent.Alignment.CENTER
             justifyContentMode = FlexComponent.JustifyContentMode.BETWEEN
@@ -92,4 +94,5 @@ class MainLayout(private val authenticatedUser: AuthenticatedUser) : AppLayout()
         icon.setSize(".9em")
         return HorizontalLayout(FlexComponent.Alignment.BASELINE, icon, link)
     }
+
 }

@@ -5,7 +5,6 @@ import br.com.clearcont.clearcontwebapp.helpers.MonthAndCompany
 import br.com.clearcont.clearcontwebapp.models.*
 import br.com.clearcont.clearcontwebapp.models.enums.Role
 import br.com.clearcont.clearcontwebapp.models.enums.StatusConciliacao
-import br.com.clearcont.clearcontwebapp.repository.EmpresaRepository
 import br.com.clearcont.clearcontwebapp.repository.ResponsavelRepository
 import br.com.clearcont.clearcontwebapp.service.ComposicaoLancamentosContabeisService
 import br.com.clearcont.clearcontwebapp.service.EmpresaGroupService
@@ -81,7 +80,7 @@ class AdminPanelView(
         addUserForm.isVisible = false
         removeUserForm.isVisible = false
         setupCompany.isVisible = false
-component.isVisible = true
+        component.isVisible = true
         log.info("Showing form")
     }
 
@@ -91,7 +90,7 @@ component.isVisible = true
 
         val formFactory = DefaultCrudFormFactory(Empresa::class.java)
         formFactory.setVisibleProperties("nomeEmpresa", "cnpj", "email")
-        val empresaGroup: EmpresaGroup = empresaGroupService.getByID(empresaGroupID)
+        val empresaGroup: EmpresaGroup? = empresaGroupService.getByID(empresaGroupID)
         val userCrud: GridCrud<Empresa> =
             GridCrud(Empresa::class.java, HorizontalSplitCrudLayout()).apply {
                 crudFormFactory = formFactory
@@ -100,8 +99,10 @@ component.isVisible = true
                 setFindAllOperation { empresaService.getAll() }
                 setAddOperation {
                     empresaService.save(it)
-                    empresaGroup.addEmpresa(it)
-                    empresaGroupService.update(empresaGroup)
+                    empresaGroup?.addEmpresa(it)
+                    if (empresaGroup != null) {
+                        empresaGroupService.update(empresaGroup)
+                    }
                     log.info("Empresa adicionada com sucesso, EMPRESA GROUP: $empresaGroup")
                     return@setAddOperation it
                 }

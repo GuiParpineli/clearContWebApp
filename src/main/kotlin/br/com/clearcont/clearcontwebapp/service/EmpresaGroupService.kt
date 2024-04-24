@@ -7,11 +7,11 @@ import org.springframework.stereotype.Service
 
 @Service
 class EmpresaGroupService(private val repository: EmpresaGroupRepository) {
-    fun getByID(id: Long): EmpresaGroup {
+    fun getByID(id: Long): EmpresaGroup? {
         return repository.findById(id).orElseThrow()
     }
 
-    fun update(empresaGroup: EmpresaGroup): EmpresaGroup {
+    fun update(empresaGroup: EmpresaGroup): EmpresaGroup? {
         return repository.saveAndFlush(empresaGroup)
     }
 }

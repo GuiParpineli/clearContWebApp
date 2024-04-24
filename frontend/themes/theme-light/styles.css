@@ -1,4 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Montserrat&display=swap');
+
 [theme~="light"] {
     --lumo-base-color: hsl(0, 0%, 96%);
     --lumo-font-family: 'Montserrat', 'sans-serif';
@@ -7,6 +8,8 @@
     --lumo-primary-color: green;
     --vaadin-button-text-color: #000000;
     --lumo-primary-text-color: #fdfdfd;
+    --vaadin-input-field-border-radius: 30px;
+    --vaadin-button-border-radius: 30px;
 
     vaadin-app-layout::part(navbar) {
         background-color: black;
@@ -46,9 +49,19 @@
         margin: 10px;
     }
 
+
     vaadin-grid::part(header-cell) {
         background-color: black;
         color: white;
+        padding: 10px;
+    }
+
+    vaadin-grid::part(header-cell).first-header-cell {
+        border-top-left-radius: 20px;
+    }
+
+    vaadin-grid::part(header-cell).last-header-cell {
+        border-top-right-radius: 20px;
     }
 
     vaadin-grid-sorter::part(indicators) {
@@ -58,7 +71,7 @@
     .card {
         background-color: azure;
         border: solid black 1px;
-        border-radius: 10px;
+        border-radius: 30px;
         padding: 10px;
         margin: 5px;
     }
@@ -72,4 +85,5 @@
     .bold-text {
         font-weight: bold;
     }
+
 }
