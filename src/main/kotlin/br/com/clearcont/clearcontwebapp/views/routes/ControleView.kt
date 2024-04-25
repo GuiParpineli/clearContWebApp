@@ -58,7 +58,7 @@ class ControleView(service: ControleService, empresaRepository: EmpresaRepositor
                 val isf = InputStreamFactory { exportToExcel(controleList) }
                 val excelStreamResource = StreamResource("controle.xlsx", isf)
                 val downloadLink = generateExcelDownloadLink(excelStreamResource)
-                add(VerticalLayout(FlexComponent.Alignment.CENTER, Div(H1("Controle")), downloadLink, grid))
+                add(VerticalLayout(FlexComponent.Alignment.START, Div(H1("Controle")), downloadLink, grid))
             }
         }
     }

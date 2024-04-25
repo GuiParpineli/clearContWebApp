@@ -59,11 +59,17 @@ class BalanceteDetailsLayout(
         )
         documentosAnexadosDiv.addClassName("card")
         documentosAnexadosDiv.minWidth = "200px"
-        val infosCards = FlexLayout(documentosAnexadosDiv, infos)
-        infosCards.style.setPadding("10px")
-        infosCards.flexWrap = FlexLayout.FlexWrap.WRAP
-        infosCards.setFlexShrink(20.0)
-        infosCards.justifyContentMode = JustifyContentMode.AROUND
+
+        val infosCards = FlexLayout(documentosAnexadosDiv, infos).apply {
+            style.setPadding("10px")
+                .setBackgroundColor("azure")
+                .setBorder("1px solid black")
+                .setBorderRadius("30px")
+
+            flexWrap = FlexLayout.FlexWrap.WRAP
+            setFlexShrink(20.0)
+            justifyContentMode = JustifyContentMode.AROUND
+        }
         add(infosCards)
     }
 

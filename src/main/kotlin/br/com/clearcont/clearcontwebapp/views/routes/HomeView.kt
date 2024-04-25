@@ -23,6 +23,7 @@ import com.vaadin.flow.dom.Style
 import com.vaadin.flow.router.PageTitle
 import com.vaadin.flow.router.Route
 import com.vaadin.flow.server.VaadinResponse
+import com.vaadin.flow.theme.lumo.LumoUtility
 import jakarta.annotation.security.PermitAll
 import org.springframework.beans.factory.annotation.Value
 import java.time.Month
@@ -75,7 +76,14 @@ class HomeView(empresaGroupService: EmpresaGroupService, empresaRepository: Empr
                     log.info("QUANTIDADE DE EMPRESAS NO GRUPO RETORNADA: " + companyList.empresas.size)
                 }
 
-                val h1 = H1("Sistema de Conciliação Contábil")
+                val h1 = H1("Sistema de Conciliação Contábil").apply {
+                    addClassNames(
+                        LumoUtility.Display.FLEX,
+                        LumoUtility.AlignItems.CENTER,
+                        LumoUtility.Padding.Horizontal.XLARGE,
+                        LumoUtility.TextColor.HEADER
+                    )
+                }
                 val logo = Image("./images/logo-clear-black.png", "Logo cont").apply {
                     maxHeight = "120px"
                     style.setPadding("20px")

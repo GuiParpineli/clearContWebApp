@@ -70,7 +70,7 @@ class LoginView(service: UserAppService) : VerticalLayout(), BeforeEnterObserver
             isPadding = true
             add(content)
         }
-        style.setBackground(" linear-gradient(to right, #99f2c8, #1f4037)")
+        style.setBackground("linear-gradient(to right, #48a95b, #023a0f)")
         add(layout)
     }
 

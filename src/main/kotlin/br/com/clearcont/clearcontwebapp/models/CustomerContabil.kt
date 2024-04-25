@@ -28,13 +28,18 @@ class CustomerContabil() {
     var status: StatusConciliacao? = null
 
     @ToStringExclude
-    @OneToOne(mappedBy = "customerContabil", cascade = [CascadeType.ALL], orphanRemoval = true, fetch = FetchType.EAGER)
-    var composicaoLancamentosContabeis: ComposicaoLancamentosContabeis = ComposicaoLancamentosContabeis()
+    @OneToOne(
+        mappedBy = "customerContabil",
+        cascade = [CascadeType.ALL],
+        orphanRemoval = true,
+        fetch = FetchType.EAGER,
+    )
+    var composicaoLancamentosContabeis: ComposicaoLancamentosContabeis? = null
 
     var composicaoData: LocalDate?
-        get() = composicaoLancamentosContabeis.data
+        get() = composicaoLancamentosContabeis?.data
         set(composicaoData) {
-            composicaoLancamentosContabeis.data = composicaoData!!
+            composicaoLancamentosContabeis?.data = composicaoData!!
         }
 
     var composicaoDebito: String
@@ -43,30 +48,30 @@ class CustomerContabil() {
             val cleanedComposicaoDebito = composicaoDebito.replace('\u00A0', ' ').trim()
             if (cleanedComposicaoDebito.contains("R$")) {
                 val valor = cleanedComposicaoDebito.replace("R$", "").replace(".", "").replace(",", ".")
-                composicaoLancamentosContabeis.setDebito(valor.toDouble())
+                composicaoLancamentosContabeis!!.setDebito(valor.toDouble())
             } else
-                composicaoLancamentosContabeis.setDebito(cleanedComposicaoDebito.toDouble())
+                composicaoLancamentosContabeis!!.setDebito(cleanedComposicaoDebito.toDouble())
         }
 
     var composicaoCredito: String
-        get() = composicaoLancamentosContabeis.getCredito()
+        get() = composicaoLancamentosContabeis?.getCredito().toString()
         set(value) {
             val cleanedValue = value.replace('\u00A0', ' ').trim()
             if (cleanedValue.contains("R$")) {
                 val valor = cleanedValue.replace("R$", "").replace(".", "").replace(",", ".")
-                composicaoLancamentosContabeis.setCredito(valor.toDouble())
-            } else composicaoLancamentosContabeis.setCredito(cleanedValue.toDouble())
+                composicaoLancamentosContabeis!!.setCredito(valor.toDouble())
+            } else composicaoLancamentosContabeis!!.setCredito(cleanedValue.toDouble())
         }
 
     var composicaoHistorico: String?
-        get() = composicaoLancamentosContabeis.historico
+        get() = composicaoLancamentosContabeis?.historico
         set(composicaoHistorico) {
             if (composicaoHistorico != null) {
-                composicaoLancamentosContabeis.historico = composicaoHistorico
+                composicaoLancamentosContabeis!!.historico = composicaoHistorico
             }
         }
 
-    fun getStatus(): String? = composicaoLancamentosContabeis.status?.name
+    fun getStatus(): String? = composicaoLancamentosContabeis?.status?.name
 
     init {
         calcularDiasVencidos(LocalDate.now().month.value)

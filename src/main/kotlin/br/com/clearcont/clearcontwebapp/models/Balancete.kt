@@ -22,7 +22,7 @@ class Balancete(
     var classificacao: TypeCount = TypeCount.ATIVO,
     var mes: String = Period.getPortugueseMonthName(LocalDate.now().month),
     val ano: Int = LocalDate.now().year,
-    @OneToMany(mappedBy = "balancete", cascade = [CascadeType.REMOVE], orphanRemoval = true)
+    @OneToMany(mappedBy = "balancete", cascade = [CascadeType.ALL], orphanRemoval = true)
     val composicaoLancamentosContabeisList: MutableList<ComposicaoLancamentosContabeis> = mutableListOf(),
     @Enumerated(EnumType.STRING)
     var status: StatusConciliacao = StatusConciliacao.OPEN,

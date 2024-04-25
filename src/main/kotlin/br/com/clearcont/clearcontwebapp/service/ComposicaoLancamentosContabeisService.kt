@@ -29,7 +29,7 @@ class ComposicaoLancamentosContabeisService(
         return contabeisRepository.findById(id).orElse(ComposicaoLancamentosContabeis())
     }
     @Transactional
-    fun save(entity: ComposicaoLancamentosContabeis) {
+    fun save(entity: ComposicaoLancamentosContabeis): ComposicaoLancamentosContabeis {
         log.info("Saving composicao with id: ${entity.id}")
         val balancete = entity.balancete
         if (balancete != null) {
@@ -39,7 +39,7 @@ class ComposicaoLancamentosContabeisService(
             }
         }
 
-        contabeisRepository.save(entity)
+        return contabeisRepository.save(entity)
     }
 
     @Transactional

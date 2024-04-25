@@ -42,8 +42,8 @@ extra["springBootAdminVersion"] = "3.2.3"
 extra["vaadinVersion"] = "24.3.8"
 
 dependencies {
-    implementation("org.springframework.boot:spring-boot-starter-actuator:3.2.4")
-    implementation("org.springframework.boot:spring-boot-starter-data-jpa:3.2.4")
+    implementation("org.springframework.boot:spring-boot-starter-actuator:3.2.5")
+    implementation("org.springframework.boot:spring-boot-starter-data-jpa:3.2.5")
     implementation("org.springframework.boot:spring-boot-starter-security:3.2.4")
     implementation("org.springframework.boot:spring-boot-starter-mail:3.2.4")
     implementation("org.springframework.security:spring-security-oauth2-jose:6.2.4")
@@ -52,17 +52,17 @@ dependencies {
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.17.0")
     implementation("org.vaadin.crudui:crudui:7.1.0")
     implementation("com.storedobject.chart:so-charts:3.2.4")
-    implementation("com.vaadin:vaadin-spring-boot-starter:24.3.9")
+    implementation("com.vaadin:vaadin-spring-boot-starter:24.3.10")
     implementation("org.apache.poi:poi-ooxml:5.2.5")
     implementation("jakarta.servlet:jakarta.servlet-api:6.0.0")
     implementation("de.codecentric:spring-boot-admin-starter-client:3.2.3")
     implementation("commons-io:commons-io:2.16.1")
     implementation("org.jetbrains.kotlin:kotlin-reflect:1.9.23")
-    implementation("com.amazonaws:aws-java-sdk-s3:1.12.700")
+    implementation("com.amazonaws:aws-java-sdk-s3:1.12.706")
 
-    developmentOnly("org.springframework.boot:spring-boot-devtools:3.2.4")
+    developmentOnly("org.springframework.boot:spring-boot-devtools:3.2.5")
     runtimeOnly("com.mysql:mysql-connector-j:8.3.0")
-    annotationProcessor("org.springframework.boot:spring-boot-configuration-processor:3.2.4")
+    annotationProcessor("org.springframework.boot:spring-boot-configuration-processor:3.2.5")
     testImplementation("org.springframework.boot:spring-boot-starter-test:3.2.4")
     testImplementation("org.springframework.security:spring-security-test:6.2.4")
 }

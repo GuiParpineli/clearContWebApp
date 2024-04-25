@@ -25,6 +25,7 @@ import com.vaadin.flow.component.upload.receivers.MemoryBuffer
 import com.vaadin.flow.router.PageTitle
 import com.vaadin.flow.router.Route
 import com.vaadin.flow.server.VaadinResponse
+import com.vaadin.flow.theme.lumo.LumoUtility
 import jakarta.annotation.security.PermitAll
 import jakarta.transaction.Transactional
 import org.apache.poi.ss.usermodel.Row
@@ -71,7 +72,7 @@ class BalanceteView(
                 val year =
                     if (balanceteData.isEmpty()) LocalDate.now().year.toString() else balanceteData.first().ano.toString()
 
-                val titleText = H3(getTitle(companyName, month, year))
+                val titleText = H3(getTitle(companyName, month, year)).apply { addClassNames(LumoUtility.FontWeight.BLACK) }
 
                 val title = getTitleDiv(titleText)
                 val grid = getBalanceteGridCrud(service, balanceteData)

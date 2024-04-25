@@ -67,13 +67,13 @@ open class GridFornecedores(
                 val updatedContabilCustomers = customerService.findByBalanceteID(balanceteID)
                 crud.setFindAllOperation {
                     updatedContabilCustomers.stream().filter { customerContabil: CustomerContabil ->
-                        customerContabil.composicaoLancamentosContabeis.balancete!!.tipo == TipoConta.FORNECEDOR
+                        customerContabil.composicaoLancamentosContabeis?.balancete!!.tipo == TipoConta.FORNECEDOR
                     }.toList()
                 }
                 isf = InputStreamFactory {
                     exportToExcel(
                         updatedContabilCustomers.stream().filter { customerContabilF: CustomerContabil ->
-                            customerContabilF.composicaoLancamentosContabeis.balancete!!.tipo == TipoConta.FORNECEDOR
+                            customerContabilF.composicaoLancamentosContabeis?.balancete!!.tipo == TipoConta.FORNECEDOR
                         }.collect(Collectors.toList())
                     )
                 }
@@ -127,7 +127,7 @@ open class GridFornecedores(
         crud.setFindAllOperation {
             contabilCustomers.stream().filter { customerContabil: CustomerContabil ->
                 customerContabil.composicaoLancamentosContabeis
-                    .balancete!!.tipo == TipoConta.FORNECEDOR
+                    ?.balancete!!.tipo == TipoConta.FORNECEDOR
             }.toList()
         }
 
@@ -142,7 +142,7 @@ open class GridFornecedores(
             crud.setFindAllOperation {
                 updatedContabilCustomers.stream().filter { customerContabilF: CustomerContabil ->
                     customerContabilF
-                        .composicaoLancamentosContabeis.balancete?.tipo == TipoConta.FORNECEDOR
+                        .composicaoLancamentosContabeis?.balancete?.tipo == TipoConta.FORNECEDOR
                 }.toList()
             }
 
@@ -224,7 +224,7 @@ open class GridFornecedores(
         isf = InputStreamFactory {
             exportToExcel(
                 updatedContabilCustomers.stream().filter { customerContabilF: CustomerContabil ->
-                    customerContabilF.composicaoLancamentosContabeis.balancete!!.tipo == TipoConta.FORNECEDOR
+                    customerContabilF.composicaoLancamentosContabeis?.balancete!!.tipo == TipoConta.FORNECEDOR
                 }
                     .collect(Collectors.toList())
             )

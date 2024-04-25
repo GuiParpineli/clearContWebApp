@@ -69,6 +69,20 @@ class ComposicaoLancamentosContabeis {
         this.responsavel = responsavel
     }
 
+    constructor(
+        data: LocalDate,
+        historico: String,
+        debito: Double,
+        credito: Double,
+        doubleSaldoContabil: Double,
+    ) : this() {
+        this.data = data
+        this.historico = historico
+        this.debito = debito
+        this.credito = credito
+        this.saldoContabil = doubleSaldoContabil
+    }
+
     fun contarPontos(texto: String): Int {
         var contador = 0
         for (element in texto) {

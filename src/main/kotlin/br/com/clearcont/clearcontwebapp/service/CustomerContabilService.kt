@@ -15,9 +15,9 @@ class CustomerContabilService(
 ) {
     @Transactional
     fun save(customerContabil: CustomerContabil, balanceteId: Long, responsavel: Responsavel, tipoConta: TipoConta) {
-        customerContabil.composicaoLancamentosContabeis.balancete = balanceteService.getById(balanceteId)
-        customerContabil.composicaoLancamentosContabeis.balancete!!.tipo =  tipoConta
-        customerContabil.composicaoLancamentosContabeis.responsavel = responsavel
+        customerContabil.composicaoLancamentosContabeis!!.balancete = balanceteService.getById(balanceteId)
+        customerContabil.composicaoLancamentosContabeis!!.balancete!!.tipo =  tipoConta
+        customerContabil.composicaoLancamentosContabeis!!.responsavel = responsavel
         repository.save(customerContabil)
     }
 
