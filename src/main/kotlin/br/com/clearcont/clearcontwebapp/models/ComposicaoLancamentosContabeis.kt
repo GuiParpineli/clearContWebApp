@@ -1,26 +1,34 @@
 package br.com.clearcont.clearcontwebapp.models
 
-import br.com.clearcont.clearcontwebapp.helpers.formatCurrencyBR
 import br.com.clearcont.clearcontwebapp.models.enums.StatusConciliacao
+import br.com.clearcont.clearcontwebapp.models.enums.TipoConta
 import com.fasterxml.jackson.annotation.JsonIgnore
-import com.vaadin.flow.component.notification.Notification
 import jakarta.persistence.*
 import java.time.LocalDate
+import java.time.Year
 import java.time.format.DateTimeFormatter
+import java.time.temporal.ChronoUnit
+import java.time.temporal.TemporalAdjusters
 import java.util.*
-import java.util.logging.Logger
 
 @Entity
-class ComposicaoLancamentosContabeis {
+class ComposicaoLancamentosContabeis() : ComposicaoLancamentos() {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
-    val id: UUID? = null
-    var data: LocalDate = LocalDate.now()
+    var id: UUID? = null
+    var numNotaFiscal = 0
+    var dataVencimento: LocalDate? = LocalDate.now()
+    var ISS = 0.0
+    var INSS = 0.0
+    var IRRF = 0.0
+    var CSRF = 0.0
+    var diasVencidos: Int = 0
+        set(value) {
+            field = if (value == 0) 1 else value
+        }
     var historico: String? = ""
     private var debito: Double = 0.0
     private var credito: Double = 0.0
-    var saldoContabil: Double = 0.0
-
 
     @JsonIgnore
     @ManyToOne(fetch = FetchType.EAGER, cascade = [CascadeType.ALL])
@@ -30,114 +38,151 @@ class ComposicaoLancamentosContabeis {
     @Enumerated(EnumType.STRING)
     var status: StatusConciliacao? = null
 
+    @ManyToOne
+    lateinit var responsavel: Responsavel
+
     @PostLoad
     fun onLoad() {
         status = balancete?.status ?: StatusConciliacao.OPEN
         saldoContabil = debito - credito
     }
 
-    @ManyToOne
-    lateinit var responsavel: Responsavel
-
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "customer_contabil_id")
-    lateinit var customerContabil: CustomerContabil
-
-    constructor(
-        data: LocalDate,
-        historico: String,
-        debito: Double,
-        credito: Double,
-        doubleSaldoContabil: Double,
-        balancete: Balancete?,
-        responsavel: Responsavel,
-        customerContabil: CustomerContabil
-    ) : this() {
-        this.data = data
-        this.historico = historico
-        this.debito = debito
-        this.credito = credito
-        this.saldoContabil = doubleSaldoContabil
-        this.balancete = balancete
-        this.responsavel = responsavel
-        this.customerContabil = customerContabil
+    init {
+        calcularDiasVencidos(LocalDate.now().month.value)
     }
 
-    constructor()
+    private fun getFixedMonthValue(month: Int): Int = if (month in 1..12) month else 1
 
-    constructor(responsavel: Responsavel) {
-        this.responsavel = responsavel
+    fun getDoubleDebito(): Double {
+        return this.debito
     }
 
-    constructor(
-        data: LocalDate,
-        historico: String,
-        debito: Double,
-        credito: Double,
-        doubleSaldoContabil: Double,
-    ) : this() {
-        this.data = data
-        this.historico = historico
-        this.debito = debito
-        this.credito = credito
-        this.saldoContabil = doubleSaldoContabil
+    fun getDoubleCredito(): Double {
+        return this.credito
     }
 
-    fun contarPontos(texto: String): Int {
-        var contador = 0
-        for (element in texto) {
-            if (element == '.') {
-                contador++
+    fun getDataVencimento(): String {
+        val formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy")
+        return dataVencimento!!.format(formatter)
+    }
+
+    fun getDiasVencidos(month: Int): Int {
+        calcularDiasVencidos(month)
+        return diasVencidos
+    }
+
+    private fun calcularDiasVencidos(mes: Int) {
+        val fixedMes = getFixedMonthValue(mes)
+        val anoAtual = Year.now().value
+        val ultimoDiaDoMes = LocalDate.of(anoAtual, fixedMes, 1).with(TemporalAdjusters.lastDayOfMonth())
+        dataVencimento?.let {
+            this.diasVencidos = ChronoUnit.DAYS.between(ultimoDiaDoMes, dataVencimento).toInt()
+
+            if (diasVencidos < 0) {
+                this.diasVencidos = -this.diasVencidos
+            } else if (diasVencidos > 0) {
+                this.diasVencidos = 0
             }
         }
-        return contador
     }
 
-    val dataFormated: String
-        get() {
-            val formatador = DateTimeFormatter.ofPattern("dd/MM/yyyy").withLocale(Locale.of("pt", "BR"))
-            return data.format(formatador)
-        }
-
-    fun setDebito(value: Double) {
-        this.debito = value
+    constructor(
+        numNotaFiscal: Int,
+        dataVencimento: LocalDate?,
+        ISS: Double,
+        INSS: Double,
+        IRRF: Double,
+        CSRF: Double
+    ) : this() {
+        this.numNotaFiscal = numNotaFiscal
+        this.dataVencimento = dataVencimento
+        this.ISS = ISS
+        this.INSS = INSS
+        this.IRRF = IRRF
+        this.CSRF = CSRF
     }
 
-    fun setDebito(debito: String) {
-        val log = Logger.getLogger(javaClass.name)
-        try {
-            this.debito = debito.replace("R$", "").replace(".", "").replace(",", ".").trim().toDouble()
-            this.saldoContabil = this.debito - credito
-        } catch (e: NumberFormatException) {
-            log.info(e.message)
-            Notification.show("Erro")
-        }
+
+    constructor(responsavel: Responsavel) : this() {
+        this.responsavel = responsavel
     }
 
-    fun setCredito(credito: String) {
-        val log = Logger.getLogger(javaClass.name)
-        try {
-            this.credito = credito.replace("R$", "").replace(".", "").replace(",", ".").trim().toDouble()
-            this.saldoContabil = this.debito - this.credito
-        } catch (e: NumberFormatException) {
-            log.info(e.message)
-            Notification.show("Erro")
-        }
+    constructor(
+        id: UUID?,
+        historico: String,
+        debito: String,
+        credito: String,
+        balancete: Balancete?,
+        responsavel: Responsavel,
+        status: StatusConciliacao?
+    ) : this() {
+        this.id = id
+        this.historico = historico
+        setDebito(debito)
+        setCredito(credito)
+        this.balancete = balancete
+        this.responsavel = responsavel
+        this.status = status
     }
 
-    fun getDebito(): String {
-        return formatCurrencyBR(debito)
+    constructor(
+        numNotaFiscal: Int,
+        dataVencimento: LocalDate?,
+        ISS: Double,
+        INSS: Double,
+        IRRF: Double,
+        CSRF: Double,
+        historico: String,
+        credito: String,
+        debito: String,
+        balancete: Balancete?,
+        status: StatusConciliacao?,
+        responsavel: Responsavel
+    ) : this() {
+        this.numNotaFiscal = numNotaFiscal
+        this.dataVencimento = dataVencimento
+        this.ISS = ISS
+        this.INSS = INSS
+        this.IRRF = IRRF
+        this.CSRF = CSRF
+        this.historico = historico
+        setCredito(credito)
+        setDebito(debito)
+        this.status = status
+        this.balancete = balancete
+        this.responsavel = responsavel
     }
 
-    fun getCredito(): String {
-        return formatCurrencyBR(credito)
+    constructor(
+        id: UUID?,
+        numNotaFiscal: Int,
+        dataVencimento: LocalDate?,
+        ISS: Double,
+        INSS: Double,
+        IRRF: Double,
+        CSRF: Double,
+        diasVencidos: Int,
+        historico: String,
+        debito: Double,
+        credito: Double,
+        balancete: Balancete?,
+        status: StatusConciliacao?,
+        responsavel: Responsavel
+    ) : this() {
+        this.id = id
+        this.numNotaFiscal = numNotaFiscal
+        this.dataVencimento = dataVencimento
+        this.ISS = ISS
+        this.INSS = INSS
+        this.IRRF = IRRF
+        this.CSRF = CSRF
+        this.diasVencidos = diasVencidos
+        this.historico = historico
+        this.debito = debito
+        this.credito = credito
+        this.balancete = balancete
+        this.status = status
+        this.responsavel = responsavel
     }
 
-    fun getSaldoContabil(): String {
-        return formatCurrencyBR(saldoContabil)
-    }
-
-    fun setCredito(value: Double) {
-        this.credito = value
-    }
 }

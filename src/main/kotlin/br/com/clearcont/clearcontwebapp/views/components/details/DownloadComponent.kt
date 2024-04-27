@@ -1,6 +1,7 @@
 package br.com.clearcont.clearcontwebapp.views.components.details
 
 import br.com.clearcont.clearcontwebapp.models.ComposicaoLancamentosContabeis
+import br.com.clearcont.clearcontwebapp.models.ComposicaoLancamentosContabeisDTO
 import br.com.clearcont.clearcontwebapp.models.InputStreamMultipartFile
 import br.com.clearcont.clearcontwebapp.service.FileUploadServiceImplement
 import com.vaadin.flow.component.Text
@@ -80,9 +81,7 @@ class DownloadComponent(
     }
 
     private fun updateFileList(composicaoId: UUID?): List<HorizontalLayout> {
-        val anexos = anexoStorageService.getAnexosByComposicao(
-            composicaoId!!
-        )
+        val anexos = anexoStorageService.getAnexosByComposicao( composicaoId!! )
         val fileLayouts: MutableList<HorizontalLayout> = ArrayList()
         for (anexo in anexos) {
             val downloadLink = Anchor()

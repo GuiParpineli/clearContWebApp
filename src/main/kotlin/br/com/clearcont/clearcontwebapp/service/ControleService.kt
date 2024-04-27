@@ -16,16 +16,16 @@ class ControleService(private val balanceteService: BalanceteService) {
         val controles: MutableList<Controle> = ArrayList()
         byCompanyAndPeriod.forEach(
             Consumer { balancete: Balancete ->
-                if (balancete.composicaoLancamentosContabeisList.isNotEmpty()) controles.add(
+                if (balancete.lancamentosContabeisList.isNotEmpty()) controles.add(
                     Controle(
                         null,
                         null,
                         balancete.classificacao,
                         balancete.nomeConta,
                         balancete.getTotalBalanceteDouble(),
-                        balancete.composicaoLancamentosContabeisList.stream().mapToDouble(
+                        balancete.lancamentosContabeisList.stream().mapToDouble(
                             ComposicaoLancamentosContabeis::saldoContabil).sum(),
-                        balancete.composicaoLancamentosContabeisList.stream()
+                        balancete.lancamentosContabeisList.stream()
                             .mapToDouble(ComposicaoLancamentosContabeis::saldoContabil)
                             .sum() - balancete.getTotalBalanceteDouble(),
                         "ABERTO",
@@ -33,7 +33,7 @@ class ControleService(private val balanceteService: BalanceteService) {
                         composicaoPreenchida = false,
                         agingListadaPendencia = false,
                         dataCompetencia = LocalDate.now(),
-                        nomeResponsavel = balancete.composicaoLancamentosContabeisList.first().responsavel.nome,
+                        nomeResponsavel = balancete.lancamentosContabeisList.first().responsavel.nome,
                         empresa = balancete.empresa
                     )
                 )

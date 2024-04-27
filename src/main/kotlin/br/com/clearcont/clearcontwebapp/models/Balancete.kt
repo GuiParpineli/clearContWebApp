@@ -23,19 +23,19 @@ class Balancete(
     var mes: String = Period.getPortugueseMonthName(LocalDate.now().month),
     val ano: Int = LocalDate.now().year,
     @OneToMany(mappedBy = "balancete", cascade = [CascadeType.ALL], orphanRemoval = true)
-    val composicaoLancamentosContabeisList: MutableList<ComposicaoLancamentosContabeis> = mutableListOf(),
+    val lancamentosContabeisList: MutableList<ComposicaoLancamentosContabeis> = mutableListOf(),
     @Enumerated(EnumType.STRING)
     var status: StatusConciliacao = StatusConciliacao.OPEN,
     var tipo: TipoConta = TipoConta.INDEFINIDO
 ) {
-    fun addComposicaoLancamentosContabeis(composicaoLancamentosContabeis: ComposicaoLancamentosContabeis) {
-        composicaoLancamentosContabeisList.add(composicaoLancamentosContabeis)
-        composicaoLancamentosContabeis.balancete = this
+    fun addComposicaoLancamentosContabeis(composicaoLancamentosContabeisLigth: ComposicaoLancamentosContabeis) {
+        lancamentosContabeisList.add(composicaoLancamentosContabeisLigth)
+        composicaoLancamentosContabeisLigth.balancete = this
     }
 
-    fun removeComposicaoLancamentosContabeis(composicaoLancamentosContabeis: ComposicaoLancamentosContabeis) {
-        composicaoLancamentosContabeisList.remove(composicaoLancamentosContabeis)
-        composicaoLancamentosContabeis.balancete = null
+    fun removeComposicaoLancamentosContabeis(composicaoLancamentosContabeisLigth: ComposicaoLancamentosContabeis) {
+        lancamentosContabeisList.remove(composicaoLancamentosContabeisLigth)
+        composicaoLancamentosContabeisLigth.balancete = null
     }
 
     override fun toString(): String {

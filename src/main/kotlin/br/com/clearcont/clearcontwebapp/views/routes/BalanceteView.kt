@@ -2,11 +2,7 @@ package br.com.clearcont.clearcontwebapp.views.routes
 
 import br.com.clearcont.clearcontwebapp.helpers.CookieFactory
 import br.com.clearcont.clearcontwebapp.helpers.MonthAndCompany
-import br.com.clearcont.clearcontwebapp.models.Balancete
-import br.com.clearcont.clearcontwebapp.models.ComposicaoLancamentosContabeis
-import br.com.clearcont.clearcontwebapp.models.Empresa
-import br.com.clearcont.clearcontwebapp.models.Responsavel
-import br.com.clearcont.clearcontwebapp.models.enums.StatusConciliacao.*
+import br.com.clearcont.clearcontwebapp.models.*
 import br.com.clearcont.clearcontwebapp.models.enums.TipoConta
 import br.com.clearcont.clearcontwebapp.models.enums.TypeCount
 import br.com.clearcont.clearcontwebapp.repository.EmpresaRepository
@@ -130,7 +126,7 @@ class BalanceteView(
                             classificacao = TypeCount.valueOf(row.getCell(3).stringCellValue.uppercase()),
                             mes = month,
                             ano = LocalDate.now().year,
-                            composicaoLancamentosContabeisList = mutableListOf(
+                            lancamentosContabeisList = mutableListOf(
                                 ComposicaoLancamentosContabeis(responsavel)
                             ),
                             tipo = row.getCell(4)?.stringCellValue?.uppercase()?.let { it1 -> TipoConta.valueOf(it1) }

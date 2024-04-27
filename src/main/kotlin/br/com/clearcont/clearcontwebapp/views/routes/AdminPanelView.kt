@@ -218,45 +218,45 @@ class AdminPanelView(
         email.clear()
     }
 
-    private fun setupComposicaoForm(): FormLayout {
-        val composicaoForm = FormLayout()
-
-        val dataField = DatePicker("Data")
-        val historicoField = TextField("Historico")
-        val debitoField = NumberField("Debito")
-        val creditoField = NumberField("Credito")
-        val saldoContabilField = NumberField("Saldo Contabil")
-        val statusField = Select<StatusConciliacao>().apply {
-            label = "Status"
-            setItems(StatusConciliacao.entries)
-        }
-
-        val saveButton = Button("Save").apply {
-            addClickListener {
-                val composicao = ComposicaoLancamentosContabeis(
-                    data = dataField.value,
-                    historico = historicoField.value,
-                    debito = debitoField.value,
-                    credito = creditoField.value,
-                    doubleSaldoContabil = saldoContabilField.value,
-                    balancete = null,
-                    responsavel = Responsavel(),
-                    customerContabil = CustomerContabil()
-                )
-                composicaoService.save(composicao)
-            }
-        }
-
-        composicaoForm.add(
-            dataField,
-            historicoField,
-            debitoField,
-            creditoField,
-            saldoContabilField,
-            statusField,
-            saveButton
-        )
-
-        return composicaoForm
-    }
+//    private fun setupComposicaoForm(): FormLayout {
+//        val composicaoForm = FormLayout()
+//
+//        val dataField = DatePicker("Data")
+//        val historicoField = TextField("Historico")
+//        val debitoField = NumberField("Debito")
+//        val creditoField = NumberField("Credito")
+//        val saldoContabilField = NumberField("Saldo Contabil")
+//        val statusField = Select<StatusConciliacao>().apply {
+//            label = "Status"
+//            setItems(StatusConciliacao.entries)
+//        }
+//
+//        val saveButton = Button("Save").apply {
+//            addClickListener {
+//                val composicao = ComposicaoLancamentosContabeis(
+//                    data = dataField.value,
+//                    historico = historicoField.value,
+//                    debito = debitoField.value,
+//                    credito = creditoField.value,
+//                    doubleSaldoContabil = saldoContabilField.value,
+//                    balancete = null,
+//                    responsavel = Responsavel(),
+//                    composicaoLancamentosContabeisFull = ComposicaoLancamentosContabeis()
+//                )
+//                composicaoService.save(composicao)
+//            }
+//        }
+//
+//        composicaoForm.add(
+//            dataField,
+//            historicoField,
+//            debitoField,
+//            creditoField,
+//            saldoContabilField,
+//            statusField,
+//            saveButton
+//        )
+//
+//        return composicaoForm
+//    }
 }

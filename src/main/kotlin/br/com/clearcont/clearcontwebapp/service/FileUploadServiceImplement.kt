@@ -46,7 +46,7 @@ class FileUploadServiceImplement(private val fileUploadRepository: FileUploadRep
     }
 
     fun getAnexosByComposicao(composicaoID: UUID): List<FileUpload> {
-        return fileUploadRepository.findAnexoByComposicaoLancamentosContabeis_Id(composicaoID)
+        return fileUploadRepository.findanexobycomposicaolancamentoscontabeisId(composicaoID)
     }
 
     override fun deleteFile(fileId: Long?, companyName: String?) {

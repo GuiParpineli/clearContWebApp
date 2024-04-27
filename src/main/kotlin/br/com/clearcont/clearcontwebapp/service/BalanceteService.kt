@@ -14,7 +14,7 @@ class BalanceteService(private val repository: BalanceteRepository, private val 
 
     fun getAll(): List<Balancete> = repository.findAll()
 
-    fun getById(balanceteId: Long): Balancete = repository.findById(balanceteId).get()
+    fun getById(balanceteId: Long): Balancete? = repository.findById(balanceteId).orElse(null)
 
     fun getByCompanyAndPeriod(id: Long, mes: String, ano: Int): List<Balancete> =
         repository.findBalanceteByEmpresa_IdAndMesAndAno(id, mes, ano)

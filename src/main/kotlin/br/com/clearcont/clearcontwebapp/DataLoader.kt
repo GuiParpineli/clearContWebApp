@@ -23,7 +23,6 @@ class DataLoader(
     private val composicaoLancamentosContabeisRepository: ComposicaoLancamentosContabeisService,
     private val responsavelRepository: ResponsavelRepository,
     private val userRepository: UserRepository,
-    private val customerContabilRepository: CustomerContabilRepository
 ) : ApplicationRunner {
     @Throws(Exception::class)
     override fun run(args: ApplicationArguments) {
@@ -70,7 +69,7 @@ class DataLoader(
                     classificacao = TypeCount.ATIVO,
                     mes = "JANEIRO",
                     ano = 2024,
-                    composicaoLancamentosContabeisList = mutableListOf(),
+                    lancamentosContabeisList = mutableListOf(),
                     status = StatusConciliacao.OPEN,
                     tipo = TipoConta.CLIENTE
                 )
@@ -256,56 +255,37 @@ class DataLoader(
             )
         }
 
-        var customerContabil = CustomerContabil()
-        var customerContabil2 = CustomerContabil()
-        if (customerContabilRepository.findAll().isEmpty()) {
-            customerContabil = customerContabilRepository.save(
-                CustomerContabil(
-                    0L,
-                    2,
-                    LocalDate.now(),
-                    10.0,
-                    313.0,
-                    813.0,
-                    813.0
-                )
-            )
-            customerContabil2 = customerContabilRepository.save(
-                CustomerContabil(
-                    0L,
+        if (composicaoLancamentosContabeisRepository.all.isEmpty()) {
+            composicaoLancamentosContabeisRepository.save(
+                ComposicaoLancamentosContabeis(
                     1231,
                     LocalDate.of(2024, 1, 1),
                     4230.0,
                     889.21,
                     32133.12,
-                    813.12
-                )
-            )
-        }
-
-        if (composicaoLancamentosContabeisRepository.all.isEmpty()) {
-            composicaoLancamentosContabeisRepository.save(
-                ComposicaoLancamentosContabeis(
-                    LocalDate.now(),
-                    "loreash",
-                    100.0,
-                    200.0,
-                    (100.0 - 200.0),
+                    813.12,
+                    "compra",
+                    "1233.1",
+                    "0.0",
                     balanceteRepository.findAll().first(),
+                    StatusConciliacao.OPEN,
                     responsavel,
-                    customerContabil
                 )
             )
             composicaoLancamentosContabeisRepository.save(
                 ComposicaoLancamentosContabeis(
+                    9985,
                     LocalDate.now(),
-                    "Compra",
                     1000.0,
-                    0.0,
-                    (1000.0),
+                    1.0,
+                    55.0,
+                    33.0,
+                    "teste",
+                    "0.0",
+                    "100.0",
                     balanceteRepository.findAll().first(),
+                    StatusConciliacao.PROGRESS,
                     responsavel2,
-                    customerContabil2
                 )
             )
         }

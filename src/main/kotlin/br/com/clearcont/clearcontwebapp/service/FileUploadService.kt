@@ -1,6 +1,7 @@
 package br.com.clearcont.clearcontwebapp.service
 
 import br.com.clearcont.clearcontwebapp.models.ComposicaoLancamentosContabeis
+import br.com.clearcont.clearcontwebapp.models.ComposicaoLancamentosContabeisDTO
 import br.com.clearcont.clearcontwebapp.models.FileUpload
 import org.springframework.web.multipart.MultipartFile
 

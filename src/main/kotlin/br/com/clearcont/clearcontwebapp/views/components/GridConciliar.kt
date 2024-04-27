@@ -1,9 +1,7 @@
 package br.com.clearcont.clearcontwebapp.views.components
 
 import br.com.clearcont.clearcontwebapp.helpers.CookieFactory
-import br.com.clearcont.clearcontwebapp.models.Balancete
-import br.com.clearcont.clearcontwebapp.models.ComposicaoLancamentosContabeis
-import br.com.clearcont.clearcontwebapp.models.CustomerContabil
+import br.com.clearcont.clearcontwebapp.models.*
 import br.com.clearcont.clearcontwebapp.repository.ResponsavelRepository
 import br.com.clearcont.clearcontwebapp.service.ComposicaoLancamentosContabeisService
 import br.com.clearcont.clearcontwebapp.views.components.details.BalanceteDetailsLayout
@@ -34,8 +32,8 @@ class GridConciliar(
 
     init {
         val cookieFactory = CookieFactory(VaadinResponse.getCurrent())
-        val crud = GridCrud(ComposicaoLancamentosContabeis::class.java)
-        val formFactory = DefaultCrudFormFactory(ComposicaoLancamentosContabeis::class.java)
+        val crud = GridCrud(ComposicaoLancamentosContabeisDTO::class.java)
+        val formFactory = DefaultCrudFormFactory(ComposicaoLancamentosContabeisDTO::class.java)
         val formatador = DateTimeFormatter.ofPattern("dd/MM/yyyy").withLocale(Locale.of("pt", "BR"))
 
         formFactory.setVisibleProperties("data", "debito", "credito", "historico")
@@ -51,7 +49,7 @@ class GridConciliar(
 
         crud.crudFormFactory = formFactory
         crud.grid.setColumns("debito", "credito", "saldoContabil", "historico")
-        crud.grid.addColumn(ComposicaoLancamentosContabeis::dataFormated).setHeader("Data")
+        crud.grid.addColumn(ComposicaoLancamentosContabeisDTO::dataFormated).setHeader("Data")
         crud.grid.setColumnOrder(
             crud.grid.columns[4],
             crud.grid.getColumnByKey("debito"),
@@ -64,16 +62,16 @@ class GridConciliar(
             lancamentosContabeis.balancete = balancete
             val responsavelID = cookieFactory.getCookieInteger("responsavel-id")
             lancamentosContabeis.responsavel = responsavelRepository.findById(responsavelID).orElseThrow()
-            contabeisService.saveWithCustomer(lancamentosContabeis, CustomerContabil())
             contabeisService.atualizarSaldoContabil(balanceteId, crud)
             infoCards.updateDiferencaLayout(
                 balancete.getTotalBalanceteDouble(),
                 contabeisService.getSaldoContabil(balanceteId)
             )
+            contabeisService.save(lancamentosContabeis.toEntity())
             lancamentosContabeis
         }
         crud.setFindAllOperation {
-            val all = contabeisService.getByBalanceteID(balanceteId)
+            val all = contabeisService.getByBalanceteID(balanceteId).map { it.toDTO() }.toList()
             contabeisService.atualizarSaldoContabil(balanceteId, crud)
             infoCards.updateDiferencaLayout(
                 balancete.getTotalBalanceteDouble(),
@@ -89,8 +87,8 @@ class GridConciliar(
                 contabeisService.getSaldoContabil(balanceteId)
             )
         }
-        crud.setUpdateOperation { a: ComposicaoLancamentosContabeis ->
-            contabeisService.update(a)
+        crud.setUpdateOperation { a: ComposicaoLancamentosContabeisDTO ->
+            contabeisService.update(a.toEntity())
             contabeisService.atualizarSaldoContabil(balanceteId, crud)
             infoCards.updateDiferencaLayout(
                 balancete.getTotalBalanceteDouble(),
@@ -102,7 +100,7 @@ class GridConciliar(
         add(crud)
     }
 
-    fun exportToExcel(itemList: List<ComposicaoLancamentosContabeis>): ByteArrayInputStream {
+    fun exportToExcel(itemList: List<ComposicaoLancamentosContabeisDTO>): ByteArrayInputStream {
         val workbook: Workbook = XSSFWorkbook()
         val sheet = workbook.createSheet("Data")
 

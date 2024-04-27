@@ -4,12 +4,11 @@ import br.com.clearcont.clearcontwebapp.helpers.CookieFactory
 import br.com.clearcont.clearcontwebapp.helpers.MonthAndCompany
 import br.com.clearcont.clearcontwebapp.helpers.Period.getMonthByPeriodoString
 import br.com.clearcont.clearcontwebapp.models.Empresa
-import br.com.clearcont.clearcontwebapp.models.enums.TipoConta
 import br.com.clearcont.clearcontwebapp.models.enums.TipoConta.*
 import br.com.clearcont.clearcontwebapp.repository.EmpresaRepository
 import br.com.clearcont.clearcontwebapp.repository.ResponsavelRepository
 import br.com.clearcont.clearcontwebapp.service.BalanceteService
-import br.com.clearcont.clearcontwebapp.service.CustomerContabilService
+import br.com.clearcont.clearcontwebapp.service.ComposicaoLancamentosContabeisService
 import br.com.clearcont.clearcontwebapp.views.components.MainLayout
 import br.com.clearcont.clearcontwebapp.views.components.GridCustomer
 import com.vaadin.flow.component.UI
@@ -30,7 +29,7 @@ import java.util.logging.Logger
 @PageTitle("Clientes| ClearCont App")
 @RolesAllowed("ADMIN")
 class CustomersView(
-    customerContabilRepository: CustomerContabilService,
+    composicaoService: ComposicaoLancamentosContabeisService,
     empresaRepository: EmpresaRepository,
     balanceteService: BalanceteService,
     responsavelRepository: ResponsavelRepository
@@ -40,11 +39,11 @@ class CustomersView(
     var log: Logger = Logger.getLogger(javaClass.name)
 
     init {
-        initializeView(customerContabilRepository, empresaRepository, balanceteService, responsavelRepository)
+        initializeView(composicaoService, empresaRepository, balanceteService, responsavelRepository)
     }
 
     private fun initializeView(
-        customerContabilRepository: CustomerContabilService,
+        customerContabilRepository: ComposicaoLancamentosContabeisService,
         empresaRepository: EmpresaRepository,
         balanceteService: BalanceteService,
         responsavelRepository: ResponsavelRepository

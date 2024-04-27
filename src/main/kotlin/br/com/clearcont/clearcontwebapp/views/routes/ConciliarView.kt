@@ -3,9 +3,7 @@ package br.com.clearcont.clearcontwebapp.views.routes
 
 import br.com.clearcont.clearcontwebapp.helpers.CookieFactory
 import br.com.clearcont.clearcontwebapp.helpers.generateExcelDownloadLink
-import br.com.clearcont.clearcontwebapp.models.Balancete
-import br.com.clearcont.clearcontwebapp.models.ComposicaoLancamentosContabeis
-import br.com.clearcont.clearcontwebapp.models.Responsavel
+import br.com.clearcont.clearcontwebapp.models.*
 import br.com.clearcont.clearcontwebapp.models.enums.StatusConciliacao
 import br.com.clearcont.clearcontwebapp.repository.ResponsavelRepository
 import br.com.clearcont.clearcontwebapp.service.BalanceteService
@@ -56,20 +54,22 @@ class ConciliarView @Autowired constructor(
         val balancete = service.getById(balanceteId)
 
         log.info("BALANCETE ID: $balanceteId")
-        log.info("BALANCETE NOME DA CONTA:  ${balancete.nomeConta}")
+        log.info("BALANCETE NOME DA CONTA:  ${balancete?.nomeConta}")
 
-        var conciliacaoList = contabeisService.getByBalanceteID(balanceteId)
+        var conciliacaoList = contabeisService.getByBalanceteID(balanceteId).map { it.toDTO() }.toList()
+
         if (conciliacaoList.isEmpty()) {
-            conciliacaoList = listOf(ComposicaoLancamentosContabeis())
-            contabeisService.update(conciliacaoList.first())
+            conciliacaoList = listOf(ComposicaoLancamentosContabeisDTO())
+            contabeisService.update(conciliacaoList.first().toEntity())
         }
+
         val saldoContabil = contabeisService.getSaldoContabil(balanceteId)
 
         val conciliacao = conciliacaoList.last()
         val infoCards =
             BalanceteDetailsLayout(
-                balancete,
-                conciliacao,
+                balancete!!,
+                conciliacao.toEntity(),
                 saldoContabil,
                 anexoStorageService
             )
@@ -87,8 +87,8 @@ class ConciliarView @Autowired constructor(
 
         val responsavel = responsavelRepository.findById(cookieFactory.getCookieInteger("responsavel-id")).orElseThrow()
         log.info("RESPONSAVEL NOME: " + responsavel.nome)
-        val dialogStart = getConfirmDialogStart(conciliacao, balancete, responsavel)
-        val dialogEnd = getConfirmDialogEnd(conciliacao, balancete)
+        val dialogStart = getConfirmDialogStart(conciliacao, balancete)
+        val dialogEnd = getConfirmDialogEnd(balancete)
 
         startBtn.addClickListener { dialogStart.open() }
         finishBtn.addClickListener { dialogEnd.open() }
@@ -101,7 +101,7 @@ class ConciliarView @Autowired constructor(
         add(conciliacaoContabil)
     }
 
-    private fun checkStatusforDisableorEnableBtn(conciliacao: ComposicaoLancamentosContabeis) {
+    private fun checkStatusforDisableorEnableBtn(conciliacao: ComposicaoLancamentosContabeisDTO) {
         if (conciliacao.status == StatusConciliacao.PROGRESS || conciliacao.status == StatusConciliacao.CLOSED) {
             startBtn.element.setEnabled(false)
         }
@@ -126,9 +126,8 @@ class ConciliarView @Autowired constructor(
     }
 
     private fun getConfirmDialogStart(
-        conciliacao: ComposicaoLancamentosContabeis,
+        conciliacao: ComposicaoLancamentosContabeisDTO,
         balancete: Balancete,
-        responsavel: Responsavel
     ): ConfirmDialog {
         val dialog = ConfirmDialog()
         val ui = UI.getCurrent()
@@ -150,7 +149,6 @@ class ConciliarView @Autowired constructor(
     }
 
     private fun getConfirmDialogEnd(
-        conciliacao: ComposicaoLancamentosContabeis,
         balancete: Balancete,
     ): ConfirmDialog {
         val dialog = ConfirmDialog()
