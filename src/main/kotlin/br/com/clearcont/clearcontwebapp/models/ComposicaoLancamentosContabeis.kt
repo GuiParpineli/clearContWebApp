@@ -22,18 +22,18 @@ class ComposicaoLancamentosContabeis() : ComposicaoLancamentos() {
     var INSS = 0.0
     var IRRF = 0.0
     var CSRF = 0.0
+    var debito: Double = 0.0
+    var credito: Double = 0.0
     var diasVencidos: Int = 0
         set(value) {
             field = if (value == 0) 1 else value
         }
     var historico: String? = ""
-    private var debito: Double = 0.0
-    private var credito: Double = 0.0
 
     @JsonIgnore
     @ManyToOne(
         fetch = FetchType.EAGER,
-        cascade = [CascadeType.DETACH, CascadeType.REMOVE, CascadeType.MERGE, CascadeType.REFRESH]
+        cascade = [CascadeType.DETACH, CascadeType.REMOVE, CascadeType.PERSIST, CascadeType.REFRESH]
     )
     @JoinColumn(name = "balancete_id")
     var balancete: Balancete? = null
@@ -55,14 +55,6 @@ class ComposicaoLancamentosContabeis() : ComposicaoLancamentos() {
     }
 
     private fun getFixedMonthValue(month: Int): Int = if (month in 1..12) month else 1
-
-    fun getDoubleDebito(): Double {
-        return this.debito
-    }
-
-    fun getDoubleCredito(): Double {
-        return this.credito
-    }
 
     fun getDataVencimento(): String {
         val formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy")
@@ -113,16 +105,16 @@ class ComposicaoLancamentosContabeis() : ComposicaoLancamentos() {
     constructor(
         id: UUID?,
         historico: String,
-        debito: String,
-        credito: String,
+        debito: Double,
+        credito: Double,
         balancete: Balancete?,
         responsavel: Responsavel,
         status: StatusConciliacao?
     ) : this() {
         this.id = id
         this.historico = historico
-        setDebito(debito)
-        setCredito(credito)
+        this.debito= debito
+        this.credito = credito
         this.balancete = balancete
         this.responsavel = responsavel
         this.status = status
@@ -136,8 +128,8 @@ class ComposicaoLancamentosContabeis() : ComposicaoLancamentos() {
         IRRF: Double,
         CSRF: Double,
         historico: String,
-        credito: String,
-        debito: String,
+        credito: Double,
+        debito: Double,
         balancete: Balancete?,
         status: StatusConciliacao?,
         responsavel: Responsavel
@@ -149,8 +141,8 @@ class ComposicaoLancamentosContabeis() : ComposicaoLancamentos() {
         this.IRRF = IRRF
         this.CSRF = CSRF
         this.historico = historico
-        setCredito(credito)
-        setDebito(debito)
+        this.credito = credito
+        this.debito = debito
         this.status = status
         this.balancete = balancete
         this.responsavel = responsavel

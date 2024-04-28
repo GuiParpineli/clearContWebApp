@@ -18,6 +18,7 @@ import com.vaadin.flow.component.html.Span
 import com.vaadin.flow.component.orderedlayout.FlexComponent
 import com.vaadin.flow.component.orderedlayout.FlexLayout
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout
+import com.vaadin.flow.component.orderedlayout.VerticalLayout
 import com.vaadin.flow.component.page.Page
 import com.vaadin.flow.dom.Style
 import com.vaadin.flow.router.PageTitle
@@ -112,7 +113,13 @@ class HomeView(empresaGroupService: EmpresaGroupService, empresaRepository: Empr
                 val confirmButton = confirmButton
                 val versionFooter = versionFooter
                 val verticalLayout = getFlexLayout(h1, logo, horizontalLayout, confirmButton, versionFooter)
-                add(HorizontalLayout(FlexComponent.JustifyContentMode.CENTER, verticalLayout))
+                add(
+                    VerticalLayout(
+                        FlexComponent.JustifyContentMode.CENTER,
+                        verticalLayout
+                    ).apply {
+                        style.setAlignItems(Style.AlignItems.CENTER).setPaddingTop("20px")
+                    })
             }
         }
     }

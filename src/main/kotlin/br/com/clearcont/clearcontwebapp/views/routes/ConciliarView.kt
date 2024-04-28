@@ -60,15 +60,17 @@ class ConciliarView @Autowired constructor(
         var conciliacaoList = contabeisService.getByBalanceteID(balanceteId).map { it.toDTO() }.toList()
 
 
-        val saldoContabil = contabeisService.getSaldoContabil(balanceteId)
-        var conciliacao: ComposicaoLancamentosContabeisDTO;
+        val saldoContabil = contabeisService.getSaldoContabil(balanceteId);
 
-        if (conciliacaoList.isEmpty()) {
-            contabeisService.createNewAndUpdate(balancete?.id, responsavel.id)
-            conciliacaoList = contabeisService.getByBalanceteID(balanceteId).map { it.toDTO() }.toList()
+//        if (conciliacaoList.isEmpty()) {
+//            contabeisService.createNewAndUpdate(balancete?.id, responsavel.id)
+//            conciliacaoList = contabeisService.getByBalanceteID(balanceteId).map { it.toDTO() }.toList()
+//        }
+        val conciliacao: ComposicaoLancamentosContabeisDTO = if (conciliacaoList.isEmpty()) {
+            ComposicaoLancamentosContabeisDTO(balancete, responsavel)
+        } else {
+            conciliacaoList.last()
         }
-
-        conciliacao = conciliacaoList.last()
         val infoCards = BalanceteDetailsLayout(balancete!!, conciliacao.toEntity(), saldoContabil, anexoStorageService)
         val crud = GridConciliar(balancete, contabeisService, balanceteId, responsavelRepository, infoCards)
 
@@ -135,6 +137,9 @@ class ConciliarView @Autowired constructor(
         dialog.setCancelText("Cancelar")
         dialog.setConfirmText("Confirmar")
         dialog.addConfirmListener {
+            if (balancete.lancamentosContabeisList.isEmpty()) {
+                contabeisService.createNewAndUpdate(balancete.id, conciliacao.responsavel?.id)
+            }
             checkStatusforDisableorEnableBtn(conciliacao)
             balancete.status = StatusConciliacao.PROGRESS
             balanceteService.update(balancete)

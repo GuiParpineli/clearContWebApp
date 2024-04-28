@@ -71,6 +71,7 @@ class BalanceteDetailsLayout(
             setFlexShrink(20.0)
             justifyContentMode = JustifyContentMode.AROUND
         }
+
         add(infosCards)
     }
 
@@ -84,4 +85,6 @@ class BalanceteDetailsLayout(
         span.style.set("font-weight", "800")["padding-left"] = "5px"
         return FlexLayout(Span(label), span)
     }
+
+
 }

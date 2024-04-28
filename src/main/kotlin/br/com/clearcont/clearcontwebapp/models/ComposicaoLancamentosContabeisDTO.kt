@@ -7,39 +7,38 @@ import jakarta.persistence.PostLoad
 import java.time.LocalDate
 import java.util.*
 
-class ComposicaoLancamentosContabeisDTO : ComposicaoLancamentos {
-    var id: UUID? = null
-    var historico: String? = ""
-    private var debito: Double = 0.0
-    private var credito: Double = 0.0
-    var balancete: Balancete? = null
-    @Enumerated(EnumType.STRING)
-    var status: StatusConciliacao? = null
-    var responsavel: Responsavel? = null
-
+data class ComposicaoLancamentosContabeisDTO(
+    var id: UUID? = null,
+    var historico: String? = "",
+    var balancete: Balancete? = null,
+     var debito: Double = 0.0,
+     var credito: Double = 0.0,
+    var responsavel: Responsavel? = null,
+    var status: StatusConciliacao = StatusConciliacao.OPEN
+) : ComposicaoLancamentos() {
     constructor(
         id: UUID?,
         data: LocalDate,
         historico: String,
         debito: Double,
         credito: Double,
-        doubleSaldoContabil: Double,
         balancete: Balancete?,
         responsavel: Responsavel,
+        status: StatusConciliacao
     ) : this() {
         this.id = id
         this.data = data
         this.historico = historico
         this.debito = debito
         this.credito = credito
-        this.saldoContabil = doubleSaldoContabil
+        super.saldoContabil = debito - credito
         this.balancete = balancete
         this.responsavel = responsavel
+        this.status = status
     }
 
-    constructor()
-
-    constructor(responsavel: Responsavel) {
+    constructor(balancete: Balancete?,responsavel: Responsavel) : this() {
+        this.balancete = balancete
         this.responsavel = responsavel
     }
 }

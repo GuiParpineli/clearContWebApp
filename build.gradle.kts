@@ -10,7 +10,7 @@ plugins {
 }
 
 group = "br.com.clearcont"
-version = "0.9.9-RELEASE_CANDIDATE"
+version = "0.9.12"
 
 java {
     sourceCompatibility = JavaVersion.VERSION_21
@@ -84,6 +84,8 @@ tasks.withType<KotlinCompile> {
 tasks.jar {
     enabled = false
 }
+
+
 
 tasks.withType<Test> {
     useJUnitPlatform()

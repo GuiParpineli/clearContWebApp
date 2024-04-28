@@ -2,6 +2,7 @@ package br.com.clearcont.clearcontwebapp.views.components.details
 
 import br.com.clearcont.clearcontwebapp.models.ComposicaoLancamentosContabeis
 import br.com.clearcont.clearcontwebapp.models.ComposicaoLancamentosContabeisDTO
+import br.com.clearcont.clearcontwebapp.models.FileUpload
 import br.com.clearcont.clearcontwebapp.models.InputStreamMultipartFile
 import br.com.clearcont.clearcontwebapp.service.FileUploadServiceImplement
 import com.vaadin.flow.component.Text
@@ -81,34 +82,45 @@ class DownloadComponent(
     }
 
     private fun updateFileList(composicaoId: UUID?): List<HorizontalLayout> {
-        val anexos = anexoStorageService.getAnexosByComposicao( composicaoId!! )
-        val fileLayouts: MutableList<HorizontalLayout> = ArrayList()
-        for (anexo in anexos) {
-            val downloadLink = Anchor()
-            val resource = StreamResource(anexo.name, InputStreamFactory {
-                try {
-                    return@InputStreamFactory anexoStorageService.loadFileAsResource(
-                        anexo.name!!,
-                        anexo.ext!!
-                    ).inputStream
-                } catch (e: IOException) {
-                    throw UncheckedIOException(e)
+        val anexosByComposicao = composicaoId?.let {
+            anexoStorageService.getAnexosByComposicao(it).apply {
+                ifEmpty {
+                    listOf(
+                        FileUpload()
+                    )
                 }
-            })
-            downloadLink.setHref(resource)
-            downloadLink.element.setAttribute("download", true)
-            val downloadButton = Button("Baixar " + anexo.name + "." + anexo.ext, Icon(VaadinIcon.DOWNLOAD_ALT))
-            downloadLink.add(downloadButton)
-
-            val removeButton = Button("Remover", Icon(VaadinIcon.TRASH))
-            removeButton.addClickListener {
-                anexoStorageService.deleteFile(anexo.id, companyName)
-                Notification.show("Arquivo removido")
-                addDownloadButtons(composicaoId)
             }
+        }
+        val anexos = anexosByComposicao
+        val fileLayouts: MutableList<HorizontalLayout> = ArrayList()
+        if (anexos != null) {
+            for (anexo in anexos) {
+                val downloadLink = Anchor()
+                val resource = StreamResource(anexo.name, InputStreamFactory {
+                    try {
+                        return@InputStreamFactory anexoStorageService.loadFileAsResource(
+                            anexo.name!!,
+                            anexo.ext!!
+                        ).inputStream
+                    } catch (e: IOException) {
+                        throw UncheckedIOException(e)
+                    }
+                })
+                downloadLink.setHref(resource)
+                downloadLink.element.setAttribute("download", true)
+                val downloadButton = Button("Baixar " + anexo.name + "." + anexo.ext, Icon(VaadinIcon.DOWNLOAD_ALT))
+                downloadLink.add(downloadButton)
 
-            val layout = HorizontalLayout(downloadLink, removeButton)
-            fileLayouts.add(layout)
+                val removeButton = Button("Remover", Icon(VaadinIcon.TRASH))
+                removeButton.addClickListener {
+                    anexoStorageService.deleteFile(anexo.id, companyName)
+                    Notification.show("Arquivo removido")
+                    addDownloadButtons(composicaoId)
+                }
+
+                val layout = HorizontalLayout(downloadLink, removeButton)
+                fileLayouts.add(layout)
+            }
         }
         return fileLayouts
     }

@@ -1,5 +1,6 @@
 package br.com.clearcont.clearcontwebapp.views.components
 
+import br.com.clearcont.clearcontwebapp.helpers.formatCurrencyBR
 import br.com.clearcont.clearcontwebapp.helpers.generateExcelDownloadLink
 import br.com.clearcont.clearcontwebapp.models.*
 import br.com.clearcont.clearcontwebapp.models.enums.TipoConta
@@ -96,22 +97,17 @@ open class GridFornecedores(
         crud.grid.setColumns(
             "numNotaFiscal",
             "dataVencimento",
-            "ISS",
-            "INSS",
-            "IRRF",
-            "CSRF",
             "status",
             "data",
-            "debito",
-            "credito",
             "historico"
         )
-
-        crud.grid.addColumn(ValueProvider<ComposicaoLancamentosContabeis, Any> { customer: ComposicaoLancamentosContabeis ->
-            customer.getDiasVencidos(
-                month
-            )
-        }).setHeader("Dias Vencidos")
+        crud.grid.addColumn({ item -> formatCurrencyBR(item.ISS) }).setHeader("ISS")
+        crud.grid.addColumn({ item -> formatCurrencyBR(item.INSS) }).setHeader("INSS")
+        crud.grid.addColumn({ item -> formatCurrencyBR(item.IRRF) }).setHeader("IRRF")
+        crud.grid.addColumn({ item -> formatCurrencyBR(item.CSRF) }).setHeader("CSRF")
+        crud.grid.addColumn({ item -> formatCurrencyBR(item.debito) }).setHeader("Debito")
+        crud.grid.addColumn({ item -> formatCurrencyBR(item.credito) }).setHeader("Credito")
+        crud.grid.addColumn({ customer -> customer.getDiasVencidos(month) }).setHeader("Dias Vencidos")
 
         crudMethods(crud, lancamentosContabeis, balanceteService, balancetePicker, responsavel, composicaoService)
 
@@ -195,8 +191,8 @@ open class GridFornecedores(
             row.createCell(6).setCellValue(item.diasVencidos.toDouble())
             row.createCell(7).setCellValue(item.status!!.name)
             row.createCell(8).setCellValue(item.data)
-            row.createCell(9).setCellValue(item.getDebito())
-            row.createCell(10).setCellValue(item.getDoubleCredito())
+            row.createCell(9).setCellValue(item.debito)
+            row.createCell(10).setCellValue(item.credito)
             row.createCell(11).setCellValue(item.historico)
         }
 

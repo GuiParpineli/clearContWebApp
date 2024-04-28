@@ -134,7 +134,7 @@ class ComposicaoLancamentosContabeisService(
     fun findByBalanceteID(balanceteID: Long): List<ComposicaoLancamentosContabeis> {
         return repository.findByBalanceteId(balanceteID)
     }
-
+    @Transactional
     fun createNewAndUpdate(balanceteId: Long?, responsavelID: Long?) {
         val balancete = balanceteRepository.findById(balanceteId!!).orElseThrow()
         val responsavel = responsavelRepository.findById(responsavelID!!).orElseThrow()
