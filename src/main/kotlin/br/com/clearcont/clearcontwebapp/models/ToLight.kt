@@ -20,7 +20,7 @@ fun ComposicaoLancamentosContabeisDTO.toEntity(): ComposicaoLancamentosContabeis
         this.getDebito(),
         this.getCredito(),
         this.balancete,
-        this.responsavel,
+        this.responsavel!!,
         this.status
     )
 }

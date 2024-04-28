@@ -52,27 +52,24 @@ class ConciliarView @Autowired constructor(
         val cookieFactory = CookieFactory(VaadinResponse.getCurrent())
         val balanceteId = parameter.toLong()
         val balancete = service.getById(balanceteId)
+        val responsavel = responsavelRepository.findById(cookieFactory.getCookieInteger("responsavel-id")).orElseThrow()
 
         log.info("BALANCETE ID: $balanceteId")
         log.info("BALANCETE NOME DA CONTA:  ${balancete?.nomeConta}")
 
         var conciliacaoList = contabeisService.getByBalanceteID(balanceteId).map { it.toDTO() }.toList()
 
-        if (conciliacaoList.isEmpty()) {
-            conciliacaoList = listOf(ComposicaoLancamentosContabeisDTO())
-            contabeisService.update(conciliacaoList.first().toEntity())
-        }
 
         val saldoContabil = contabeisService.getSaldoContabil(balanceteId)
+        var conciliacao: ComposicaoLancamentosContabeisDTO;
 
-        val conciliacao = conciliacaoList.last()
-        val infoCards =
-            BalanceteDetailsLayout(
-                balancete!!,
-                conciliacao.toEntity(),
-                saldoContabil,
-                anexoStorageService
-            )
+        if (conciliacaoList.isEmpty()) {
+            contabeisService.createNewAndUpdate(balancete?.id, responsavel.id)
+            conciliacaoList = contabeisService.getByBalanceteID(balanceteId).map { it.toDTO() }.toList()
+        }
+
+        conciliacao = conciliacaoList.last()
+        val infoCards = BalanceteDetailsLayout(balancete!!, conciliacao.toEntity(), saldoContabil, anexoStorageService)
         val crud = GridConciliar(balancete, contabeisService, balanceteId, responsavelRepository, infoCards)
 
         val finalConciliacaoList = conciliacaoList
@@ -85,7 +82,6 @@ class ConciliarView @Autowired constructor(
 
         crud.isEnabled = conciliacao.status != StatusConciliacao.OPEN && conciliacao.status != StatusConciliacao.CLOSED
 
-        val responsavel = responsavelRepository.findById(cookieFactory.getCookieInteger("responsavel-id")).orElseThrow()
         log.info("RESPONSAVEL NOME: " + responsavel.nome)
         val dialogStart = getConfirmDialogStart(conciliacao, balancete)
         val dialogEnd = getConfirmDialogEnd(balancete)

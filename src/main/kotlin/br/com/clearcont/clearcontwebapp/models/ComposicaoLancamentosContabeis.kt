@@ -31,7 +31,10 @@ class ComposicaoLancamentosContabeis() : ComposicaoLancamentos() {
     private var credito: Double = 0.0
 
     @JsonIgnore
-    @ManyToOne(fetch = FetchType.EAGER, cascade = [CascadeType.ALL])
+    @ManyToOne(
+        fetch = FetchType.EAGER,
+        cascade = [CascadeType.DETACH, CascadeType.REMOVE, CascadeType.MERGE, CascadeType.REFRESH]
+    )
     @JoinColumn(name = "balancete_id")
     var balancete: Balancete? = null
 
@@ -183,6 +186,11 @@ class ComposicaoLancamentosContabeis() : ComposicaoLancamentos() {
         this.balancete = balancete
         this.status = status
         this.responsavel = responsavel
+    }
+
+    constructor(balancete: Balancete?, responsavel: Responsavel?) : this() {
+        this.balancete = balancete
+        this.responsavel = responsavel!!
     }
 
 }

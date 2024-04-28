@@ -15,7 +15,7 @@ class ComposicaoLancamentosContabeisDTO : ComposicaoLancamentos {
     var balancete: Balancete? = null
     @Enumerated(EnumType.STRING)
     var status: StatusConciliacao? = null
-    lateinit var responsavel: Responsavel
+    var responsavel: Responsavel? = null
 
     constructor(
         id: UUID?,

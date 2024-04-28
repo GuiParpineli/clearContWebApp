@@ -7,11 +7,10 @@ import br.com.clearcont.clearcontwebapp.models.enums.StatusConciliacao
 import br.com.clearcont.clearcontwebapp.models.toDTO
 import br.com.clearcont.clearcontwebapp.repository.BalanceteRepository
 import br.com.clearcont.clearcontwebapp.repository.ComposicaoLancamentosContabeisRepository
+import br.com.clearcont.clearcontwebapp.repository.EmpresaRepository
 import br.com.clearcont.clearcontwebapp.repository.ResponsavelRepository
 import jakarta.transaction.Transactional
-import org.apache.poi.ss.formula.functions.T
 import org.jboss.logging.Logger
-import org.springframework.data.jpa.domain.AbstractPersistable_.id
 import org.springframework.stereotype.Service
 import org.vaadin.crudui.crud.impl.GridCrud
 import java.util.*
@@ -20,7 +19,7 @@ import java.util.*
 class ComposicaoLancamentosContabeisService(
     private val repository: ComposicaoLancamentosContabeisRepository,
     private val balanceteRepository: BalanceteRepository,
-    private val responsavelRepository: ResponsavelRepository,
+    private val responsavelRepository: ResponsavelRepository, private val empresaRepository: EmpresaRepository,
 ) {
 
     private val log = Logger.getLogger(javaClass.name)
@@ -134,5 +133,11 @@ class ComposicaoLancamentosContabeisService(
 
     fun findByBalanceteID(balanceteID: Long): List<ComposicaoLancamentosContabeis> {
         return repository.findByBalanceteId(balanceteID)
+    }
+
+    fun createNewAndUpdate(balanceteId: Long?, responsavelID: Long?) {
+        val balancete = balanceteRepository.findById(balanceteId!!).orElseThrow()
+        val responsavel = responsavelRepository.findById(responsavelID!!).orElseThrow()
+        repository.saveAndFlush(ComposicaoLancamentosContabeis(balancete, responsavel))
     }
 }
