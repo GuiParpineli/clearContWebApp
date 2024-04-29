@@ -4,13 +4,13 @@ import br.com.clearcont.clearcontwebapp.helpers.CookieFactory
 import br.com.clearcont.clearcontwebapp.helpers.MonthAndCompany
 import br.com.clearcont.clearcontwebapp.helpers.Period.getMonthByPeriodoString
 import br.com.clearcont.clearcontwebapp.models.Empresa
-import br.com.clearcont.clearcontwebapp.models.enums.TipoConta.*
+import br.com.clearcont.clearcontwebapp.models.enums.TipoConta.FORNECEDOR
 import br.com.clearcont.clearcontwebapp.repository.EmpresaRepository
 import br.com.clearcont.clearcontwebapp.repository.ResponsavelRepository
 import br.com.clearcont.clearcontwebapp.service.BalanceteService
 import br.com.clearcont.clearcontwebapp.service.ComposicaoLancamentosContabeisService
-import br.com.clearcont.clearcontwebapp.views.components.MainLayout
 import br.com.clearcont.clearcontwebapp.views.components.GridFornecedores
+import br.com.clearcont.clearcontwebapp.views.components.MainLayout
 import com.vaadin.flow.component.UI
 import com.vaadin.flow.component.html.H1
 import com.vaadin.flow.component.html.Span
@@ -48,7 +48,7 @@ class FornecedoresView(
         balanceteService: BalanceteService,
         responsavelRepository: ResponsavelRepository
     ) {
-        getCompany(empresaRepository) { empresa: Empresa? ->
+        this.getCompany(empresaRepository) { empresa: Empresa? ->
             getMonth { month: String? ->
                 verifySelectedCompanyAndMonthExistAndNavigate(empresa, month)
                 val cookieFactory = CookieFactory(VaadinResponse.getCurrent())

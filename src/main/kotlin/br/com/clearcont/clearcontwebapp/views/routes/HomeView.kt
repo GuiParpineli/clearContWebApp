@@ -38,7 +38,7 @@ import java.util.stream.Stream
 @PermitAll
 class HomeView(empresaGroupService: EmpresaGroupService, empresaRepository: EmpresaRepository?) : Div(),
     MonthAndCompany {
-    var log: Logger = Logger.getLogger(javaClass.name)
+    private val log: Logger = Logger.getLogger(javaClass.name)
     override lateinit var empresa: Empresa
     override var month: String? = null
 
@@ -64,18 +64,16 @@ class HomeView(empresaGroupService: EmpresaGroupService, empresaRepository: Empr
     init {
         val ui = UI.getCurrent()
         val page = ui.page
-        getCompany(empresaRepository!!) { empresa: Empresa? ->
+        this.getCompany(empresaRepository!!) { empresa: Empresa? ->
             getMonth { month: String? ->
                 val cookieFactory = CookieFactory(VaadinResponse.getCurrent())
                 val id = cookieFactory.getCookieInteger("company-group-id")
                 val companyList = empresaGroupService.getByID(id)
 
-                if (companyList != null) {
-                    log.info("ID COMPANY GROUP RETORNADA: " + companyList.id)
-                }
-                if (companyList != null) {
-                    log.info("QUANTIDADE DE EMPRESAS NO GRUPO RETORNADA: " + companyList.empresas.size)
-                }
+                if (companyList != null) log.info("ID COMPANY GROUP RETORNADA: ${companyList.id}")
+
+                if (companyList != null) log.info("QUANTIDADE DE EMPRESAS NO GRUPO RETORNADA: ${companyList.empresas.size}")
+
 
                 val h1 = H1("Sistema de Conciliação Contábil").apply {
                     addClassNames(
@@ -113,13 +111,13 @@ class HomeView(empresaGroupService: EmpresaGroupService, empresaRepository: Empr
                 val confirmButton = confirmButton
                 val versionFooter = versionFooter
                 val verticalLayout = getFlexLayout(h1, logo, horizontalLayout, confirmButton, versionFooter)
+
                 add(
-                    VerticalLayout(
-                        FlexComponent.JustifyContentMode.CENTER,
-                        verticalLayout
-                    ).apply {
+                    VerticalLayout(FlexComponent.JustifyContentMode.CENTER, verticalLayout).apply {
                         style.setAlignItems(Style.AlignItems.CENTER).setPaddingTop("20px")
-                    })
+                    }
+                )
+
             }
         }
     }

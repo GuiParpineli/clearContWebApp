@@ -62,11 +62,7 @@ class ConciliarView @Autowired constructor(
 
         val saldoContabil = contabeisService.getSaldoContabil(balanceteId);
 
-//        if (conciliacaoList.isEmpty()) {
-//            contabeisService.createNewAndUpdate(balancete?.id, responsavel.id)
-//            conciliacaoList = contabeisService.getByBalanceteID(balanceteId).map { it.toDTO() }.toList()
-//        }
-        val conciliacao: ComposicaoLancamentosContabeisDTO = if (conciliacaoList.isEmpty()) {
+        val conciliacao = if (conciliacaoList.isEmpty()) {
             ComposicaoLancamentosContabeisDTO(balancete, responsavel)
         } else {
             conciliacaoList.last()

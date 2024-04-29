@@ -19,6 +19,7 @@ import com.vaadin.flow.server.StreamResource
 import jakarta.transaction.Transactional
 import org.apache.poi.ss.usermodel.Workbook
 import org.apache.poi.xssf.usermodel.XSSFWorkbook
+import org.springframework.web.servlet.mvc.method.annotation.SseEmitter.event
 import org.vaadin.crudui.crud.impl.GridCrud
 import org.vaadin.crudui.form.impl.form.factory.DefaultCrudFormFactory
 import java.io.ByteArrayInputStream
@@ -69,14 +70,14 @@ open class GridCustomer(
                 val updatedContabilCustomers = composicaoService.findByBalanceteID(balanceteID)
                 crud.setFindAllOperation {
                     updatedContabilCustomers.stream()
-                        .filter { composicaoLancamentosContabeis: ComposicaoLancamentosContabeis ->
+                        .filter { composicaoLancamentosContabeis ->
                             composicaoLancamentosContabeis.balancete!!.tipo == TipoConta.CLIENTE
                         }.toList()
                 }
                 isf = InputStreamFactory {
                     exportToExcel(
                         updatedContabilCustomers.stream()
-                            .filter { composicaoLancamentosContabeisF: ComposicaoLancamentosContabeis ->
+                            .filter { composicaoLancamentosContabeisF ->
                                 composicaoLancamentosContabeisF.balancete!!.tipo == TipoConta.CLIENTE
                             }.collect(Collectors.toList())
                     )
@@ -89,7 +90,7 @@ open class GridCustomer(
         formFactory.setFieldCreationListener("data") { field: HasValue<*, *> ->
             val datePicker = field as DatePicker
             datePicker.locale = Locale.of("pt", "BR")
-            datePicker.addValueChangeListener { event: ComponentValueChangeEvent<DatePicker?, LocalDate> ->
+            datePicker.addValueChangeListener { event ->
                 val selectedDate = event.value
                 selectedDate.format(DateTimeFormatter.ofPattern("dd/MM/yyyy"))
             }
@@ -109,17 +110,13 @@ open class GridCustomer(
         crud.grid.addColumn({ item -> formatCurrencyBR(item.debito) }).setHeader("Debito")
         crud.grid.addColumn({ item -> formatCurrencyBR(item.credito) }).setHeader("Credito")
 
-        crud.grid.addColumn(ValueProvider<ComposicaoLancamentosContabeis, Any> { customer: ComposicaoLancamentosContabeis ->
-            customer.getDiasVencidos(
-                month
-            )
-        }).setHeader("Dias Vencidos")
+        crud.grid.addColumn({ customer -> customer.getDiasVencidos(month) }).setHeader("Dias Vencidos")
 
-        crudMethods(crud, lancamentosContabeis, balanceteService, balancetePicker, responsavel, composicaoService)
+        this.crudMethods(crud, lancamentosContabeis, balanceteService, balancetePicker, responsavel, composicaoService)
 
         downloadLink = generateExcelDownloadLink(excelStreamResource)
 
-        add(balancetePicker, downloadLink, crud)
+        this.add(balancetePicker, downloadLink, crud)
     }
 
     @Transactional
@@ -133,12 +130,12 @@ open class GridCustomer(
     ) {
 
         crud.setFindAllOperation {
-            contabilCustomers.stream().filter { composicaoLancamentosContabeis: ComposicaoLancamentosContabeis ->
+            contabilCustomers.stream().filter { composicaoLancamentosContabeis ->
                 composicaoLancamentosContabeis.balancete!!.tipo == TipoConta.CLIENTE
             }.toList()
         }
 
-        crud.setAddOperation { composicaoLancamentosContabeis: ComposicaoLancamentosContabeis ->
+        crud.setAddOperation { composicaoLancamentosContabeis ->
             composicaoLancamentosContabeis.balancete = balancetePicker.value
             composicaoLancamentosContabeis.responsavel = responsavel!!
             composicaoLancamentosContabeis.balancete!!.tipo = TipoConta.CLIENTE
@@ -148,7 +145,7 @@ open class GridCustomer(
 
             crud.setFindAllOperation {
                 updatedContabilCustomers.stream()
-                    .filter { composicaoLancamentosContabeisF: ComposicaoLancamentosContabeis ->
+                    .filter { composicaoLancamentosContabeisF ->
                         composicaoLancamentosContabeisF.balancete?.tipo == TipoConta.CLIENTE
                     }.toList()
             }
@@ -233,7 +230,7 @@ open class GridCustomer(
         isf = InputStreamFactory {
             exportToExcel(
                 updatedContabilCustomers.stream()
-                    .filter { composicaoLancamentosContabeisF: ComposicaoLancamentosContabeis ->
+                    .filter { composicaoLancamentosContabeisF ->
                         composicaoLancamentosContabeisF.balancete!!.tipo == TipoConta.CLIENTE
                     }
                     .collect(Collectors.toList())

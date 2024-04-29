@@ -37,27 +37,25 @@ class ControleView(service: ControleService, empresaRepository: EmpresaRepositor
     var log: Logger = Logger.getLogger(javaClass.name)
 
     init {
-        getCompany(empresaRepository!!) { empresa: Empresa? ->
+        this.getCompany(empresaRepository!!) { empresa: Empresa? ->
             getMonth { month: String? ->
                 verifySelectedCompanyAndMonthExistAndNavigate(empresa, month)
                 val year = LocalDate.now().year
                 val controleList = service.getAllByMonthAndCompanyID(empresa!!.id!!, month!!, year)
-                val grid = Grid(
-                    Controle::class.java, false
-                )
-                grid.addColumn(Controle::nomeConta).setHeader("Nome da conta").setSortable(true)
-                grid.addColumn(ValueProvider<Controle, Any> { obj: Controle -> obj.getSaldoBalancete() })
-                    .setHeader("Saldo Balancete")
-                grid.addColumn(ValueProvider<Controle, Any> { obj: Controle -> obj.getSaldoAnalise() })
-                    .setHeader("Saldo Analise")
-                grid.addColumn(ValueProvider<Controle, Any> { obj: Controle -> obj.getValorDiferenca() })
-                    .setHeader("Valor da Diferença")
-                grid.addColumn(Controle::nomeResponsavel).setHeader("Responsável")
-                grid.setItems(controleList)
+
+                val grid = Grid(Controle::class.java, false).apply {
+                    addColumn(Controle::nomeConta).setHeader("Nome da conta").setSortable(true)
+                    addColumn({ obj -> obj.getSaldoBalancete() }).setHeader("Saldo Balancete")
+                    addColumn({ obj -> obj.getSaldoAnalise() }).setHeader("Saldo Analise")
+                    addColumn({ obj -> obj.getValorDiferenca() }).setHeader("Valor da Diferença")
+                    addColumn(Controle::nomeResponsavel).setHeader("Responsável")
+                    setItems(controleList)
+                }
 
                 val isf = InputStreamFactory { exportToExcel(controleList) }
                 val excelStreamResource = StreamResource("controle.xlsx", isf)
                 val downloadLink = generateExcelDownloadLink(excelStreamResource)
+
                 add(VerticalLayout(FlexComponent.Alignment.START, Div(H1("Controle")), downloadLink, grid))
             }
         }

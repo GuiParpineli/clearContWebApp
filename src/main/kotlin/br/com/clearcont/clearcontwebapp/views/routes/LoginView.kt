@@ -30,14 +30,15 @@ class LoginView(service: UserAppService) : VerticalLayout(), BeforeEnterObserver
 
         login.action = "login"
         login.onEnabledStateChanged(true)
+
         val i18n = LoginI18n.createDefault().apply {
             header = LoginI18n.Header()
             header.title = "Faça Login para acessar a aplicação"
             header.description = "Login utilizando usuario e senha"
             additionalInformation = null
+            errorMessage.title = "Usuario ou senha incorretos"
+            errorMessage.message = "Por favor, tente novamente"
         }
-        i18n.errorMessage.title = "Usuario ou senha incorretos"
-        i18n.errorMessage.message = "Por favor, tente novamente"
 
         login.setI18n(i18n)
         login.isForgotPasswordButtonVisible = false
@@ -75,12 +76,9 @@ class LoginView(service: UserAppService) : VerticalLayout(), BeforeEnterObserver
     }
 
     override fun beforeEnter(beforeEnterEvent: BeforeEnterEvent) {
-        if (beforeEnterEvent.location
-                .queryParameters
-                .parameters
-                .containsKey("error")
-        ) {
+        if (beforeEnterEvent.location.queryParameters.parameters.containsKey("error")) {
             login.isError = true
         }
     }
+
 }

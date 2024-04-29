@@ -27,6 +27,7 @@ import jakarta.transaction.Transactional
 import org.apache.poi.ss.usermodel.Row
 import org.apache.poi.ss.usermodel.Workbook
 import org.apache.poi.xssf.usermodel.XSSFWorkbook
+import org.springframework.web.servlet.mvc.method.annotation.SseEmitter.event
 import org.vaadin.crudui.crud.impl.GridCrud
 import org.vaadin.crudui.form.impl.form.factory.DefaultCrudFormFactory
 import java.io.IOException
@@ -68,7 +69,8 @@ class BalanceteView(
                 val year =
                     if (balanceteData.isEmpty()) LocalDate.now().year.toString() else balanceteData.first().ano.toString()
 
-                val titleText = H3(getTitle(companyName, month, year)).apply { addClassNames(LumoUtility.FontWeight.BLACK) }
+                val titleText =
+                    H3(getTitle(companyName, month, year)).apply { addClassNames(LumoUtility.FontWeight.BLACK) }
 
                 val title = getTitleDiv(titleText)
                 val grid = getBalanceteGridCrud(service, balanceteData)
@@ -158,6 +160,7 @@ class BalanceteView(
             grid.setColumns("nomeConta", "numeroConta", "totalBalancete", "tipo")
             grid.isColumnReorderingAllowed = true
             style["border-radius"] = "10px"
+
             setAddOperation { balancete ->
                 balancete.empresa = empresa
                 balancete.mes = month.toString()
@@ -165,22 +168,20 @@ class BalanceteView(
                 UI.getCurrent().page.reload()
                 balancete
             }
-            setUpdateOperation { balancete: Balancete? -> service.update(balancete!!) }
-            setDeleteOperation { balancete: Balancete? -> service.delete(balancete!!) }
+            setUpdateOperation { balancete -> service.update(balancete!!) }
+            setDeleteOperation { balancete -> service.delete(balancete!!) }
             setFindAllOperation { balanceteData }
 
             grid.addComponentColumn { balancete -> createStatusBadge(balancete.classificacao) }
                 .setHeader("Classificação")
 
-            grid.addComponentColumn { balanceteComp: Balancete ->
+            grid.addComponentColumn { balanceteComp ->
                 val editButton = Button("Conciliar")
-                editButton.addClickListener {
-                    UI.getCurrent().navigate("conciliar/" + balanceteComp.id)
-                }
+                editButton.addClickListener { UI.getCurrent().navigate("conciliar/" + balanceteComp.id) }
                 editButton
             }.setWidth("150px").setFlexGrow(0)
 
-            grid.addItemDoubleClickListener { event: ItemDoubleClickEvent<Balancete> ->
+            grid.addItemDoubleClickListener { event ->
                 val balancete = event.item
                 UI.getCurrent().navigate("conciliar/" + balancete.id)
             }
