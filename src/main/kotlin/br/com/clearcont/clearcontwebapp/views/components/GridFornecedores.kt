@@ -93,9 +93,9 @@ open class GridFornecedores(
                     )
                 }
                 updateDownloadLink(crud, service, downloadLink)
-                getUpload(service, empresa, balancete, responsavel).also {
+                getUpload(service, empresa, balancete, responsavel).apply { style.setPadding("20px") }.also {
                     style.setMargin("10px")
-                    files.add(FlexLayout(it, downloadLink).apply {
+                    files.add(HorizontalLayout(it, downloadLink).apply {
                         style.setAlignSelf(Style.AlignSelf.CENTER)
                             .setAlignItems(Style.AlignItems.CENTER)
                     })
