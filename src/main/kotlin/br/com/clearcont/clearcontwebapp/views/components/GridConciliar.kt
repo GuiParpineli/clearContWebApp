@@ -2,6 +2,7 @@ package br.com.clearcont.clearcontwebapp.views.components
 
 import br.com.clearcont.clearcontwebapp.helpers.CookieFactory
 import br.com.clearcont.clearcontwebapp.helpers.formatCurrencyBR
+import br.com.clearcont.clearcontwebapp.helpers.unformatCurrencyBR
 import br.com.clearcont.clearcontwebapp.models.*
 import br.com.clearcont.clearcontwebapp.repository.ResponsavelRepository
 import br.com.clearcont.clearcontwebapp.service.ComposicaoLancamentosContabeisService
@@ -9,6 +10,8 @@ import br.com.clearcont.clearcontwebapp.views.components.details.BalanceteDetail
 import com.vaadin.flow.component.HasValue
 import com.vaadin.flow.component.datepicker.DatePicker
 import com.vaadin.flow.component.orderedlayout.VerticalLayout
+import com.vaadin.flow.component.textfield.TextField
+import com.vaadin.flow.data.binder.Binder
 import com.vaadin.flow.data.provider.ListDataProvider
 import com.vaadin.flow.server.VaadinResponse
 import org.apache.poi.ss.usermodel.Workbook
@@ -18,6 +21,7 @@ import org.vaadin.crudui.form.impl.form.factory.DefaultCrudFormFactory
 import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
 import java.io.IOException
+import java.text.NumberFormat
 import java.time.format.DateTimeFormatter
 import java.util.*
 import java.util.logging.Logger
@@ -36,7 +40,7 @@ class GridConciliar(
         val cookieFactory = CookieFactory(VaadinResponse.getCurrent())
         val crud = GridCrud(ComposicaoLancamentosContabeisDTO::class.java)
         val formFactory = DefaultCrudFormFactory(ComposicaoLancamentosContabeisDTO::class.java)
-        val formatador = DateTimeFormatter.ofPattern("dd/MM/yyyy").withLocale(Locale.of("pt", "BR"))
+        val dateTimeFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy").withLocale(Locale.of("pt", "BR"))
 
         formFactory.setVisibleProperties("data", "debito", "credito", "historico")
 
@@ -45,15 +49,15 @@ class GridConciliar(
             datePicker.locale = Locale.of("pt", "BR")
             datePicker.addValueChangeListener { event ->
                 val selectedDate = event.value
-                selectedDate.format(formatador)
+                selectedDate.format(dateTimeFormatter)
             }
         }
 
         crud.crudFormFactory = formFactory
         crud.grid.setColumns()
         crud.grid.addColumn(ComposicaoLancamentosContabeisDTO::dataFormated).setHeader("Data")
-        crud.grid.addColumn({ item -> formatCurrencyBR(item.credito) }).setHeader("Credito")
-        crud.grid.addColumn({ item -> formatCurrencyBR(item.debito) }).setHeader("Debito")
+        crud.grid.addColumn({ item -> item.credito }).setHeader("Credito").setKey("credito")
+        crud.grid.addColumn({ item -> item.debito }).setHeader("Debito")
         crud.grid.addColumn({ item -> formatCurrencyBR(item.saldoContabil) }).setHeader("Saldo Contabil")
             .setKey("saldoContabil")
         crud.grid.addColumn({ item -> item.status.value }).setHeader("Status")
@@ -135,8 +139,8 @@ class GridConciliar(
             val row = sheet.createRow(rowIndex++)
 
             row.createCell(0).setCellValue(item.dataFormated)
-            row.createCell(1).setCellValue(item.debito)
-            row.createCell(2).setCellValue(item.credito)
+            row.createCell(1).setCellValue(unformatCurrencyBR(item.debito))
+            row.createCell(2).setCellValue(unformatCurrencyBR(item.credito))
             row.createCell(3).setCellValue(item.saldoContabil)
             row.createCell(4).setCellValue(item.historico)
         }

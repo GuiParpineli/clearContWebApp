@@ -63,6 +63,7 @@ class LoginView(service: UserAppService) : VerticalLayout(), BeforeEnterObserver
             addClassName("login-content")
             justifyContentMode = FlexComponent.JustifyContentMode.CENTER
             alignItems = FlexComponent.Alignment.CENTER
+            style.setBackgroundColor("#f0f1f2")
             add(logo, login)
         }
         val layout = HorizontalLayout().apply {

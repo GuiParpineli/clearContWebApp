@@ -2,6 +2,7 @@ package br.com.clearcont.clearcontwebapp.views.components
 
 import br.com.clearcont.clearcontwebapp.helpers.formatCurrencyBR
 import br.com.clearcont.clearcontwebapp.helpers.generateExcelDownloadLink
+import br.com.clearcont.clearcontwebapp.helpers.unformatCurrencyBR
 import br.com.clearcont.clearcontwebapp.models.*
 import br.com.clearcont.clearcontwebapp.models.enums.TipoConta
 import br.com.clearcont.clearcontwebapp.service.BalanceteService
@@ -46,7 +47,7 @@ open class GridFornecedores(
     var log: Logger = Logger.getLogger(javaClass.name)
 
     init {
-        val crud = GridCrud(ComposicaoLancamentosContabeis::class.java)
+        val crud = GridCrud(ComposicaoLancamentosContabeisFullDTO::class.java)
         val formFactory = composicaoLancamentosContabeisDefaultCrudFormFactory
 
         val balancetePicker = ComboBox<Balancete>()
@@ -58,24 +59,25 @@ open class GridFornecedores(
             crud.setVisible(selectedBalancete.id != null)
         }
 
-        val lancamentosContabeis = composicaoService.findByBalanceteID(balanceteID)
+        val lancamentosContabeis = composicaoService.findByBalanceteID(balanceteID).map { it.toFullDTO() }.toList()
 
         balancetePicker.addValueChangeListener { event: ComponentValueChangeEvent<ComboBox<Balancete?>?, Balancete?> ->
             balancete = balanceteService.getById(balancetePicker.value.id!!)!!
             val selectedBalancete = event.value
             if (selectedBalancete != null) {
                 balanceteID = selectedBalancete.id!!
-                val updatedContabilCustomers = composicaoService.findByBalanceteID(balanceteID)
+                val updatedContabilCustomers =
+                    composicaoService.findByBalanceteID(balanceteID).map { it.toFullDTO() }.toList()
                 crud.setFindAllOperation {
                     updatedContabilCustomers.stream()
-                        .filter { composicaoLancamentosContabeis: ComposicaoLancamentosContabeis ->
+                        .filter { composicaoLancamentosContabeis ->
                             composicaoLancamentosContabeis.balancete!!.tipo == TipoConta.FORNECEDOR
                         }.toList()
                 }
                 isf = InputStreamFactory {
                     exportToExcel(
                         updatedContabilCustomers.stream()
-                            .filter { composicaoLancamentosContabeisF: ComposicaoLancamentosContabeis ->
+                            .filter { composicaoLancamentosContabeisF ->
                                 composicaoLancamentosContabeisF.balancete!!.tipo == TipoConta.FORNECEDOR
                             }.collect(Collectors.toList())
                     )
@@ -85,41 +87,42 @@ open class GridFornecedores(
             }
         }
 
+        val formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy").withLocale(Locale.of("pt", "BR"))
+
         formFactory.setFieldCreationListener("data") { field: HasValue<*, *> ->
             val datePicker = field as DatePicker
             datePicker.locale = Locale.of("pt", "BR")
-            datePicker.addValueChangeListener { event: ComponentValueChangeEvent<DatePicker?, LocalDate> ->
+            datePicker.addValueChangeListener { event ->
                 val selectedDate = event.value
                 selectedDate.format(DateTimeFormatter.ofPattern("dd/MM/yyyy"))
             }
         }
-        crud.crudFormFactory = formFactory
-        crud.grid.setColumns(
-            "numNotaFiscal",
-            "dataVencimento",
-            "status",
-            "data",
-            "historico"
-        )
-        crud.grid.addColumn({ item -> formatCurrencyBR(item.ISS) }).setHeader("ISS")
-        crud.grid.addColumn({ item -> formatCurrencyBR(item.INSS) }).setHeader("INSS")
-        crud.grid.addColumn({ item -> formatCurrencyBR(item.IRRF) }).setHeader("IRRF")
-        crud.grid.addColumn({ item -> formatCurrencyBR(item.CSRF) }).setHeader("CSRF")
-        crud.grid.addColumn({ item -> formatCurrencyBR(item.debito) }).setHeader("Debito")
-        crud.grid.addColumn({ item -> formatCurrencyBR(item.credito) }).setHeader("Credito")
-        crud.grid.addColumn({ customer -> customer.getDiasVencidos(month) }).setHeader("Dias Vencidos")
 
-        crudMethods(crud, lancamentosContabeis, balanceteService, balancetePicker, responsavel, composicaoService)
+        crud.crudFormFactory = formFactory
+        crud.grid.setColumns("numNotaFiscal")
+        crud.grid.addColumn({ item -> formatter.format(item.data) }).setHeader("Data")
+        crud.grid.addColumn({ item -> formatter.format(item.dataVencimento) }).setHeader("Data Vencimento")
+        crud.grid.addColumn({ item -> item.ISS }).setHeader("ISS")
+        crud.grid.addColumn({ item -> item.INSS }).setHeader("INSS")
+        crud.grid.addColumn({ item -> item.IRRF }).setHeader("IRRF")
+        crud.grid.addColumn({ item -> item.CSRF }).setHeader("CSRF")
+        crud.grid.addColumn({ item -> item.debito }).setHeader("Debito")
+        crud.grid.addColumn({ item -> item.credito }).setHeader("Credito")
+        crud.grid.addColumn({ item -> item.status.value }).setHeader("Status")
+        crud.grid.addColumn({ customer -> customer.getDiasVencidos(month) }).setHeader("Dias Vencidos")
+        crud.grid.addColumn({ item -> item.historico.toString() }).setHeader("Historico")
+
+        this.crudMethods(crud, lancamentosContabeis, balanceteService, balancetePicker, responsavel, composicaoService)
 
         downloadLink = generateExcelDownloadLink(excelStreamResource)
 
-        add(balancetePicker, downloadLink, crud)
+        this.add(balancetePicker, downloadLink, crud)
     }
 
     @Transactional
     open fun crudMethods(
-        crud: GridCrud<ComposicaoLancamentosContabeis>,
-        contabilCustomers: List<ComposicaoLancamentosContabeis>,
+        crud: GridCrud<ComposicaoLancamentosContabeisFullDTO>,
+        contabilCustomers: List<ComposicaoLancamentosContabeisFullDTO>,
         balanceteService: BalanceteService,
         balancetePicker: ComboBox<Balancete>,
         responsavel: Responsavel?,
@@ -127,22 +130,23 @@ open class GridFornecedores(
     ) {
 
         crud.setFindAllOperation {
-            contabilCustomers.stream().filter { composicaoLancamentosContabeis: ComposicaoLancamentosContabeis ->
+            contabilCustomers.stream().filter { composicaoLancamentosContabeis ->
                 composicaoLancamentosContabeis.balancete!!.tipo == TipoConta.FORNECEDOR
             }.toList()
         }
 
-        crud.setAddOperation { composicaoLancamentosContabeis: ComposicaoLancamentosContabeis ->
+        crud.setAddOperation { composicaoLancamentosContabeis ->
             composicaoLancamentosContabeis.balancete = balancetePicker.value
             composicaoLancamentosContabeis.responsavel = responsavel!!
             composicaoLancamentosContabeis.balancete!!.tipo = TipoConta.FORNECEDOR
-            contabeisService.save(composicaoLancamentosContabeis)
+            contabeisService.save(composicaoLancamentosContabeis.toEntity())
 
-            val updatedContabilCustomers = contabeisService.findByBalanceteID(balanceteID)
+            val updatedContabilCustomers =
+                contabeisService.findByBalanceteID(balanceteID).map { it.toFullDTO() }.toList()
 
             crud.setFindAllOperation {
                 updatedContabilCustomers.stream()
-                    .filter { composicaoLancamentosContabeisF: ComposicaoLancamentosContabeis ->
+                    .filter { composicaoLancamentosContabeisF ->
                         composicaoLancamentosContabeisF.balancete?.tipo == TipoConta.FORNECEDOR
                     }.toList()
             }
@@ -151,10 +155,16 @@ open class GridFornecedores(
             composicaoLancamentosContabeis
         }
 
-        crud.setUpdateOperation { entity -> contabeisService.update(entity) }
+        crud.setDeleteOperation {
+            contabeisService.deleteByID(it.id!!)
+//            UI.getCurrent().page.reload()
+            crud.refreshGrid()
+        }
+
+        crud.setUpdateOperation { entity -> contabeisService.update(entity.toEntity()).toFullDTO() }
     }
 
-    private fun exportToExcel(itemList: List<ComposicaoLancamentosContabeis>): ByteArrayInputStream {
+    private fun exportToExcel(itemList: MutableList<ComposicaoLancamentosContabeisFullDTO>): ByteArrayInputStream {
         val workbook: Workbook = XSSFWorkbook()
         val sheet = workbook.createSheet("Data")
 
@@ -184,15 +194,15 @@ open class GridFornecedores(
             val row = sheet.createRow(rowIndex++)
             row.createCell(0).setCellValue(item.numNotaFiscal.toDouble())
             row.createCell(1).setCellValue(item.getDataVencimento())
-            row.createCell(2).setCellValue(item.ISS)
-            row.createCell(3).setCellValue(item.INSS)
-            row.createCell(4).setCellValue(item.IRRF)
-            row.createCell(5).setCellValue(item.CSRF)
+            row.createCell(2).setCellValue(unformatCurrencyBR(item.ISS))
+            row.createCell(3).setCellValue(unformatCurrencyBR(item.INSS))
+            row.createCell(4).setCellValue(unformatCurrencyBR(item.IRRF))
+            row.createCell(5).setCellValue(unformatCurrencyBR(item.CSRF))
             row.createCell(6).setCellValue(item.diasVencidos.toDouble())
-            row.createCell(7).setCellValue(item.status!!.name)
+            row.createCell(7).setCellValue(item.status.name)
             row.createCell(8).setCellValue(item.data)
-            row.createCell(9).setCellValue(item.debito)
-            row.createCell(10).setCellValue(item.credito)
+            row.createCell(9).setCellValue(unformatCurrencyBR(item.debito))
+            row.createCell(10).setCellValue(unformatCurrencyBR(item.credito))
             row.createCell(11).setCellValue(item.historico)
         }
 
@@ -213,30 +223,30 @@ open class GridFornecedores(
     }
 
     private fun updateDownloadLink(
-        crud: GridCrud<ComposicaoLancamentosContabeis>,
+        crud: GridCrud<ComposicaoLancamentosContabeisFullDTO>,
         contabeisService: ComposicaoLancamentosContabeisService,
         downloadLink: Anchor
     ) {
-        val updatedContabilCustomers = contabeisService.findByBalanceteID(balanceteID)
+        val updatedContabilCustomers = contabeisService.findByBalanceteID(balanceteID).map { it.toFullDTO() }.toList()
         isf = InputStreamFactory {
             exportToExcel(
                 updatedContabilCustomers.stream()
-                    .filter { composicaoLancamentosContabeisF: ComposicaoLancamentosContabeis ->
+                    .filter { composicaoLancamentosContabeisF ->
                         composicaoLancamentosContabeisF.balancete!!.tipo == TipoConta.FORNECEDOR
                     }
                     .collect(Collectors.toList())
             )
         }
         crud.refreshGrid()
-        excelStreamResource = StreamResource("clientes.xlsx", isf)
+        excelStreamResource = StreamResource("fornecedores.xlsx", isf)
         downloadLink.setHref(excelStreamResource)
     }
 
     companion object {
-        private val composicaoLancamentosContabeisDefaultCrudFormFactory: DefaultCrudFormFactory<ComposicaoLancamentosContabeis>
+        private val composicaoLancamentosContabeisDefaultCrudFormFactory: DefaultCrudFormFactory<ComposicaoLancamentosContabeisFullDTO>
             get() {
                 val formFactory = DefaultCrudFormFactory(
-                    ComposicaoLancamentosContabeis::class.java
+                    ComposicaoLancamentosContabeisFullDTO::class.java
                 )
                 formFactory.setVisibleProperties(
                     "numNotaFiscal",

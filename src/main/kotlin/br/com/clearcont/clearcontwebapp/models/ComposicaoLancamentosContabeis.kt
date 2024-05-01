@@ -17,14 +17,14 @@ class ComposicaoLancamentosContabeis() : ComposicaoLancamentos() {
     @GeneratedValue(strategy = GenerationType.UUID)
     var id: UUID? = null
     var numNotaFiscal = 0
-    var dataVencimento: LocalDate? = LocalDate.now()
+    override var dataVencimento: LocalDate? = LocalDate.now()
     var ISS = 0.0
     var INSS = 0.0
     var IRRF = 0.0
     var CSRF = 0.0
     var debito: Double = 0.0
     var credito: Double = 0.0
-    var diasVencidos: Int = 0
+    override var diasVencidos: Int = 0
         set(value) {
             field = if (value == 0) 1 else value
         }
@@ -56,17 +56,17 @@ class ComposicaoLancamentosContabeis() : ComposicaoLancamentos() {
 
     private fun getFixedMonthValue(month: Int): Int = if (month in 1..12) month else 1
 
-    fun getDataVencimento(): String {
+    override fun getDataVencimento(): String {
         val formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy")
         return dataVencimento!!.format(formatter)
     }
 
-    fun getDiasVencidos(month: Int): Int {
+    override fun getDiasVencidos(month: Int): Int {
         calcularDiasVencidos(month)
         return diasVencidos
     }
 
-    private fun calcularDiasVencidos(mes: Int) {
+    override fun calcularDiasVencidos(mes: Int) {
         val fixedMes = getFixedMonthValue(mes)
         val anoAtual = Year.now().value
         val ultimoDiaDoMes = LocalDate.of(anoAtual, fixedMes, 1).with(TemporalAdjusters.lastDayOfMonth())
