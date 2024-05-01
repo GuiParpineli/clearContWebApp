@@ -65,13 +65,17 @@ class FornecedoresView(
                     balanceteData,
                     responsavel,
                     getMonthByPeriodoString(month),
-                    balanceteService
+                    balanceteService,
+                    empresa
                 )
 
                 val clientes = H1("Fornecedores")
                 val span = Span(empresa.nomeEmpresa)
                 val subtitle = Span("Selecione uma conta do periodo: " + month + " " + LocalDate.now().year)
-                val verticalLayout = VerticalLayout(VerticalLayout(clientes, span, subtitle), gridCustomer)
+                val titleLayout = VerticalLayout(clientes, span, subtitle).apply {
+                    style.setBackgroundColor("#dbdee0").setBorderRadius("30px")
+                }
+                val verticalLayout = VerticalLayout(titleLayout, gridCustomer)
 
                 add(verticalLayout)
             }

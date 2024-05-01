@@ -134,10 +134,19 @@ class ComposicaoLancamentosContabeisService(
     fun findByBalanceteID(balanceteID: Long): List<ComposicaoLancamentosContabeis> {
         return repository.findByBalanceteId(balanceteID)
     }
+
     @Transactional
     fun createNewAndUpdate(balanceteId: Long?, responsavelID: Long?) {
         val balancete = balanceteRepository.findById(balanceteId!!).orElseThrow()
         val responsavel = responsavelRepository.findById(responsavelID!!).orElseThrow()
         repository.saveAndFlush(ComposicaoLancamentosContabeis(balancete, responsavel))
+    }
+
+    @Transactional
+    fun saveAll(id: Long, composicoesList: MutableList<ComposicaoLancamentosContabeis?>) {
+        val balancete = balanceteRepository.findById(id).orElseThrow()
+        repository.deleteAllByBalancete_Id(id)
+        composicoesList.forEach { it!!.balancete = balancete }
+        repository.saveAll(composicoesList)
     }
 }

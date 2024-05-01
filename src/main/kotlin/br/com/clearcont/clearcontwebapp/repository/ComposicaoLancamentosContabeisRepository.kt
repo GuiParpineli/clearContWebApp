@@ -2,6 +2,7 @@ package br.com.clearcont.clearcontwebapp.repository
 
 import br.com.clearcont.clearcontwebapp.helpers.CNPJ
 import br.com.clearcont.clearcontwebapp.models.ComposicaoLancamentosContabeis
+import jakarta.transaction.Transactional
 import org.apache.poi.ss.formula.functions.T
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.jpa.repository.Query
@@ -23,4 +24,6 @@ interface ComposicaoLancamentosContabeisRepository : JpaRepository<ComposicaoLan
     ): List<T>
 
     fun <T> findComposicaoLancamentosContabeisByResponsavel_Id(responsavel_id: Long?, projection: Class<T>): List<T>
+    @Transactional
+    fun deleteAllByBalancete_Id(id: Long)
 }

@@ -28,6 +28,7 @@ fun ComposicaoLancamentosContabeisFullDTO.toEntity(): ComposicaoLancamentosConta
         this.id,
         this.numNotaFiscal,
         this.dataVencimento,
+        this.data,
         unformatCurrencyBR(this.ISS),
         unformatCurrencyBR(this.INSS),
         unformatCurrencyBR(this.IRRF),

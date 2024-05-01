@@ -81,6 +81,10 @@ class ComposicaoLancamentosContabeis() : ComposicaoLancamentos() {
         }
     }
 
+    override fun toString(): String {
+        return "ComposicaoLancamentosContabeis(id=$id, numNotaFiscal=$numNotaFiscal, dataVencimento=$dataVencimento, ISS=$ISS, INSS=$INSS, IRRF=$IRRF, CSRF=$CSRF, debito=$debito, credito=$credito, diasVencidos=$diasVencidos, historico=$historico, balancete=$balancete, status=$status, responsavel=$responsavel)"
+    }
+
     constructor(
         numNotaFiscal: Int,
         dataVencimento: LocalDate?,
@@ -113,7 +117,7 @@ class ComposicaoLancamentosContabeis() : ComposicaoLancamentos() {
     ) : this() {
         this.id = id
         this.historico = historico
-        this.debito= debito
+        this.debito = debito
         this.credito = credito
         this.balancete = balancete
         this.responsavel = responsavel
@@ -123,6 +127,7 @@ class ComposicaoLancamentosContabeis() : ComposicaoLancamentos() {
     constructor(
         numNotaFiscal: Int,
         dataVencimento: LocalDate?,
+        data: LocalDate?,
         ISS: Double,
         INSS: Double,
         IRRF: Double,
@@ -134,6 +139,7 @@ class ComposicaoLancamentosContabeis() : ComposicaoLancamentos() {
         status: StatusConciliacao?,
         responsavel: Responsavel
     ) : this() {
+        super.data = data ?: LocalDate.now()
         this.numNotaFiscal = numNotaFiscal
         this.dataVencimento = dataVencimento
         this.ISS = ISS
@@ -152,6 +158,7 @@ class ComposicaoLancamentosContabeis() : ComposicaoLancamentos() {
         id: UUID?,
         numNotaFiscal: Int,
         dataVencimento: LocalDate?,
+        data: LocalDate?,
         ISS: Double,
         INSS: Double,
         IRRF: Double,
@@ -167,6 +174,7 @@ class ComposicaoLancamentosContabeis() : ComposicaoLancamentos() {
         this.id = id
         this.numNotaFiscal = numNotaFiscal
         this.dataVencimento = dataVencimento
+        super.data = data ?: LocalDate.now()
         this.ISS = ISS
         this.INSS = INSS
         this.IRRF = IRRF
@@ -184,5 +192,7 @@ class ComposicaoLancamentosContabeis() : ComposicaoLancamentos() {
         this.balancete = balancete
         this.responsavel = responsavel!!
     }
+
+
 
 }

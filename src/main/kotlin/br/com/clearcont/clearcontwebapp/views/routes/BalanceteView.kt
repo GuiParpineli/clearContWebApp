@@ -54,7 +54,7 @@ class BalanceteView(
 
     private fun processCompanyAndMonth(empresaRepository: EmpresaRepository, service: BalanceteService) {
         val cookieFactory = CookieFactory(VaadinResponse.getCurrent())
-        getCompany(empresaRepository) { empresa: Empresa? ->
+        this.getCompany(empresaRepository) { empresa: Empresa? ->
             getMonth { month: String? ->
                 verifySelectedCompanyAndMonthExistAndNavigate(empresa, month)
                 val responsavelID = cookieFactory.getCookieInteger("responsavel-id")
@@ -69,8 +69,7 @@ class BalanceteView(
                 val year =
                     if (balanceteData.isEmpty()) LocalDate.now().year.toString() else balanceteData.first().ano.toString()
 
-                val titleText =
-                    H3(getTitle(companyName, month, year)).apply { addClassNames(LumoUtility.FontWeight.BLACK) }
+                val titleText = H3(getTitle(companyName, month, year)).apply { addClassNames(LumoUtility.FontWeight.BLACK) }
 
                 val title = getTitleDiv(titleText)
                 val grid = getBalanceteGridCrud(service, balanceteData)

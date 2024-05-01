@@ -3,18 +3,26 @@ package br.com.clearcont.clearcontwebapp.views.components
 import br.com.clearcont.clearcontwebapp.helpers.generateExcelDownloadLink
 import br.com.clearcont.clearcontwebapp.helpers.unformatCurrencyBR
 import br.com.clearcont.clearcontwebapp.models.*
+import br.com.clearcont.clearcontwebapp.models.enums.StatusConciliacao
 import br.com.clearcont.clearcontwebapp.models.enums.TipoConta
 import br.com.clearcont.clearcontwebapp.service.BalanceteService
 import br.com.clearcont.clearcontwebapp.service.ComposicaoLancamentosContabeisService
 import com.vaadin.flow.component.AbstractField.ComponentValueChangeEvent
 import com.vaadin.flow.component.HasValue
+import com.vaadin.flow.component.UI
 import com.vaadin.flow.component.combobox.ComboBox
 import com.vaadin.flow.component.datepicker.DatePicker
 import com.vaadin.flow.component.html.Anchor
+import com.vaadin.flow.component.orderedlayout.FlexLayout
+import com.vaadin.flow.component.orderedlayout.HorizontalLayout
 import com.vaadin.flow.component.orderedlayout.VerticalLayout
+import com.vaadin.flow.component.upload.Upload
+import com.vaadin.flow.component.upload.receivers.MemoryBuffer
+import com.vaadin.flow.dom.Style
 import com.vaadin.flow.server.InputStreamFactory
 import com.vaadin.flow.server.StreamResource
 import jakarta.transaction.Transactional
+import org.apache.poi.ss.usermodel.Row
 import org.apache.poi.ss.usermodel.Workbook
 import org.apache.poi.xssf.usermodel.XSSFWorkbook
 import org.vaadin.crudui.crud.impl.GridCrud
@@ -22,20 +30,22 @@ import org.vaadin.crudui.form.impl.form.factory.DefaultCrudFormFactory
 import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
 import java.io.IOException
-import java.text.SimpleDateFormat
+import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.util.*
 import java.util.logging.Logger
 import java.util.stream.Collectors
+import kotlin.math.sin
 
 
 @Transactional
 open class GridCustomer(
-    composicaoService: ComposicaoLancamentosContabeisService,
+    service: ComposicaoLancamentosContabeisService,
     balancetes: List<Balancete?>,
     responsavel: Responsavel?,
     month: Int,
-    balanceteService: BalanceteService
+    balanceteService: BalanceteService,
+    empresa: Empresa?
 ) : VerticalLayout() {
     private var balanceteID: Long = 0
     private var isf: InputStreamFactory? = null
@@ -43,10 +53,12 @@ open class GridCustomer(
     private var excelStreamResource: StreamResource = StreamResource("clientes.xlsx", isf)
     lateinit var balancete: Balancete
     var log: Logger = Logger.getLogger(javaClass.name)
+    private val formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy").withLocale(Locale.of("pt", "BR"))
 
     init {
         val crud = GridCrud(ComposicaoLancamentosContabeisFullDTO::class.java)
         val formFactory = composicaoLancamentosContabeisDefaultCrudFormFactory
+        val files = HorizontalLayout()
 
         val balancetePicker = ComboBox<Balancete>()
         crud.isVisible = balancetePicker.value != null
@@ -57,7 +69,7 @@ open class GridCustomer(
             crud.setVisible(selectedBalancete.id != null)
         }
 
-        val lancamentosContabeis = composicaoService.findByBalanceteID(balanceteID).map { it.toFullDTO() }.toList()
+        val lancamentosContabeis = service.findByBalanceteID(balanceteID).map { it.toFullDTO() }.toList()
 
         balancetePicker.addValueChangeListener { event: ComponentValueChangeEvent<ComboBox<Balancete?>?, Balancete?> ->
             balancete = balanceteService.getById(balancetePicker.value.id!!)!!
@@ -65,7 +77,7 @@ open class GridCustomer(
             if (selectedBalancete != null) {
                 balanceteID = selectedBalancete.id!!
                 val updatedContabilCustomers =
-                    composicaoService.findByBalanceteID(balanceteID).map { it.toFullDTO() }.toList()
+                    service.findByBalanceteID(balanceteID).map { it.toFullDTO() }.toList()
                 crud.setFindAllOperation {
                     updatedContabilCustomers.stream()
                         .filter { composicaoLancamentosContabeis ->
@@ -80,12 +92,18 @@ open class GridCustomer(
                             }.collect(Collectors.toList())
                     )
                 }
-                updateDownloadLink(crud, composicaoService, downloadLink)
+                updateDownloadLink(crud, service, downloadLink)
+                getUpload(service, empresa, balancete, responsavel).also {
+                    style.setMargin("10px")
+                    files.add(FlexLayout(it, downloadLink).apply {
+                        style.setAlignSelf(Style.AlignSelf.CENTER)
+                            .setAlignItems(Style.AlignItems.CENTER)
+                    })
+                }
                 crud.refreshGrid()
             }
         }
 
-        val formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy").withLocale(Locale.of("pt", "BR"))
 
         formFactory.setFieldCreationListener("data") { field: HasValue<*, *> ->
             val datePicker = field as DatePicker
@@ -110,11 +128,15 @@ open class GridCustomer(
         crud.grid.addColumn({ customer -> customer.getDiasVencidos(month) }).setHeader("Dias Vencidos")
         crud.grid.addColumn({ item -> item.historico.toString() }).setHeader("Historico")
 
-        this.crudMethods(crud, lancamentosContabeis, balanceteService, balancetePicker, responsavel, composicaoService)
+        this.crudMethods(crud, lancamentosContabeis, balanceteService, balancetePicker, responsavel, service)
 
         downloadLink = generateExcelDownloadLink(excelStreamResource)
+        files.add(FlexLayout(downloadLink).apply {
+            style.setAlignSelf(Style.AlignSelf.CENTER)
+                .setAlignItems(Style.AlignItems.CENTER)
+        })
 
-        this.add(balancetePicker, downloadLink, crud)
+        this.add(files, balancetePicker, crud)
     }
 
     @Transactional
@@ -198,7 +220,7 @@ open class GridCustomer(
             row.createCell(5).setCellValue(unformatCurrencyBR(item.CSRF))
             row.createCell(6).setCellValue(item.diasVencidos.toDouble())
             row.createCell(7).setCellValue(item.status.name)
-            row.createCell(8).setCellValue(item.data)
+            row.createCell(8).setCellValue(formatter.format(item.data))
             row.createCell(9).setCellValue(unformatCurrencyBR(item.debito))
             row.createCell(10).setCellValue(unformatCurrencyBR(item.credito))
             row.createCell(11).setCellValue(item.historico)
@@ -240,27 +262,81 @@ open class GridCustomer(
         downloadLink.setHref(excelStreamResource)
     }
 
-    companion object {
-        private val composicaoLancamentosContabeisDefaultCrudFormFactory: DefaultCrudFormFactory<ComposicaoLancamentosContabeisFullDTO>
-            get() {
-                val formFactory = DefaultCrudFormFactory(
-                    ComposicaoLancamentosContabeisFullDTO::class.java
-                )
-                formFactory.setVisibleProperties(
-                    "numNotaFiscal",
-                    "dataVencimento",
-                    "ISS",
-                    "INSS",
-                    "IRRF",
-                    "CSRF",
-                    "diasVencidos",
-                    "status",
-                    "data",
-                    "debito",
-                    "credito",
-                    "historico"
-                )
-                return formFactory
+    private val composicaoLancamentosContabeisDefaultCrudFormFactory: DefaultCrudFormFactory<ComposicaoLancamentosContabeisFullDTO>
+        get() {
+            val formFactory = DefaultCrudFormFactory(
+                ComposicaoLancamentosContabeisFullDTO::class.java
+            )
+            formFactory.setVisibleProperties(
+                "numNotaFiscal",
+                "dataVencimento",
+                "ISS",
+                "INSS",
+                "IRRF",
+                "CSRF",
+                "diasVencidos",
+                "status",
+                "data",
+                "debito",
+                "credito",
+                "historico"
+            )
+            return formFactory
+        }
+
+    private fun getUpload(
+        service: ComposicaoLancamentosContabeisService,
+        empresa: Empresa?,
+        balancete: Balancete,
+        responsavel: Responsavel?
+    ): Upload {
+        val memoryBuffer = MemoryBuffer()
+        val singleFileUpload = Upload(memoryBuffer)
+
+        singleFileUpload.addSucceededListener {
+            try {
+                val workbook: Workbook = XSSFWorkbook(memoryBuffer.inputStream)
+                val sheet = workbook.getSheetAt(0)
+                val rowIterator: Iterator<Row> = sheet.iterator()
+                if (rowIterator.hasNext()) rowIterator.next()
+                val composicoesList: MutableList<ComposicaoLancamentosContabeis?> = ArrayList()
+                val formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy").withLocale(Locale.of("pt", "BR"))
+                while (rowIterator.hasNext()) {
+
+                    val row = rowIterator.next()
+
+                    composicoesList.add(
+                        ComposicaoLancamentosContabeis(
+                            null,
+                            row.getCell(0).numericCellValue.toInt(),
+                            LocalDate.from(formatter.parse(row.getCell(1).stringCellValue)),
+                            LocalDate.from(formatter.parse(row.getCell(6).stringCellValue)),
+                            row.getCell(2).numericCellValue,
+                            row.getCell(3).numericCellValue,
+                            row.getCell(4).numericCellValue,
+                            row.getCell(5).numericCellValue,
+                            0,
+                            row.getCell(9).stringCellValue,
+                            row.getCell(7).numericCellValue,
+                            row.getCell(8).numericCellValue,
+                            balancete,
+                            StatusConciliacao.PROGRESS,
+                            responsavel!!
+                        )
+                    )
+
+                    service.saveAll(empresa!!.id!!, composicoesList)
+                    log.info(" COMPOSICAO CLIENTE INSERIDAS : ${composicoesList}")
+                }
+
+                workbook.close()
+                UI.getCurrent().page.reload()
+
+            } catch (e: IOException) {
+                log.info("ERRO: ${e.message}")
             }
+        }
+
+        return singleFileUpload
     }
 }

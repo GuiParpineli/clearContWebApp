@@ -5,6 +5,7 @@ import br.com.clearcont.clearcontwebapp.helpers.CookieFactory
 import br.com.clearcont.clearcontwebapp.helpers.generateExcelDownloadLink
 import br.com.clearcont.clearcontwebapp.models.*
 import br.com.clearcont.clearcontwebapp.models.enums.StatusConciliacao
+import br.com.clearcont.clearcontwebapp.repository.EmpresaRepository
 import br.com.clearcont.clearcontwebapp.repository.ResponsavelRepository
 import br.com.clearcont.clearcontwebapp.service.BalanceteService
 import br.com.clearcont.clearcontwebapp.service.ComposicaoLancamentosContabeisService
@@ -41,7 +42,8 @@ class ConciliarView @Autowired constructor(
     private val contabeisService: ComposicaoLancamentosContabeisService,
     private val anexoStorageService: FileUploadServiceImplement,
     private val responsavelRepository: ResponsavelRepository,
-    private val balanceteService: BalanceteService
+    private val balanceteService: BalanceteService,
+    private val empresaRepository: EmpresaRepository
 ) : VerticalLayout(), HasUrlParameter<String> {
 
     var log: Logger = Logger.getLogger(javaClass.name)
@@ -57,8 +59,7 @@ class ConciliarView @Autowired constructor(
         log.info("BALANCETE ID: $balanceteId")
         log.info("BALANCETE NOME DA CONTA:  ${balancete?.nomeConta}")
 
-        var conciliacaoList = contabeisService.getByBalanceteID(balanceteId).map { it.toDTO() }.toList()
-
+        val conciliacaoList = contabeisService.getByBalanceteID(balanceteId).map { it.toDTO() }.toList()
 
         val saldoContabil = contabeisService.getSaldoContabil(balanceteId);
 
@@ -68,7 +69,7 @@ class ConciliarView @Autowired constructor(
             conciliacaoList.last()
         }
         val infoCards = BalanceteDetailsLayout(balancete!!, conciliacao.toEntity(), saldoContabil, anexoStorageService)
-        val crud = GridConciliar(balancete, contabeisService, balanceteId, responsavelRepository, infoCards)
+        val crud = GridConciliar(balancete, contabeisService, balanceteId, responsavelRepository, infoCards, empresaRepository)
 
         val finalConciliacaoList = conciliacaoList
         val isf = InputStreamFactory { crud.exportToExcel(finalConciliacaoList) }

@@ -260,6 +260,7 @@ class DataLoader(
                 ComposicaoLancamentosContabeis(
                     1231,
                     LocalDate.of(2024, 1, 1),
+                    null,
                     4230.0,
                     889.21,
                     32133.12,
@@ -276,6 +277,7 @@ class DataLoader(
                 ComposicaoLancamentosContabeis(
                     9985,
                     LocalDate.now(),
+                    null,
                     1000.0,
                     1.0,
                     55.0,

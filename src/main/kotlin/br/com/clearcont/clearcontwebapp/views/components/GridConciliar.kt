@@ -1,19 +1,24 @@
 package br.com.clearcont.clearcontwebapp.views.components
 
 import br.com.clearcont.clearcontwebapp.helpers.CookieFactory
+import br.com.clearcont.clearcontwebapp.helpers.MonthAndCompany
 import br.com.clearcont.clearcontwebapp.helpers.formatCurrencyBR
 import br.com.clearcont.clearcontwebapp.helpers.unformatCurrencyBR
 import br.com.clearcont.clearcontwebapp.models.*
+import br.com.clearcont.clearcontwebapp.models.enums.StatusConciliacao
+import br.com.clearcont.clearcontwebapp.repository.EmpresaRepository
 import br.com.clearcont.clearcontwebapp.repository.ResponsavelRepository
 import br.com.clearcont.clearcontwebapp.service.ComposicaoLancamentosContabeisService
 import br.com.clearcont.clearcontwebapp.views.components.details.BalanceteDetailsLayout
 import com.vaadin.flow.component.HasValue
+import com.vaadin.flow.component.UI
 import com.vaadin.flow.component.datepicker.DatePicker
 import com.vaadin.flow.component.orderedlayout.VerticalLayout
-import com.vaadin.flow.component.textfield.TextField
-import com.vaadin.flow.data.binder.Binder
+import com.vaadin.flow.component.upload.Upload
+import com.vaadin.flow.component.upload.receivers.MemoryBuffer
 import com.vaadin.flow.data.provider.ListDataProvider
 import com.vaadin.flow.server.VaadinResponse
+import org.apache.poi.ss.usermodel.Row
 import org.apache.poi.ss.usermodel.Workbook
 import org.apache.poi.xssf.usermodel.XSSFWorkbook
 import org.vaadin.crudui.crud.impl.GridCrud
@@ -21,7 +26,7 @@ import org.vaadin.crudui.form.impl.form.factory.DefaultCrudFormFactory
 import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
 import java.io.IOException
-import java.text.NumberFormat
+import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.util.*
 import java.util.logging.Logger
@@ -29,97 +34,107 @@ import java.util.logging.Logger
 
 class GridConciliar(
     balancete: Balancete,
-    contabeisService: ComposicaoLancamentosContabeisService,
+    service: ComposicaoLancamentosContabeisService,
     balanceteId: Long?,
     responsavelRepository: ResponsavelRepository,
-    infoCards: BalanceteDetailsLayout
-) : VerticalLayout() {
+    infoCards: BalanceteDetailsLayout,
+    empresaRepository: EmpresaRepository,
+) : VerticalLayout(), MonthAndCompany {
     var log: Logger = Logger.getLogger(javaClass.name)
+    override var month: String? = null
+    override lateinit var empresa: Empresa
 
     init {
-        val cookieFactory = CookieFactory(VaadinResponse.getCurrent())
-        val crud = GridCrud(ComposicaoLancamentosContabeisDTO::class.java)
-        val formFactory = DefaultCrudFormFactory(ComposicaoLancamentosContabeisDTO::class.java)
-        val dateTimeFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy").withLocale(Locale.of("pt", "BR"))
+        this.getCompany(empresaRepository) { empresa: Empresa? ->
+            getMonth { month: String? ->
+                val cookieFactory = CookieFactory(VaadinResponse.getCurrent())
+                val responsavelID = cookieFactory.getCookieInteger("responsavel-id")
+                val responsavel = responsavelRepository.findById(responsavelID).orElseThrow()
+                val crud = GridCrud(ComposicaoLancamentosContabeisDTO::class.java)
+                val formFactory = DefaultCrudFormFactory(ComposicaoLancamentosContabeisDTO::class.java)
+                val dateTimeFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy").withLocale(Locale.of("pt", "BR"))
 
-        formFactory.setVisibleProperties("data", "debito", "credito", "historico")
+                formFactory.setVisibleProperties("data", "debito", "credito", "historico")
 
-        formFactory.setFieldCreationListener("data") { field: HasValue<*, *> ->
-            val datePicker = field as DatePicker
-            datePicker.locale = Locale.of("pt", "BR")
-            datePicker.addValueChangeListener { event ->
-                val selectedDate = event.value
-                selectedDate.format(dateTimeFormatter)
+                formFactory.setFieldCreationListener("data") { field: HasValue<*, *> ->
+                    val datePicker = field as DatePicker
+                    datePicker.locale = Locale.of("pt", "BR")
+                    datePicker.addValueChangeListener { event ->
+                        val selectedDate = event.value
+                        selectedDate.format(dateTimeFormatter)
+                    }
+                }
+
+                crud.crudFormFactory = formFactory
+                crud.grid.setColumns()
+                crud.grid.addColumn(ComposicaoLancamentosContabeisDTO::dataFormated).setHeader("Data")
+                crud.grid.addColumn({ item -> item.credito }).setHeader("Credito").setKey("credito")
+                crud.grid.addColumn({ item -> item.debito }).setHeader("Debito")
+                crud.grid.addColumn({ item -> formatCurrencyBR(item.saldoContabil) }).setHeader("Saldo Contabil")
+                    .setKey("saldoContabil")
+                crud.grid.addColumn({ item -> item.status.value }).setHeader("Status")
+                crud.grid.addColumn({ item -> item.historico.toString() }).setHeader("Historico")
+                val listDataProvider = ListDataProvider(service.getByBalanceteID(balanceteId).map { it.toDTO() })
+                crud.grid.dataProvider = listDataProvider
+
+                val newSaldoContabil = service.getSaldoContabil(balanceteId)
+
+                crud.setAddOperation { lancamentosContabeis ->
+                    lancamentosContabeis.balancete = balancete
+                    lancamentosContabeis.responsavel = responsavelRepository.findById(responsavelID).orElseThrow()
+                    service.atualizarSaldoContabil(balanceteId, crud)
+                    service.save(lancamentosContabeis.toEntity())
+                    infoCards.updateDiferencaLayout(
+                        balancete.getTotalBalanceteDouble(),
+                        newSaldoContabil
+                    )
+                    listDataProvider.refreshAll()
+                    lancamentosContabeis
+                }
+
+                crud.setFindAllOperation {
+                    val all = service.getByBalanceteID(balanceteId).map { it.toDTO() }.toList()
+                    service.atualizarSaldoContabil(balanceteId, crud)
+                    infoCards.apply {
+                        infoCards.updateDiferencaLayout(
+                            balancete.getTotalBalanceteDouble(),
+                            newSaldoContabil
+                        )
+                    }
+                    listDataProvider.refreshAll()
+                    all
+                }
+
+                crud.setDeleteOperation { lancamentosContabeis ->
+                    service.deleteByID(lancamentosContabeis.id!!)
+                    service.atualizarSaldoContabil(balanceteId, crud)
+                    infoCards.apply {
+                        infoCards.updateDiferencaLayout(
+                            balancete.getTotalBalanceteDouble(),
+                            newSaldoContabil
+                        )
+                    }
+                    listDataProvider.refreshAll()
+                }
+
+                crud.setUpdateOperation { a: ComposicaoLancamentosContabeisDTO ->
+                    service.update(a.toEntity())
+                    service.atualizarSaldoContabil(balanceteId, crud)
+                    infoCards.apply {
+                        infoCards.updateDiferencaLayout(
+                            balancete.getTotalBalanceteDouble(),
+                            newSaldoContabil
+                        )
+                    }
+                    listDataProvider.refreshAll()
+                    a
+                }
+                val singleFileUpload =
+                    getUpload(service, empresa, balancete, responsavel).apply { style.setMargin("10px") }
+
+                add(singleFileUpload, crud)
             }
         }
-
-        crud.crudFormFactory = formFactory
-        crud.grid.setColumns()
-        crud.grid.addColumn(ComposicaoLancamentosContabeisDTO::dataFormated).setHeader("Data")
-        crud.grid.addColumn({ item -> item.credito }).setHeader("Credito").setKey("credito")
-        crud.grid.addColumn({ item -> item.debito }).setHeader("Debito")
-        crud.grid.addColumn({ item -> formatCurrencyBR(item.saldoContabil) }).setHeader("Saldo Contabil")
-            .setKey("saldoContabil")
-        crud.grid.addColumn({ item -> item.status.value }).setHeader("Status")
-        crud.grid.addColumn({ item -> item.historico.toString() }).setHeader("Historico")
-        val listDataProvider = ListDataProvider(contabeisService.getByBalanceteID(balanceteId).map { it.toDTO() })
-        crud.grid.dataProvider = listDataProvider
-
-        val newSaldoContabil = contabeisService.getSaldoContabil(balanceteId)
-
-        crud.setAddOperation { lancamentosContabeis ->
-            lancamentosContabeis.balancete = balancete
-            val responsavelID = cookieFactory.getCookieInteger("responsavel-id")
-            lancamentosContabeis.responsavel = responsavelRepository.findById(responsavelID).orElseThrow()
-            contabeisService.atualizarSaldoContabil(balanceteId, crud)
-            contabeisService.save(lancamentosContabeis.toEntity())
-            infoCards.updateDiferencaLayout(
-                balancete.getTotalBalanceteDouble(),
-                newSaldoContabil
-            )
-            listDataProvider.refreshAll()
-            lancamentosContabeis
-        }
-
-        crud.setFindAllOperation {
-            val all = contabeisService.getByBalanceteID(balanceteId).map { it.toDTO() }.toList()
-            contabeisService.atualizarSaldoContabil(balanceteId, crud)
-            infoCards.apply {
-                infoCards.updateDiferencaLayout(
-                    balancete.getTotalBalanceteDouble(),
-                    newSaldoContabil
-                )
-            }
-            listDataProvider.refreshAll()
-            all
-        }
-
-        crud.setDeleteOperation { lancamentosContabeis ->
-            contabeisService.deleteByID(lancamentosContabeis.id!!)
-            contabeisService.atualizarSaldoContabil(balanceteId, crud)
-            infoCards.apply {
-                infoCards.updateDiferencaLayout(
-                    balancete.getTotalBalanceteDouble(),
-                    newSaldoContabil
-                )
-            }
-            listDataProvider.refreshAll()
-        }
-
-        crud.setUpdateOperation { a: ComposicaoLancamentosContabeisDTO ->
-            contabeisService.update(a.toEntity())
-            contabeisService.atualizarSaldoContabil(balanceteId, crud)
-            infoCards.apply {
-                infoCards.updateDiferencaLayout(
-                    balancete.getTotalBalanceteDouble(),
-                    newSaldoContabil
-                )
-            }
-            listDataProvider.refreshAll()
-            a
-        }
-
-        add(crud)
     }
 
     fun exportToExcel(itemList: List<ComposicaoLancamentosContabeisDTO>): ByteArrayInputStream {
@@ -159,5 +174,54 @@ class GridConciliar(
         }
 
         return ByteArrayInputStream(bos.toByteArray())
+    }
+
+    private fun getUpload(
+        service: ComposicaoLancamentosContabeisService,
+        empresa: Empresa?,
+        balancete: Balancete,
+        responsavel: Responsavel?
+    ): Upload {
+        val memoryBuffer = MemoryBuffer()
+        val singleFileUpload = Upload(memoryBuffer)
+
+        singleFileUpload.addSucceededListener {
+            try {
+                val workbook: Workbook = XSSFWorkbook(memoryBuffer.inputStream)
+                val sheet = workbook.getSheetAt(0)
+                val rowIterator: Iterator<Row> = sheet.iterator()
+                if (rowIterator.hasNext()) rowIterator.next()
+                val composicoesList: MutableList<ComposicaoLancamentosContabeisDTO?> = ArrayList()
+                val formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy").withLocale(Locale.of("pt", "BR"))
+                while (rowIterator.hasNext()) {
+
+                    val row = rowIterator.next()
+
+                    composicoesList.add(
+                        ComposicaoLancamentosContabeisDTO(
+                            null,
+                            LocalDate.from(formatter.parse(row.getCell(0).stringCellValue)),
+                            row.getCell(3).stringCellValue,
+                            formatCurrencyBR(row.getCell(1).numericCellValue),
+                            formatCurrencyBR(row.getCell(2).numericCellValue),
+                            balancete,
+                            responsavel!!,
+                            StatusConciliacao.PROGRESS
+                        )
+                    )
+
+                    service.saveAll(empresa!!.id!!, composicoesList.map { it?.toEntity() }.toMutableList())
+                    UI.getCurrent().page.reload()
+                    log.info("QUANTIDADE DE COMPOSICOES INSERIDAS : ${composicoesList.size}")
+                }
+
+                workbook.close()
+
+            } catch (e: IOException) {
+                log.info("ERRO: ${e.message}")
+            }
+        }
+
+        return singleFileUpload
     }
 }
