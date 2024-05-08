@@ -191,26 +191,34 @@ class GridConciliar(
                 val sheet = workbook.getSheetAt(0)
                 val rowIterator: Iterator<Row> = sheet.iterator()
                 if (rowIterator.hasNext()) rowIterator.next()
-                val composicoesList: MutableList<ComposicaoLancamentosContabeisDTO?> = ArrayList()
+                val composicoesList: MutableList<ComposicaoLancamentosContabeisDTO> = ArrayList()
                 val formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy").withLocale(Locale.of("pt", "BR"))
                 while (rowIterator.hasNext()) {
 
                     val row = rowIterator.next()
 
-                    composicoesList.add(
-                        ComposicaoLancamentosContabeisDTO(
-                            null,
-                            LocalDate.from(formatter.parse(row.getCell(0).stringCellValue)),
-                            row.getCell(3).stringCellValue,
-                            formatCurrencyBR(row.getCell(1).numericCellValue),
-                            formatCurrencyBR(row.getCell(2).numericCellValue),
-                            balancete,
-                            responsavel!!,
-                            StatusConciliacao.PROGRESS
+                    row.getCell(3)?.stringCellValue?.let { data ->
+                        row.getCell(1)?.numericCellValue?.let { it2 -> formatCurrencyBR(it2) }?.let { historico ->
+                            row.getCell(2)?.numericCellValue?.let { it2 -> formatCurrencyBR(it2) }?.let { debito ->
+                                ComposicaoLancamentosContabeisDTO(
+                                    null,
+                                    LocalDate.from(row.getCell(0)?.stringCellValue?.let { it1 -> formatter.parse(it1) }),
+                                    data,
+                                    historico,
+                                    debito,
+                                    balancete,
+                                    responsavel!!,
+                                    StatusConciliacao.PROGRESS
+                                )
+                            }
+                        }
+                    }?.let { it2 ->
+                        composicoesList.add(
+                            it2
                         )
-                    )
+                    }
 
-                    service.saveAll(empresa!!.id!!, composicoesList.map { it?.toEntity() }.toMutableList())
+                    service.saveAll(empresa!!.id!!, composicoesList.map { it.toEntity() }.toMutableList())
                     UI.getCurrent().page.reload()
                     log.info("QUANTIDADE DE COMPOSICOES INSERIDAS : ${composicoesList.size}")
                 }

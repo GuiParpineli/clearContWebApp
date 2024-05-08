@@ -26,4 +26,7 @@ interface ComposicaoLancamentosContabeisRepository : JpaRepository<ComposicaoLan
     fun <T> findComposicaoLancamentosContabeisByResponsavel_Id(responsavel_id: Long?, projection: Class<T>): List<T>
     @Transactional
     fun deleteAllByBalancete_Id(id: Long)
+
+    @Transactional
+    fun findByBalancete_Empresa_Id(id: Long): List<ComposicaoLancamentosContabeis>
 }

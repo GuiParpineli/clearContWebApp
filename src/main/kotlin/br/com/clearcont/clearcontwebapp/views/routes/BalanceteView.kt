@@ -69,7 +69,8 @@ class BalanceteView(
                 val year =
                     if (balanceteData.isEmpty()) LocalDate.now().year.toString() else balanceteData.first().ano.toString()
 
-                val titleText = H3(getTitle(companyName, month, year)).apply { addClassNames(LumoUtility.FontWeight.BLACK) }
+                val titleText =
+                    H3(getTitle(companyName, month, year)).apply { addClassNames(LumoUtility.FontWeight.BLACK) }
 
                 val title = getTitleDiv(titleText)
                 val grid = getBalanceteGridCrud(service, balanceteData)
@@ -111,36 +112,44 @@ class BalanceteView(
                 val sheet = workbook.getSheetAt(0)
                 val rowIterator: Iterator<Row> = sheet.iterator()
                 if (rowIterator.hasNext()) rowIterator.next()
-                val balancetes: MutableList<Balancete?> = ArrayList()
+                val balancetes: MutableList<Balancete> = ArrayList()
 
                 while (rowIterator.hasNext()) {
 
                     val row = rowIterator.next()
 
-                    balancetes.add(
-                        Balancete(
-                            id = 0L,
-                            empresa = empresa,
-                            nomeConta = row.getCell(0).stringCellValue,
-                            numeroConta = row.getCell(1).numericCellValue.toInt(),
-                            totalBalancete = row.getCell(2).numericCellValue,
-                            classificacao = TypeCount.valueOf(row.getCell(3).stringCellValue.uppercase()),
-                            mes = month,
-                            ano = LocalDate.now().year,
-                            lancamentosContabeisList = mutableListOf(
-                                ComposicaoLancamentosContabeis(responsavel)
-                            ),
-                            tipo = row.getCell(4)?.stringCellValue?.uppercase()?.let { it1 -> TipoConta.valueOf(it1) }
-                                ?: TipoConta.INDEFINIDO
-                        )
-                    )
 
-                    service.saveAll(empresa.id!!, balancetes)
-                    UI.getCurrent().page.reload()
-                    log.info("TAMANHO BALANTE INSERIDO : ${balancetes.size}")
+                    row.getCell(0)?.stringCellValue?.let { it1 ->
+                        row.getCell(1)?.numericCellValue?.let { it2 ->
+                            row.getCell(2)?.numericCellValue?.let { it3 ->
+                                row.getCell(3)?.stringCellValue?.let { it4 ->
+                                    Balancete(
+                                        id = 0L,
+                                        empresa = empresa,
+                                        nomeConta = it1,
+                                        numeroConta = it2.toInt(),
+                                        totalBalancete = it3,
+                                        classificacao = TypeCount.valueOf(it4.uppercase()),
+                                        mes = month,
+                                        ano = LocalDate.now().year,
+                                        lancamentosContabeisList = mutableListOf( ComposicaoLancamentosContabeis( responsavel ) ),
+                                        tipo = row.getCell(4)?.stringCellValue?.uppercase()?.let { TipoConta.valueOf(it) } ?: TipoConta.INDEFINIDO
+                                    )
+                                }
+                            }
+                        }
+                    }?.let { it5 ->
+                        balancetes.add(
+                            it5
+                        )
+                    }
                 }
 
+                log.info("TAMANHO BALANTE INSERIDO : ${balancetes.size}")
+
                 workbook.close()
+                service.saveAll(empresa.id!!, balancetes)
+                UI.getCurrent().page.reload()
 
             } catch (e: IOException) {
                 log.info("ERRO: ${e.message}")

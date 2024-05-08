@@ -143,10 +143,11 @@ class ComposicaoLancamentosContabeisService(
     }
 
     @Transactional
-    fun saveAll(id: Long, composicoesList: MutableList<ComposicaoLancamentosContabeis?>) {
-        val balancete = balanceteRepository.findById(id).orElseThrow()
-        repository.deleteAllByBalancete_Id(id)
-        composicoesList.forEach { it!!.balancete = balancete }
+    fun saveAll(empresaID: Long, composicoesList: MutableList<ComposicaoLancamentosContabeis>) {
+        log.info("BUSCANDO BALANCETE id: $empresaID para upload de grid")
+        val composicoes = repository.findByBalancete_Empresa_Id(empresaID)
+        composicoesList.forEach { it.balancete = balanceteRepository.findById(it.balancete!!.id!!).orElseThrow() }
         repository.saveAll(composicoesList)
+        composicoes.forEach { deleteByID(it.id!!)}
     }
 }

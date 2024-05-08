@@ -35,9 +35,10 @@ class BalanceteService(private val repository: BalanceteRepository, private val 
     }
 
     @Transactional
-    fun saveAll(id: Long, balancetes: List<Balancete?>) {
-        repository.deleteAllByEmpresa_Id(id)
+    fun saveAll(id: Long, balancetes: List<Balancete>) {
+        val empresaBalancete = repository.getBalanceteByEmpresa_Id(id)
         repository.saveAll(balancetes)
+        empresaBalancete.forEach { delete(it) }
     }
 
     fun merge(balancete: Balancete): Balancete {

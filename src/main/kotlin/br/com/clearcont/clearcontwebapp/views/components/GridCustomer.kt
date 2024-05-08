@@ -299,7 +299,7 @@ open class GridCustomer(
                 val sheet = workbook.getSheetAt(0)
                 val rowIterator: Iterator<Row> = sheet.iterator()
                 if (rowIterator.hasNext()) rowIterator.next()
-                val composicoesList: MutableList<ComposicaoLancamentosContabeis?> = ArrayList()
+                val composicoesList: MutableList<ComposicaoLancamentosContabeis> = ArrayList()
                 val formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy").withLocale(Locale.of("pt", "BR"))
                 while (rowIterator.hasNext()) {
 
@@ -326,7 +326,7 @@ open class GridCustomer(
                     )
 
                     service.saveAll(empresa!!.id!!, composicoesList)
-                    log.info(" COMPOSICAO CLIENTE INSERIDAS : ${composicoesList}")
+                    log.info(" COMPOSICAO CLIENTE INSERIDAS : $composicoesList")
                 }
 
                 workbook.close()
