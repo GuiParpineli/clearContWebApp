@@ -36,21 +36,19 @@ class TopBarControleView(controleService: ControleService, empresaRepository: Em
     }
 
     private fun getCompany(empresaRepository: EmpresaRepository, callback: Consumer<Empresa?>) {
-        page.executeJs("return sessionStorage.getItem($0)", "company-name")
-            .then { item: JsonValue ->
-                empresa = empresaRepository.findEmpresaByNomeEmpresa(item.asString()).orElseThrow()
-                println("Valor do sessionStorage para 'company-name': " + item.asString())
-                callback.accept(empresa)
-            }
+        page.executeJs("return sessionStorage.getItem($0)", "company-name").then { item: JsonValue ->
+            empresa = empresaRepository.findEmpresaByNomeEmpresa(item.asString()).orElseThrow()
+            println("Valor do sessionStorage para 'company-name': " + item.asString())
+            callback.accept(empresa)
+        }
     }
 
     private fun getMonth(callback: Consumer<String?>) {
-        page.executeJs("return sessionStorage.getItem($0)", "month")
-            .then { item: JsonValue ->
-                month = item.asString()
-                println("Valor do sessionStorage para 'month': " + item.asString())
-                callback.accept(month)
-            }
+        page.executeJs("return sessionStorage.getItem($0)", "month").then { item: JsonValue ->
+            month = item.asString()
+            println("Valor do sessionStorage para 'month': " + item.asString())
+            callback.accept(month)
+        }
     }
 
     init {
@@ -98,40 +96,44 @@ class TopBarControleView(controleService: ControleService, empresaRepository: Em
                 b3.style.setPadding("20px")
                 b5.style.setColor("white")
 
-                val companyInfo = FlexLayout(createSeparator(), b1, b2)
-                companyInfo.style["flex"] = "auto"
-                companyInfo.justifyContentMode = JustifyContentMode.AROUND
-                companyInfo.style.setColor("white")
-                companyInfo.setFlexBasis("25%")
+                val companyInfo = FlexLayout(createSeparator(), b1, b2).also {
+                    style["flex"] = "auto"
+                    justifyContentMode = JustifyContentMode.AROUND
+                    style.setColor("white")
+                    setFlexBasis("25%")
+                }
 
-                val companyBalanceteResume = FlexLayout(createSeparator(), b3, b4)
-                companyBalanceteResume.style["flex"] = "auto"
-                companyBalanceteResume.justifyContentMode = JustifyContentMode.AROUND
-                companyBalanceteResume.style.setColor("white")
-                companyBalanceteResume.style.setPadding("20px")
-                companyBalanceteResume.setFlexBasis("25%")
+                val companyBalanceteResume = FlexLayout(createSeparator(), b3, b4).also {
+                    style["flex"] = "auto"
+                    justifyContentMode = JustifyContentMode.AROUND
+                    style.setColor("white")
+                    style.setPadding("20px")
+                    setFlexBasis("25%")
+                }
 
-                val downloadBalancete = FlexLayout(createSeparator(), b5)
-                downloadBalancete.style["flex"] = "auto"
-                downloadBalancete.justifyContentMode = JustifyContentMode.AROUND
-                downloadBalancete.style.setColor("white")
-                downloadBalancete.style.setPadding("20px")
-                downloadBalancete.setFlexBasis("25%")
+                val downloadBalancete = FlexLayout(createSeparator(), b5).also {
+                    style["flex"] = "auto"
+                    justifyContentMode = JustifyContentMode.AROUND
+                    style.setColor("white")
+                    style.setPadding("20px")
+                    setFlexBasis("25%")
+                }
 
                 val items = FlexLayout(
                     logo, companyInfo, companyBalanceteResume, downloadBalancete
-                )
-                items.alignItems = FlexComponent.Alignment.CENTER
-                items.flexWrap = FlexWrap.WRAP
-                items.alignContent = ContentAlignment.SPACE_BETWEEN
-                items.style.setPadding("10px")
-                items.maxWidth = "80vw"
+                ).also {
+                    alignItems = FlexComponent.Alignment.CENTER
+                    flexWrap = FlexWrap.WRAP
+                    alignContent = ContentAlignment.SPACE_BETWEEN
+                    style.setPadding("10px")
+                    maxWidth = "80vw"
+                }
 
-                val div = FlexLayout(items)
-                div.style.setBackground("black")
-                div.style["border-radius"] = "12px"
-                div.flexWrap = FlexWrap.WRAP
-
+                val div = FlexLayout(items).also {
+                    style.setBackground("black")
+                    style["border-radius"] = "12px"
+                    flexWrap = FlexWrap.WRAP
+                }
                 this.flexDirection = FlexDirection.COLUMN
                 add(div)
             }

@@ -118,31 +118,31 @@ class BalanceteView(
 
                     val row = rowIterator.next()
 
-
-                    row.getCell(0)?.stringCellValue?.let { it1 ->
-                        row.getCell(1)?.numericCellValue?.let { it2 ->
-                            row.getCell(2)?.numericCellValue?.let { it3 ->
-                                row.getCell(3)?.stringCellValue?.let { it4 ->
+                    row.getCell(0)?.stringCellValue?.let { nomeConta ->
+                        row.getCell(1)?.numericCellValue?.let { numeroConta ->
+                            row.getCell(2)?.numericCellValue?.let { totalBalancete ->
+                                row.getCell(3)?.stringCellValue?.let { classificacao ->
                                     Balancete(
                                         id = 0L,
                                         empresa = empresa,
-                                        nomeConta = it1,
-                                        numeroConta = it2.toInt(),
-                                        totalBalancete = it3,
-                                        classificacao = TypeCount.valueOf(it4.uppercase()),
+                                        nomeConta = nomeConta,
+                                        numeroConta = numeroConta.toInt(),
+                                        totalBalancete = totalBalancete,
+                                        classificacao = TypeCount.valueOf(classificacao.uppercase()),
                                         mes = month,
                                         ano = LocalDate.now().year,
-                                        lancamentosContabeisList = mutableListOf( ComposicaoLancamentosContabeis( responsavel ) ),
-                                        tipo = row.getCell(4)?.stringCellValue?.uppercase()?.let { TipoConta.valueOf(it) } ?: TipoConta.INDEFINIDO
+                                        lancamentosContabeisList = mutableListOf(
+                                            ComposicaoLancamentosContabeis(
+                                                responsavel
+                                            )
+                                        ),
+                                        tipo = row.getCell(4)?.stringCellValue?.uppercase()
+                                            ?.let { TipoConta.valueOf(it) } ?: TipoConta.INDEFINIDO
                                     )
                                 }
                             }
                         }
-                    }?.let { it5 ->
-                        balancetes.add(
-                            it5
-                        )
-                    }
+                    }?.let { element -> balancetes.add(element) }
                 }
 
                 log.info("TAMANHO BALANTE INSERIDO : ${balancetes.size}")
@@ -169,19 +169,18 @@ class BalanceteView(
             grid.isColumnReorderingAllowed = true
             style["border-radius"] = "10px"
 
-            setAddOperation { balancete ->
-                balancete.empresa = empresa
-                balancete.mes = month.toString()
-                service.save(balancete!!)
+            setAddOperation {
+                it.empresa = empresa
+                it.mes = month.toString()
+                service.save(it!!)
                 UI.getCurrent().page.reload()
-                balancete
+                it
             }
-            setUpdateOperation { balancete -> service.update(balancete!!) }
-            setDeleteOperation { balancete -> service.delete(balancete!!) }
+            setUpdateOperation { service.update(it!!) }
+            setDeleteOperation { service.delete(it!!) }
             setFindAllOperation { balanceteData }
 
-            grid.addComponentColumn { balancete -> createStatusBadge(balancete.classificacao) }
-                .setHeader("Classificação")
+            grid.addComponentColumn { createStatusBadge(it.classificacao) }.setHeader("Classificação")
 
             grid.addComponentColumn { balanceteComp ->
                 val editButton = Button("Conciliar")

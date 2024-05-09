@@ -158,7 +158,7 @@ class ConciliarView @Autowired constructor(
         dialog.setCancelable(true)
         dialog.setCancelText("Cancelar")
         dialog.setConfirmText("Confirmar")
-        dialog.addConfirmListener { dialogEvent: ConfirmEvent? ->
+        dialog.addConfirmListener {
             balancete.status = StatusConciliacao.CLOSED
             balanceteService.update(balancete)
             Notification.show("CONCIALIAÇÃO FINALIZADA")

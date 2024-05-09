@@ -305,25 +305,27 @@ open class GridCustomer(
 
                     val row = rowIterator.next()
 
-                    composicoesList.add(
-                        ComposicaoLancamentosContabeis(
-                            null,
-                            row.getCell(0).numericCellValue.toInt(),
-                            LocalDate.from(formatter.parse(row.getCell(1).stringCellValue)),
-                            LocalDate.from(formatter.parse(row.getCell(6).stringCellValue)),
-                            row.getCell(2).numericCellValue,
-                            row.getCell(3).numericCellValue,
-                            row.getCell(4).numericCellValue,
-                            row.getCell(5).numericCellValue,
-                            0,
-                            row.getCell(9).stringCellValue,
-                            row.getCell(7).numericCellValue,
-                            row.getCell(8).numericCellValue,
-                            balancete,
-                            StatusConciliacao.PROGRESS,
-                            responsavel!!
-                        )
-                    )
+                    row.getCell(0)?.numericCellValue?.toInt()?.let { it1 ->
+                        row.getCell(9)?.stringCellValue?.let { it2 ->
+                            ComposicaoLancamentosContabeis(
+                                null,
+                                it1,
+                                LocalDate.from(row.getCell(1)?.stringCellValue?.let { it3 -> formatter.parse(it3) }),
+                                LocalDate.from(row.getCell(6)?.stringCellValue?.let { it4 -> formatter.parse(it4) }),
+                                row.getCell(2)?.numericCellValue!!,
+                                row.getCell(3)?.numericCellValue!!,
+                                row.getCell(4)?.numericCellValue!!,
+                                row.getCell(5)?.numericCellValue!!,
+                                0,
+                                it2,
+                                row.getCell(7)?.numericCellValue!!,
+                                row.getCell(8)?.numericCellValue!!,
+                                balancete,
+                                StatusConciliacao.PROGRESS,
+                                responsavel!!
+                            )
+                        }
+                    }?.let { it2 -> composicoesList.add( it2 ) }
 
                     service.saveAll(empresa!!.id!!, composicoesList)
                     log.info(" COMPOSICAO CLIENTE INSERIDAS : $composicoesList")

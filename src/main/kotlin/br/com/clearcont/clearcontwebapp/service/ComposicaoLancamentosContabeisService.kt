@@ -147,6 +147,7 @@ class ComposicaoLancamentosContabeisService(
         log.info("BUSCANDO BALANCETE id: $empresaID para upload de grid")
         val composicoes = repository.findByBalancete_Empresa_Id(empresaID)
         composicoesList.forEach { it.balancete = balanceteRepository.findById(it.balancete!!.id!!).orElseThrow() }
+        log.info("SALVANDO COMPOSICOES: $composicoesList")
         repository.saveAll(composicoesList)
         composicoes.forEach { deleteByID(it.id!!)}
     }

@@ -42,12 +42,12 @@ class LoginView(service: UserAppService) : VerticalLayout(), BeforeEnterObserver
 
         login.setI18n(i18n)
         login.isForgotPasswordButtonVisible = false
-        login.addLoginListener { e ->
-            val user = service.getUserByUserName(e.username)
+        login.addLoginListener {
+            val user = service.getUserByUserName(it.username)
             if (user != null) {
                 val cookieFactory = CookieFactory(VaadinResponse.getCurrent())
                 cookieFactory.setCookie("company-group-id", user.empresaGroup.id.toString())
-                cookieFactory.setCookie("username", e.username)
+                cookieFactory.setCookie("username",it.username)
                 cookieFactory.setCookie("responsavel-id", user.responsavel?.id.toString())
             } else {
                 Notification.show("Senha incorreta", 2000, Notification.Position.MIDDLE)

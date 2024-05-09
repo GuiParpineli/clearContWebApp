@@ -45,9 +45,9 @@ class ControleView(service: ControleService, empresaRepository: EmpresaRepositor
 
                 val grid = Grid(Controle::class.java, false).apply {
                     addColumn(Controle::nomeConta).setHeader("Nome da conta").setSortable(true)
-                    addColumn({ obj -> obj.getSaldoBalancete() }).setHeader("Saldo Balancete")
-                    addColumn({ obj -> obj.getSaldoAnalise() }).setHeader("Saldo Analise")
-                    addColumn({ obj -> obj.getValorDiferenca() }).setHeader("Valor da Diferença")
+                    addColumn({ it.getSaldoBalancete() }).setHeader("Saldo Balancete")
+                    addColumn({ it.getSaldoAnalise() }).setHeader("Saldo Analise")
+                    addColumn({ it.getValorDiferenca() }).setHeader("Valor da Diferença")
                     addColumn(Controle::nomeResponsavel).setHeader("Responsável")
                     setItems(controleList)
                 }

@@ -212,16 +212,12 @@ class GridConciliar(
                                 )
                             }
                         }
-                    }?.let { it2 ->
-                        composicoesList.add(
-                            it2
-                        )
-                    }
-
-                    service.saveAll(empresa!!.id!!, composicoesList.map { it.toEntity() }.toMutableList())
-                    UI.getCurrent().page.reload()
-                    log.info("QUANTIDADE DE COMPOSICOES INSERIDAS : ${composicoesList.size}")
+                    }?.let { it2 -> composicoesList.add( it2 ) }
                 }
+
+                service.saveAll(empresa!!.id!!, composicoesList.map { it.toEntity() }.toMutableList())
+                UI.getCurrent().page.reload()
+                log.info("QUANTIDADE DE COMPOSICOES INSERIDAS : ${composicoesList.size}")
 
                 workbook.close()
 
