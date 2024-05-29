@@ -10,7 +10,6 @@ import br.com.clearcont.clearcontwebapp.repository.EmpresaRepository
 import br.com.clearcont.clearcontwebapp.repository.ResponsavelRepository
 import br.com.clearcont.clearcontwebapp.service.ComposicaoLancamentosContabeisService
 import br.com.clearcont.clearcontwebapp.views.components.details.BalanceteDetailsLayout
-import com.vaadin.flow.component.HasValue
 import com.vaadin.flow.component.UI
 import com.vaadin.flow.component.datepicker.DatePicker
 import com.vaadin.flow.component.orderedlayout.VerticalLayout
@@ -46,7 +45,7 @@ class GridConciliar(
 
     init {
         this.getCompany(empresaRepository) { empresa: Empresa? ->
-            getMonth { month: String? ->
+            getMonth {
                 val cookieFactory = CookieFactory(VaadinResponse.getCurrent())
                 val responsavelID = cookieFactory.getCookieInteger("responsavel-id")
                 val responsavel = responsavelRepository.findById(responsavelID).orElseThrow()
@@ -56,7 +55,7 @@ class GridConciliar(
 
                 formFactory.setVisibleProperties("data", "debito", "credito", "historico")
 
-                formFactory.setFieldCreationListener("data") { field: HasValue<*, *> ->
+                formFactory.setFieldCreationListener("data") { field ->
                     val datePicker = field as DatePicker
                     datePicker.locale = Locale.of("pt", "BR")
                     datePicker.addValueChangeListener { event ->
@@ -68,12 +67,11 @@ class GridConciliar(
                 crud.crudFormFactory = formFactory
                 crud.grid.setColumns()
                 crud.grid.addColumn(ComposicaoLancamentosContabeisDTO::dataFormated).setHeader("Data")
-                crud.grid.addColumn({ item -> item.credito }).setHeader("Credito").setKey("credito")
-                crud.grid.addColumn({ item -> item.debito }).setHeader("Debito")
-                crud.grid.addColumn({ item -> formatCurrencyBR(item.saldoContabil) }).setHeader("Saldo Contabil")
-                    .setKey("saldoContabil")
-                crud.grid.addColumn({ item -> item.status.value }).setHeader("Status")
-                crud.grid.addColumn({ item -> item.historico.toString() }).setHeader("Historico")
+                crud.grid.addColumn({ it.credito }).setHeader("Credito").setKey("credito")
+                crud.grid.addColumn({ it.debito }).setHeader("Debito")
+                crud.grid.addColumn({ formatCurrencyBR(it.saldoContabil) }).setHeader("Saldo Contabil").setKey("saldoContabil")
+                crud.grid.addColumn({ it.status.value }).setHeader("Status")
+                crud.grid.addColumn({ it.historico.toString() }).setHeader("Historico")
                 val listDataProvider = ListDataProvider(service.getByBalanceteID(balanceteId).map { it.toDTO() })
                 crud.grid.dataProvider = listDataProvider
 
@@ -212,7 +210,7 @@ class GridConciliar(
                                 )
                             }
                         }
-                    }?.let { it2 -> composicoesList.add( it2 ) }
+                    }?.let { it2 -> composicoesList.add(it2) }
                 }
 
                 service.saveAll(empresa!!.id!!, composicoesList.map { it.toEntity() }.toMutableList())

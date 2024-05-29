@@ -35,7 +35,6 @@ import java.time.format.DateTimeFormatter
 import java.util.*
 import java.util.logging.Logger
 import java.util.stream.Collectors
-import kotlin.math.sin
 
 
 @Transactional
@@ -264,24 +263,22 @@ open class GridCustomer(
 
     private val composicaoLancamentosContabeisDefaultCrudFormFactory: DefaultCrudFormFactory<ComposicaoLancamentosContabeisFullDTO>
         get() {
-            val formFactory = DefaultCrudFormFactory(
-                ComposicaoLancamentosContabeisFullDTO::class.java
-            )
-            formFactory.setVisibleProperties(
-                "numNotaFiscal",
-                "dataVencimento",
-                "ISS",
-                "INSS",
-                "IRRF",
-                "CSRF",
-                "diasVencidos",
-                "status",
-                "data",
-                "debito",
-                "credito",
-                "historico"
-            )
-            return formFactory
+            return DefaultCrudFormFactory(ComposicaoLancamentosContabeisFullDTO::class.java).apply {
+                setVisibleProperties(
+                    "numNotaFiscal",
+                    "dataVencimento",
+                    "ISS",
+                    "INSS",
+                    "IRRF",
+                    "CSRF",
+                    "diasVencidos",
+                    "status",
+                    "data",
+                    "debito",
+                    "credito",
+                    "historico"
+                )
+            }
         }
 
     private fun getUpload(
@@ -304,7 +301,6 @@ open class GridCustomer(
                 while (rowIterator.hasNext()) {
 
                     val row = rowIterator.next()
-
                     row.getCell(0)?.numericCellValue?.toInt()?.let { it1 ->
                         row.getCell(9)?.stringCellValue?.let { it2 ->
                             ComposicaoLancamentosContabeis(
@@ -325,7 +321,7 @@ open class GridCustomer(
                                 responsavel!!
                             )
                         }
-                    }?.let { it2 -> composicoesList.add( it2 ) }
+                    }?.let { it2 -> composicoesList.add(it2) }
 
                     service.saveAll(empresa!!.id!!, composicoesList)
                     log.info(" COMPOSICAO CLIENTE INSERIDAS : $composicoesList")
