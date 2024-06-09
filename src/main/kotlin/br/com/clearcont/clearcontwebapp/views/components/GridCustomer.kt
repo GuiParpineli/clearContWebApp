@@ -63,48 +63,43 @@ open class GridCustomer(
         crud.isVisible = balancetePicker.value != null
         balancetePicker.setItems(balancetes)
         balancetePicker.setItemLabelGenerator(Balancete::nomeConta)
-        balancetePicker.addValueChangeListener { event ->
-            val selectedBalancete = event.value
-            crud.setVisible(selectedBalancete.id != null)
-        }
+        balancetePicker.addValueChangeListener { event -> event.value.also { crud.setVisible(it.id != null) } }
 
         val lancamentosContabeis = service.findByBalanceteID(balanceteID).map { it.toFullDTO() }.toList()
 
-        balancetePicker.addValueChangeListener { event: ComponentValueChangeEvent<ComboBox<Balancete?>?, Balancete?> ->
+        balancetePicker.addValueChangeListener { event ->
             balancete = balanceteService.getById(balancetePicker.value.id!!)!!
-            val selectedBalancete = event.value
-            if (selectedBalancete != null) {
+
+            event.value?.let { selectedBalancete ->
+
                 balanceteID = selectedBalancete.id!!
-                val updatedContabilCustomers =
-                    service.findByBalanceteID(balanceteID).map { it.toFullDTO() }.toList()
+                val updatedContabilCustomers = service.findByBalanceteID(balanceteID).map { it.toFullDTO() }.toList()
+
                 crud.setFindAllOperation {
-                    updatedContabilCustomers.stream()
-                        .filter { composicaoLancamentosContabeis ->
-                            composicaoLancamentosContabeis.balancete!!.tipo == TipoConta.CLIENTE
-                        }.toList()
+                    updatedContabilCustomers.stream().filter { it.balancete!!.tipo == TipoConta.CLIENTE }.toList()
                 }
+
                 isf = InputStreamFactory {
                     exportToExcel(
-                        updatedContabilCustomers.stream()
-                            .filter { composicaoLancamentosContabeisF ->
-                                composicaoLancamentosContabeisF.balancete!!.tipo == TipoConta.CLIENTE
-                            }.collect(Collectors.toList())
+                        updatedContabilCustomers.stream().filter { it.balancete!!.tipo == TipoConta.CLIENTE }
+                            .collect(Collectors.toList())
                     )
                 }
+
                 updateDownloadLink(crud, service, downloadLink)
+
                 getUpload(service, empresa, balancete, responsavel).apply { style.setPadding("20px") }.also {
                     style.setMargin("10px")
                     files.add(HorizontalLayout(it, downloadLink).apply {
-                        style.setAlignSelf(Style.AlignSelf.CENTER)
-                            .setAlignItems(Style.AlignItems.CENTER)
+                        style.setAlignSelf(Style.AlignSelf.CENTER).setAlignItems(Style.AlignItems.CENTER)
                     })
                 }
+
                 crud.refreshGrid()
             }
         }
 
-
-        formFactory.setFieldCreationListener("data") { field: HasValue<*, *> ->
+        formFactory.setFieldCreationListener("data") { field ->
             val datePicker = field as DatePicker
             datePicker.locale = Locale.of("pt", "BR")
             datePicker.addValueChangeListener { event ->
@@ -115,22 +110,34 @@ open class GridCustomer(
 
         crud.crudFormFactory = formFactory
         crud.grid.setColumns("numNotaFiscal")
-        crud.grid.addColumn({ item -> formatter.format(item.data) }).setHeader("Data")
-        crud.grid.addColumn({ item -> formatter.format(item.dataVencimento) }).setHeader("Data Vencimento")
-        crud.grid.addColumn({ item -> item.ISS }).setHeader("ISS")
-        crud.grid.addColumn({ item -> item.INSS }).setHeader("INSS")
-        crud.grid.addColumn({ item -> item.IRRF }).setHeader("IRRF")
-        crud.grid.addColumn({ item -> item.CSRF }).setHeader("CSRF")
-        crud.grid.addColumn({ item -> item.debito }).setHeader("Debito")
-        crud.grid.addColumn({ item -> item.credito }).setHeader("Credito")
-        crud.grid.addColumn({ item -> item.status.value }).setHeader("Status")
-        crud.grid.addColumn({ customer -> customer.getDiasVencidos(month) }).setHeader("Dias Vencidos")
-        crud.grid.addColumn({ item -> item.historico.toString() }).setHeader("Historico")
+        crud.grid.addColumn(
+            { formatter.format(it.data) }).setHeader("Data")
+        crud.grid.addColumn(
+            { formatter.format(it.dataVencimento) }).setHeader("Data Vencimento")
+        crud.grid.addColumn(
+            { it.ISS }).setHeader("ISS")
+        crud.grid.addColumn(
+            { it.INSS }).setHeader("INSS")
+        crud.grid.addColumn(
+            { it.IRRF }).setHeader("IRRF")
+        crud.grid.addColumn(
+            { it.CSRF }).setHeader("CSRF")
+        crud.grid.addColumn(
+            { it.debito }).setHeader("Debito")
+        crud.grid.addColumn(
+            { it.credito }).setHeader("Credito")
+        crud.grid.addColumn(
+            { it.status.value }).setHeader("Status")
+        crud.grid.addColumn(
+            { it.getDiasVencidos(month) }).setHeader("Dias Vencidos")
+        crud.grid.addColumn(
+            { it.historico.toString() }).setHeader("Historico")
 
         this.crudMethods(crud, lancamentosContabeis, balanceteService, balancetePicker, responsavel, service)
 
         downloadLink = generateExcelDownloadLink(excelStreamResource)
-        files.add(FlexLayout(downloadLink).apply {
+        files.add(FlexLayout(downloadLink).apply
+        {
             style.setAlignSelf(Style.AlignSelf.CENTER)
                 .setAlignItems(Style.AlignItems.CENTER)
         })

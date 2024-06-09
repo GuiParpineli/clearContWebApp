@@ -1,6 +1,7 @@
 package br.com.clearcont.clearcontwebapp.views.routes
 
 import br.com.clearcont.clearcontwebapp.helpers.MonthAndCompany
+import br.com.clearcont.clearcontwebapp.helpers.createTitle
 import br.com.clearcont.clearcontwebapp.helpers.generateExcelDownloadLink
 import br.com.clearcont.clearcontwebapp.models.Controle
 import br.com.clearcont.clearcontwebapp.models.Empresa
@@ -55,8 +56,8 @@ class ControleView(service: ControleService, empresaRepository: EmpresaRepositor
                 val isf = InputStreamFactory { exportToExcel(controleList) }
                 val excelStreamResource = StreamResource("controle.xlsx", isf)
                 val downloadLink = generateExcelDownloadLink(excelStreamResource)
-
-                add(VerticalLayout(FlexComponent.Alignment.START, Div(H1("Controle")), downloadLink, grid))
+                val title = createTitle("Controle").apply { width = "50%" }
+                add(VerticalLayout(FlexComponent.Alignment.START, title, downloadLink, grid))
             }
         }
     }

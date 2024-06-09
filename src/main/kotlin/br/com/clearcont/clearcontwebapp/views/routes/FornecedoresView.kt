@@ -3,6 +3,7 @@ package br.com.clearcont.clearcontwebapp.views.routes
 import br.com.clearcont.clearcontwebapp.helpers.CookieFactory
 import br.com.clearcont.clearcontwebapp.helpers.MonthAndCompany
 import br.com.clearcont.clearcontwebapp.helpers.Period.getMonthByPeriodoString
+import br.com.clearcont.clearcontwebapp.helpers.createTitle
 import br.com.clearcont.clearcontwebapp.models.Empresa
 import br.com.clearcont.clearcontwebapp.models.enums.TipoConta.FORNECEDOR
 import br.com.clearcont.clearcontwebapp.repository.EmpresaRepository
@@ -69,12 +70,10 @@ class FornecedoresView(
                     empresa
                 )
 
-                val clientes = H1("Fornecedores")
+                val clientes = createTitle("Fornecedores").apply { width = "50%" }
                 val span = Span(empresa.nomeEmpresa)
                 val subtitle = Span("Selecione uma conta do periodo: " + month + " " + LocalDate.now().year)
-                val titleLayout = VerticalLayout(clientes, span, subtitle).apply {
-                    style.setBackgroundColor("#dbdee0").setBorderRadius("30px")
-                }
+                val titleLayout = VerticalLayout(clientes, span, subtitle)
                 val verticalLayout = VerticalLayout(titleLayout, gridCustomer)
 
                 add(verticalLayout)

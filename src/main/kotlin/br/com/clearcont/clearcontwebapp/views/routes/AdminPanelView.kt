@@ -2,6 +2,7 @@ package br.com.clearcont.clearcontwebapp.views.routes
 
 import br.com.clearcont.clearcontwebapp.helpers.CookieFactory
 import br.com.clearcont.clearcontwebapp.helpers.MonthAndCompany
+import br.com.clearcont.clearcontwebapp.helpers.createTitle
 import br.com.clearcont.clearcontwebapp.models.*
 import br.com.clearcont.clearcontwebapp.models.enums.Role
 import br.com.clearcont.clearcontwebapp.models.enums.StatusConciliacao
@@ -55,6 +56,7 @@ class AdminPanelView(
     private val setupCompany: GridCrud<Empresa> by lazy { setupEmpresa() }
 
     init {
+        val title = createTitle("Admin Panel").apply { width = "50%" }
 
         val addCard = Button("Adicionar Usuário").apply {
             addClickListener { showForm(addUserForm) }
@@ -67,7 +69,6 @@ class AdminPanelView(
             addClickListener { showForm(setupCompany) }
         }
 
-        val title = H1("Admin Panel")
         val cardLayout = HorizontalLayout(addCard, removeCard, empresaCard)
 
         this.add(

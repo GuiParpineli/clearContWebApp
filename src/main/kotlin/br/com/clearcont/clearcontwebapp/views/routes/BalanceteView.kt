@@ -2,7 +2,11 @@ package br.com.clearcont.clearcontwebapp.views.routes
 
 import br.com.clearcont.clearcontwebapp.helpers.CookieFactory
 import br.com.clearcont.clearcontwebapp.helpers.MonthAndCompany
-import br.com.clearcont.clearcontwebapp.models.*
+import br.com.clearcont.clearcontwebapp.helpers.createTitle
+import br.com.clearcont.clearcontwebapp.models.Balancete
+import br.com.clearcont.clearcontwebapp.models.ComposicaoLancamentosContabeis
+import br.com.clearcont.clearcontwebapp.models.Empresa
+import br.com.clearcont.clearcontwebapp.models.Responsavel
 import br.com.clearcont.clearcontwebapp.models.enums.TipoConta
 import br.com.clearcont.clearcontwebapp.models.enums.TypeCount
 import br.com.clearcont.clearcontwebapp.repository.EmpresaRepository
@@ -11,23 +15,20 @@ import br.com.clearcont.clearcontwebapp.service.BalanceteService
 import br.com.clearcont.clearcontwebapp.views.components.MainLayout
 import com.vaadin.flow.component.UI
 import com.vaadin.flow.component.button.Button
-import com.vaadin.flow.component.grid.ItemDoubleClickEvent
 import com.vaadin.flow.component.html.Div
-import com.vaadin.flow.component.html.H3
 import com.vaadin.flow.component.html.Span
 import com.vaadin.flow.component.notification.Notification
+import com.vaadin.flow.component.orderedlayout.HorizontalLayout
 import com.vaadin.flow.component.upload.Upload
 import com.vaadin.flow.component.upload.receivers.MemoryBuffer
 import com.vaadin.flow.router.PageTitle
 import com.vaadin.flow.router.Route
 import com.vaadin.flow.server.VaadinResponse
-import com.vaadin.flow.theme.lumo.LumoUtility
 import jakarta.annotation.security.PermitAll
 import jakarta.transaction.Transactional
 import org.apache.poi.ss.usermodel.Row
 import org.apache.poi.ss.usermodel.Workbook
 import org.apache.poi.xssf.usermodel.XSSFWorkbook
-import org.springframework.web.servlet.mvc.method.annotation.SseEmitter.event
 import org.vaadin.crudui.crud.impl.GridCrud
 import org.vaadin.crudui.form.impl.form.factory.DefaultCrudFormFactory
 import java.io.IOException
@@ -66,22 +67,20 @@ class BalanceteView(
 
                 val totalSize = balanceteData.size
                 log.info("TAMANHO TOTAL DA LISTA BALANCETE: $totalSize")
-                val year =
-                    if (balanceteData.isEmpty()) LocalDate.now().year.toString() else balanceteData.first().ano.toString()
 
-                val titleText =
-                    H3(getTitle(companyName, month, year)).apply { addClassNames(LumoUtility.FontWeight.BLACK) }
+                val year = if (balanceteData.isEmpty()) LocalDate.now().year.toString()
+                else balanceteData.first().ano.toString()
 
-                val title = getTitleDiv(titleText)
+                val titleText = createTitle("EMPRESA: $companyName")
+                val titleText2 = createTitle("MÊS: $month")
+                val titleText3 = createTitle("ANO: $year")
+
+                val divTitle = HorizontalLayout(titleText, titleText2, titleText3).apply { style.setMargin("10px") }
                 val grid = getBalanceteGridCrud(service, balanceteData)
                 val singleFileUpload = getUpload(service, empresa, month, responsavel).apply { style.setMargin("10px") }
-                add(title, singleFileUpload, grid)
+                add(divTitle, singleFileUpload, grid)
             }
         }
-    }
-
-    private fun getTitle(companyName: String?, month: String?, year: String): String {
-        return "EMPRESA: $companyName | MES: $month | ANO: $year"
     }
 
     private fun verifySelectedCompanyAndMonthExistAndNavigate(empresa: Empresa?, month: String?) {
@@ -89,12 +88,6 @@ class BalanceteView(
             Notification.show("Selecione uma empresa e periodo")
             UI.getCurrent().navigate("/")
         }
-    }
-
-    private fun getTitleDiv(titleText: H3): Div {
-        val title = Div(titleText)
-        title.style.setPadding("20px")
-        return title
     }
 
     private fun getUpload(
