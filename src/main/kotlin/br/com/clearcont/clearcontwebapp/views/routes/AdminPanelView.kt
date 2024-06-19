@@ -3,28 +3,26 @@ package br.com.clearcont.clearcontwebapp.views.routes
 import br.com.clearcont.clearcontwebapp.helpers.CookieFactory
 import br.com.clearcont.clearcontwebapp.helpers.MonthAndCompany
 import br.com.clearcont.clearcontwebapp.helpers.createTitle
-import br.com.clearcont.clearcontwebapp.models.*
+import br.com.clearcont.clearcontwebapp.models.ApplicationUser
+import br.com.clearcont.clearcontwebapp.models.Empresa
+import br.com.clearcont.clearcontwebapp.models.EmpresaGroup
+import br.com.clearcont.clearcontwebapp.models.Responsavel
 import br.com.clearcont.clearcontwebapp.models.enums.Role
-import br.com.clearcont.clearcontwebapp.models.enums.StatusConciliacao
 import br.com.clearcont.clearcontwebapp.repository.ResponsavelRepository
-import br.com.clearcont.clearcontwebapp.service.ComposicaoLancamentosContabeisService
 import br.com.clearcont.clearcontwebapp.service.EmpresaGroupService
 import br.com.clearcont.clearcontwebapp.service.EmpresaService
 import br.com.clearcont.clearcontwebapp.service.UserAppService
 import br.com.clearcont.clearcontwebapp.views.components.MainLayout
 import com.vaadin.flow.component.Component
 import com.vaadin.flow.component.button.Button
-import com.vaadin.flow.component.datepicker.DatePicker
 import com.vaadin.flow.component.formlayout.FormLayout
 import com.vaadin.flow.component.html.Div
-import com.vaadin.flow.component.html.H1
 import com.vaadin.flow.component.notification.Notification
 import com.vaadin.flow.component.orderedlayout.FlexComponent
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout
 import com.vaadin.flow.component.orderedlayout.VerticalLayout
 import com.vaadin.flow.component.select.Select
 import com.vaadin.flow.component.textfield.EmailField
-import com.vaadin.flow.component.textfield.NumberField
 import com.vaadin.flow.component.textfield.PasswordField
 import com.vaadin.flow.component.textfield.TextField
 import com.vaadin.flow.router.PageTitle
@@ -42,7 +40,6 @@ import java.util.logging.Logger
 @RolesAllowed("SUPER_ADMIN")
 class AdminPanelView(
     private val userService: UserAppService,
-    private val composicaoService: ComposicaoLancamentosContabeisService,
     private val responsavelRepository: ResponsavelRepository,
     private val empresaGroupService: EmpresaGroupService,
     private val empresaService: EmpresaService
@@ -92,24 +89,23 @@ class AdminPanelView(
         val formFactory = DefaultCrudFormFactory(Empresa::class.java)
         formFactory.setVisibleProperties("nomeEmpresa", "cnpj", "email")
         val empresaGroup: EmpresaGroup? = empresaGroupService.getByID(empresaGroupID)
-        val userCrud: GridCrud<Empresa> =
-            GridCrud(Empresa::class.java, HorizontalSplitCrudLayout()).apply {
-                crudFormFactory = formFactory
-                grid.setColumns("nomeEmpresa", "cnpj", "email")
+        val userCrud: GridCrud<Empresa> = GridCrud(Empresa::class.java, HorizontalSplitCrudLayout()).apply {
+            crudFormFactory = formFactory
+            grid.setColumns("nomeEmpresa", "cnpj", "email")
 
-                setFindAllOperation { empresaService.getAll() }
-                setAddOperation {
-                    empresaService.save(it)
-                    empresaGroup?.addEmpresa(it)
-                    if (empresaGroup != null) {
-                        empresaGroupService.update(empresaGroup)
-                    }
-                    log.info("Empresa adicionada com sucesso, EMPRESA GROUP: $empresaGroup")
-                    return@setAddOperation it
+            setFindAllOperation { empresaService.getAll() }
+            setAddOperation {
+                empresaService.save(it)
+                empresaGroup?.addEmpresa(it)
+                if (empresaGroup != null) {
+                    empresaGroupService.update(empresaGroup)
                 }
-                setUpdateOperation { empresaService.update(it) }
-                setDeleteOperation { empresaService.delete(it) }
+                log.info("Empresa adicionada com sucesso, EMPRESA GROUP: $empresaGroup")
+                return@setAddOperation it
             }
+            setUpdateOperation { empresaService.update(it) }
+            setDeleteOperation { empresaService.delete(it) }
+        }
 
         add(userCrud)
         userCrud.isVisible = false

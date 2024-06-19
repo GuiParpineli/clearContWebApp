@@ -5,15 +5,14 @@ import br.com.clearcont.clearcontwebapp.helpers.MonthAndCompany
 import br.com.clearcont.clearcontwebapp.helpers.Period.getMonthByPeriodoString
 import br.com.clearcont.clearcontwebapp.helpers.createTitle
 import br.com.clearcont.clearcontwebapp.models.Empresa
-import br.com.clearcont.clearcontwebapp.models.enums.TipoConta.*
+import br.com.clearcont.clearcontwebapp.models.enums.TipoConta.CLIENTE
 import br.com.clearcont.clearcontwebapp.repository.EmpresaRepository
 import br.com.clearcont.clearcontwebapp.repository.ResponsavelRepository
 import br.com.clearcont.clearcontwebapp.service.BalanceteService
 import br.com.clearcont.clearcontwebapp.service.ComposicaoLancamentosContabeisService
-import br.com.clearcont.clearcontwebapp.views.components.MainLayout
 import br.com.clearcont.clearcontwebapp.views.components.GridCustomer
+import br.com.clearcont.clearcontwebapp.views.components.MainLayout
 import com.vaadin.flow.component.UI
-import com.vaadin.flow.component.html.H1
 import com.vaadin.flow.component.html.Span
 import com.vaadin.flow.component.notification.Notification
 import com.vaadin.flow.component.orderedlayout.FlexLayout
@@ -35,9 +34,10 @@ class CustomersView(
     balanceteService: BalanceteService,
     responsavelRepository: ResponsavelRepository
 ) : FlexLayout(), MonthAndCompany {
+
     override var month: String? = null
     override lateinit var empresa: Empresa
-    var log: Logger = Logger.getLogger(javaClass.name)
+    private val log: Logger = Logger.getLogger(javaClass.name)
 
     init {
         initializeView(composicaoService, empresaRepository, balanceteService, responsavelRepository)
@@ -50,13 +50,15 @@ class CustomersView(
         responsavelRepository: ResponsavelRepository
     ) {
         getCompany(empresaRepository) { empresa: Empresa? ->
-            getMonth { month: String? -> verifySelectedCompanyAndMonthExistAndNavigate(empresa, month)
+            getMonth { month: String? ->
+                verifySelectedCompanyAndMonthExistAndNavigate(empresa, month)
 
                 val cookieFactory = CookieFactory(VaadinResponse.getCurrent())
                 val responsavelID = cookieFactory.getCookieInteger("responsavel-id")
                 val responsavel = responsavelRepository.findById(responsavelID).orElseThrow()
                 val empresaId = empresa!!.id
-                val balanceteData = balanceteService.filterClassification(empresaId!!, month!!, LocalDate.now().year, CLIENTE)
+                val balanceteData =
+                    balanceteService.filterClassification(empresaId!!, month!!, LocalDate.now().year, CLIENTE)
 
                 log.info("Empresa selecionada: " + empresa.nomeEmpresa)
 

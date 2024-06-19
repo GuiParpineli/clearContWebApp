@@ -7,7 +7,6 @@ import br.com.clearcont.clearcontwebapp.models.enums.StatusConciliacao
 import br.com.clearcont.clearcontwebapp.models.toDTO
 import br.com.clearcont.clearcontwebapp.repository.BalanceteRepository
 import br.com.clearcont.clearcontwebapp.repository.ComposicaoLancamentosContabeisRepository
-import br.com.clearcont.clearcontwebapp.repository.EmpresaRepository
 import br.com.clearcont.clearcontwebapp.repository.ResponsavelRepository
 import jakarta.transaction.Transactional
 import org.jboss.logging.Logger
@@ -19,18 +18,17 @@ import java.util.*
 class ComposicaoLancamentosContabeisService(
     private val repository: ComposicaoLancamentosContabeisRepository,
     private val balanceteRepository: BalanceteRepository,
-    private val responsavelRepository: ResponsavelRepository, private val empresaRepository: EmpresaRepository,
+    private val responsavelRepository: ResponsavelRepository,
 ) {
 
     private val log = Logger.getLogger(javaClass.name)
 
     val all: List<ComposicaoLancamentosContabeis> = repository.findAll()
-    val allLigth: List<ComposicaoLancamentosContabeisDTO> =
-        repository.findAll().stream().map { it.toDTO() }.toList()
 
-    fun <T> getByID(id: UUID, output: Class<T>): T {
+    val allLigth: List<ComposicaoLancamentosContabeisDTO> = repository.findAll().stream().map { it.toDTO() }.toList()
+
+    fun <T> getByID(id: UUID, output: Class<T>): T = repository.findById(id, output).orElseThrow().also {
         log.info("Obtendo composicao com id: $id")
-        return repository.findById(id, output).orElseThrow()
     }
 
     @Transactional
@@ -149,6 +147,6 @@ class ComposicaoLancamentosContabeisService(
         composicoesList.forEach { it.balancete = balanceteRepository.findById(it.balancete!!.id!!).orElseThrow() }
         log.info("SALVANDO COMPOSICOES: $composicoesList")
         repository.saveAll(composicoesList)
-        composicoes.forEach { deleteByID(it.id!!)}
+        composicoes.forEach { deleteByID(it.id!!) }
     }
 }

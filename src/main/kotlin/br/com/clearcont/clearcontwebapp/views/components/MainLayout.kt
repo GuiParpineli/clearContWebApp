@@ -19,7 +19,6 @@ import com.vaadin.flow.component.textfield.TextField
 import com.vaadin.flow.router.RouterLink
 
 class MainLayout(private val authenticatedUser: AuthenticatedUser) : AppLayout() {
-    private var darkThemeEnabled = false
 
     init {
         createHeader()

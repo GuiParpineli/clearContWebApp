@@ -3,13 +3,12 @@ package br.com.clearcont.clearcontwebapp.service
 import br.com.clearcont.clearcontwebapp.models.Balancete
 import br.com.clearcont.clearcontwebapp.models.enums.TipoConta
 import br.com.clearcont.clearcontwebapp.repository.BalanceteRepository
-import jakarta.persistence.EntityManager
 import jakarta.transaction.Transactional
 import org.springframework.stereotype.Service
 import java.util.logging.Logger
 
 @Service
-class BalanceteService(private val repository: BalanceteRepository, private val entityManager: EntityManager) {
+class BalanceteService(private val repository: BalanceteRepository) {
     private val log = Logger.getLogger(javaClass.name)
 
     fun getAll(): List<Balancete> = repository.findAll()

@@ -5,9 +5,8 @@ import com.vaadin.flow.server.VaadinService
 import jakarta.servlet.http.Cookie
 import java.util.logging.Logger
 
-class CookieFactory(
-    private var response: VaadinResponse
-) {
+class CookieFactory(private var response: VaadinResponse) {
+
     private val log: Logger = Logger.getLogger(javaClass.name)
 
     fun setCookie(cookieName: String?, value: String?) {

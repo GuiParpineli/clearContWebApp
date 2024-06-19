@@ -2,13 +2,12 @@ package br.com.clearcont.clearcontwebapp.views.components
 
 import br.com.clearcont.clearcontwebapp.helpers.generateExcelDownloadLink
 import br.com.clearcont.clearcontwebapp.helpers.unformatCurrencyBR
+import br.com.clearcont.clearcontwebapp.helpers.writeWorkbookToByteArrayInputStream
 import br.com.clearcont.clearcontwebapp.models.*
 import br.com.clearcont.clearcontwebapp.models.enums.StatusConciliacao
 import br.com.clearcont.clearcontwebapp.models.enums.TipoConta
 import br.com.clearcont.clearcontwebapp.service.BalanceteService
 import br.com.clearcont.clearcontwebapp.service.ComposicaoLancamentosContabeisService
-import com.vaadin.flow.component.AbstractField.ComponentValueChangeEvent
-import com.vaadin.flow.component.HasValue
 import com.vaadin.flow.component.UI
 import com.vaadin.flow.component.combobox.ComboBox
 import com.vaadin.flow.component.datepicker.DatePicker
@@ -28,7 +27,6 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook
 import org.vaadin.crudui.crud.impl.GridCrud
 import org.vaadin.crudui.form.impl.form.factory.DefaultCrudFormFactory
 import java.io.ByteArrayInputStream
-import java.io.ByteArrayOutputStream
 import java.io.IOException
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
@@ -231,21 +229,7 @@ open class GridCustomer(
             row.createCell(10).setCellValue(unformatCurrencyBR(item.credito))
             row.createCell(11).setCellValue(item.historico)
         }
-
-        val bos = ByteArrayOutputStream()
-        try {
-            workbook.write(bos)
-        } catch (e: IOException) {
-            log.info(e.message)
-        } finally {
-            try {
-                workbook.close()
-            } catch (e: IOException) {
-                log.info(e.message)
-            }
-        }
-
-        return ByteArrayInputStream(bos.toByteArray())
+        return writeWorkbookToByteArrayInputStream(workbook, log)
     }
 
     private fun updateDownloadLink(

@@ -1,8 +1,8 @@
 package br.com.clearcont.clearcontwebapp.views.components
 
-import br.com.clearcont.clearcontwebapp.helpers.formatCurrencyBR
 import br.com.clearcont.clearcontwebapp.helpers.generateExcelDownloadLink
 import br.com.clearcont.clearcontwebapp.helpers.unformatCurrencyBR
+import br.com.clearcont.clearcontwebapp.helpers.writeWorkbookToByteArrayInputStream
 import br.com.clearcont.clearcontwebapp.models.*
 import br.com.clearcont.clearcontwebapp.models.enums.StatusConciliacao
 import br.com.clearcont.clearcontwebapp.models.enums.TipoConta
@@ -20,7 +20,6 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout
 import com.vaadin.flow.component.upload.Upload
 import com.vaadin.flow.component.upload.receivers.MemoryBuffer
 import com.vaadin.flow.dom.Style
-import com.vaadin.flow.function.ValueProvider
 import com.vaadin.flow.server.InputStreamFactory
 import com.vaadin.flow.server.StreamResource
 import jakarta.transaction.Transactional
@@ -30,7 +29,6 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook
 import org.vaadin.crudui.crud.impl.GridCrud
 import org.vaadin.crudui.form.impl.form.factory.DefaultCrudFormFactory
 import java.io.ByteArrayInputStream
-import java.io.ByteArrayOutputStream
 import java.io.IOException
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
@@ -45,8 +43,7 @@ open class GridFornecedores(
     balancetes: List<Balancete?>,
     responsavel: Responsavel?,
     month: Int,
-    balanceteService: BalanceteService,
-    empresa: Empresa?
+    balanceteService: BalanceteService
 ) : VerticalLayout() {
     private var balanceteID: Long = 0
     private var isf: InputStreamFactory? = null
@@ -93,7 +90,7 @@ open class GridFornecedores(
                     )
                 }
                 updateDownloadLink(crud, service, downloadLink)
-                getUpload(service, empresa, balancete, responsavel).apply { style.setPadding("20px") }.also {
+                getUpload(service, balancete, responsavel).apply { style.setPadding("20px") }.also {
                     style.setMargin("10px")
                     files.add(HorizontalLayout(it, downloadLink).apply {
                         style.setAlignSelf(Style.AlignSelf.CENTER)
@@ -240,20 +237,7 @@ open class GridFornecedores(
             row.createCell(11).setCellValue(item.historico)
         }
 
-        val bos = ByteArrayOutputStream()
-        try {
-            workbook.write(bos)
-        } catch (e: IOException) {
-            log.info(e.message)
-        } finally {
-            try {
-                workbook.close()
-            } catch (e: IOException) {
-                log.info(e.message)
-            }
-        }
-
-        return ByteArrayInputStream(bos.toByteArray())
+        return writeWorkbookToByteArrayInputStream(workbook, log)
     }
 
     private fun updateDownloadLink(
@@ -300,7 +284,6 @@ open class GridFornecedores(
 
     private fun getUpload(
         service: ComposicaoLancamentosContabeisService,
-        empresa: Empresa?,
         balancete: Balancete,
         responsavel: Responsavel?
     ): Upload {

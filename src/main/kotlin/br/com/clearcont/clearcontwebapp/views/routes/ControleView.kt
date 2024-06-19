@@ -3,6 +3,7 @@ package br.com.clearcont.clearcontwebapp.views.routes
 import br.com.clearcont.clearcontwebapp.helpers.MonthAndCompany
 import br.com.clearcont.clearcontwebapp.helpers.createTitle
 import br.com.clearcont.clearcontwebapp.helpers.generateExcelDownloadLink
+import br.com.clearcont.clearcontwebapp.helpers.writeWorkbookToByteArrayInputStream
 import br.com.clearcont.clearcontwebapp.models.Controle
 import br.com.clearcont.clearcontwebapp.models.Empresa
 import br.com.clearcont.clearcontwebapp.repository.EmpresaRepository
@@ -11,11 +12,9 @@ import br.com.clearcont.clearcontwebapp.views.components.MainLayout
 import com.vaadin.flow.component.UI
 import com.vaadin.flow.component.grid.Grid
 import com.vaadin.flow.component.html.Div
-import com.vaadin.flow.component.html.H1
 import com.vaadin.flow.component.notification.Notification
 import com.vaadin.flow.component.orderedlayout.FlexComponent
 import com.vaadin.flow.component.orderedlayout.VerticalLayout
-import com.vaadin.flow.function.ValueProvider
 import com.vaadin.flow.router.PageTitle
 import com.vaadin.flow.router.Route
 import com.vaadin.flow.server.InputStreamFactory
@@ -24,8 +23,6 @@ import jakarta.annotation.security.PermitAll
 import org.apache.poi.ss.usermodel.Workbook
 import org.apache.poi.xssf.usermodel.XSSFWorkbook
 import java.io.ByteArrayInputStream
-import java.io.ByteArrayOutputStream
-import java.io.IOException
 import java.time.LocalDate
 import java.util.logging.Logger
 
@@ -35,7 +32,7 @@ import java.util.logging.Logger
 class ControleView(service: ControleService, empresaRepository: EmpresaRepository?) : Div(), MonthAndCompany {
     override var month: String? = null
     override lateinit var empresa: Empresa
-    var log: Logger = Logger.getLogger(javaClass.name)
+    private val log: Logger = Logger.getLogger(javaClass.name)
 
     init {
         this.getCompany(empresaRepository!!) { empresa: Empresa? ->
@@ -85,20 +82,7 @@ class ControleView(service: ControleService, empresaRepository: EmpresaRepositor
             row.createCell(4).setCellValue(item.nomeResponsavel)
         }
 
-        val bos = ByteArrayOutputStream()
-        try {
-            workbook.write(bos)
-        } catch (e: IOException) {
-            log.info(e.message)
-        } finally {
-            try {
-                workbook.close()
-            } catch (e: IOException) {
-                log.info(e.message)
-            }
-        }
-
-        return ByteArrayInputStream(bos.toByteArray())
+        return writeWorkbookToByteArrayInputStream(workbook, log)
     }
 
     private fun verifySelectedCompanyAndMonthExistAndNavigate(empresa: Empresa?, month: String?) {

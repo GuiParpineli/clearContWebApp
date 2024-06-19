@@ -1,9 +1,6 @@
 package br.com.clearcont.clearcontwebapp.views.components
 
-import br.com.clearcont.clearcontwebapp.helpers.CookieFactory
-import br.com.clearcont.clearcontwebapp.helpers.MonthAndCompany
-import br.com.clearcont.clearcontwebapp.helpers.formatCurrencyBR
-import br.com.clearcont.clearcontwebapp.helpers.unformatCurrencyBR
+import br.com.clearcont.clearcontwebapp.helpers.*
 import br.com.clearcont.clearcontwebapp.models.*
 import br.com.clearcont.clearcontwebapp.models.enums.StatusConciliacao
 import br.com.clearcont.clearcontwebapp.repository.EmpresaRepository
@@ -23,7 +20,6 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook
 import org.vaadin.crudui.crud.impl.GridCrud
 import org.vaadin.crudui.form.impl.form.factory.DefaultCrudFormFactory
 import java.io.ByteArrayInputStream
-import java.io.ByteArrayOutputStream
 import java.io.IOException
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
@@ -158,20 +154,7 @@ class GridConciliar(
             row.createCell(4).setCellValue(item.historico)
         }
 
-        val bos = ByteArrayOutputStream()
-        try {
-            workbook.write(bos)
-        } catch (e: IOException) {
-            log.info(e.message)
-        } finally {
-            try {
-                workbook.close()
-            } catch (e: IOException) {
-                log.info(e.message)
-            }
-        }
-
-        return ByteArrayInputStream(bos.toByteArray())
+        return writeWorkbookToByteArrayInputStream(workbook, log)
     }
 
     private fun getUpload(
