@@ -6,6 +6,7 @@ import br.com.clearcont.clearcontwebapp.models.enums.StatusConciliacao
 import br.com.clearcont.clearcontwebapp.models.enums.TipoConta
 import br.com.clearcont.clearcontwebapp.models.enums.TypeCount
 import jakarta.persistence.*
+import jakarta.validation.constraints.NotNull
 import java.time.LocalDate
 
 @Entity
@@ -29,7 +30,8 @@ class Balancete(
         orphanRemoval = true
     )
     val lancamentosContabeisList: MutableList<ComposicaoLancamentosContabeis> = mutableListOf(),
-    @Enumerated(EnumType.STRING)
+    @Enumerated(EnumType.ORDINAL)
+    @Column(length = 2)
     var status: StatusConciliacao = StatusConciliacao.OPEN,
     var tipo: TipoConta = TipoConta.INDEFINIDO
 ) {

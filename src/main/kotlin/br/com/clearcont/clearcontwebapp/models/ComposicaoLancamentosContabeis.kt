@@ -10,6 +10,7 @@ import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoUnit
 import java.time.temporal.TemporalAdjusters
 import java.util.*
+import kotlin.jvm.Transient
 
 @Entity
 class ComposicaoLancamentosContabeis() : ComposicaoLancamentos() {
@@ -33,12 +34,13 @@ class ComposicaoLancamentosContabeis() : ComposicaoLancamentos() {
     @JsonIgnore
     @ManyToOne(
         fetch = FetchType.EAGER,
-        cascade = [CascadeType.DETACH, CascadeType.REMOVE, CascadeType.PERSIST, CascadeType.REFRESH]
+        cascade = [CascadeType.DETACH, CascadeType.REMOVE, CascadeType.PERSIST, CascadeType.REFRESH, CascadeType.MERGE]
     )
     @JoinColumn(name = "balancete_id")
     var balancete: Balancete? = null
 
     @Enumerated(EnumType.STRING)
+    @Transient
     var status: StatusConciliacao? = null
 
     @ManyToOne

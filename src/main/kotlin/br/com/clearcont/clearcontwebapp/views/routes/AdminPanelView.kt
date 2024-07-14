@@ -3,15 +3,11 @@ package br.com.clearcont.clearcontwebapp.views.routes
 import br.com.clearcont.clearcontwebapp.helpers.CookieFactory
 import br.com.clearcont.clearcontwebapp.helpers.MonthAndCompany
 import br.com.clearcont.clearcontwebapp.helpers.createTitle
-import br.com.clearcont.clearcontwebapp.models.ApplicationUser
-import br.com.clearcont.clearcontwebapp.models.Empresa
-import br.com.clearcont.clearcontwebapp.models.EmpresaGroup
-import br.com.clearcont.clearcontwebapp.models.Responsavel
+import br.com.clearcont.clearcontwebapp.models.*
 import br.com.clearcont.clearcontwebapp.models.enums.Role
+import br.com.clearcont.clearcontwebapp.models.enums.StatusConciliacao
 import br.com.clearcont.clearcontwebapp.repository.ResponsavelRepository
-import br.com.clearcont.clearcontwebapp.service.EmpresaGroupService
-import br.com.clearcont.clearcontwebapp.service.EmpresaService
-import br.com.clearcont.clearcontwebapp.service.UserAppService
+import br.com.clearcont.clearcontwebapp.service.*
 import br.com.clearcont.clearcontwebapp.views.components.MainLayout
 import com.vaadin.flow.component.Component
 import com.vaadin.flow.component.button.Button
@@ -42,7 +38,9 @@ class AdminPanelView(
     private val userService: UserAppService,
     private val responsavelRepository: ResponsavelRepository,
     private val empresaGroupService: EmpresaGroupService,
-    private val empresaService: EmpresaService
+    private val composicaoLancamentosContabeisService: ComposicaoLancamentosContabeisService,
+    private val empresaService: EmpresaService,
+    private val balanceteService: BalanceteService
 ) : Div(), MonthAndCompany {
     override var month: String? = null
     override lateinit var empresa: Empresa
@@ -51,6 +49,7 @@ class AdminPanelView(
     private val addUserForm: FormLayout by lazy { setupAddUserForm() }
     private val removeUserForm: GridCrud<ApplicationUser> by lazy { setupRemoveUpdateUserForm() }
     private val setupCompany: GridCrud<Empresa> by lazy { setupEmpresa() }
+    private val setupConciliar: GridCrud<ComposicaoLancamentosContabeis> by lazy { setupConciliarForm() }
 
     init {
         val title = createTitle("Admin Panel").apply { width = "50%" }
@@ -66,10 +65,14 @@ class AdminPanelView(
             addClickListener { showForm(setupCompany) }
         }
 
+        val conciliationCard = Button("Gerenciar Conciliações").apply {
+            addClickListener { showForm(setupConciliar) }
+        }
+
         val cardLayout = HorizontalLayout(addCard, removeCard, empresaCard)
 
         this.add(
-            VerticalLayout(title, cardLayout, addUserForm, removeUserForm).apply {
+            VerticalLayout(title, cardLayout, addUserForm, removeUserForm, conciliationCard).apply {
                 justifyContentMode = FlexComponent.JustifyContentMode.CENTER
             })
     }
@@ -82,9 +85,29 @@ class AdminPanelView(
         log.info("Showing form")
     }
 
+    private fun setupConciliarForm(): GridCrud<ComposicaoLancamentosContabeis> {
+        val cookieFactory = CookieFactory(VaadinResponse.getCurrent())
+        val empresaGroupID = cookieFactory.getCookieInteger("company-group-id")
+        val formFactory = DefaultCrudFormFactory(ComposicaoLancamentosContabeis::class.java).apply {
+            setVisibleProperties("status")
+        }
+        val crud = GridCrud(ComposicaoLancamentosContabeis::class.java).apply {
+            crudFormFactory = formFactory
+            grid.setColumns("status", "balancete.nomeConta", "balancete.ano","balancete.mes")
+            setFindAllOperation { composicaoLancamentosContabeisService.findAllStatusReopen(empresaGroupID) }
+            setUpdateOperation{
+                it.balancete!!.status = it.status!!
+                balanceteService.update(it.balancete!!)
+                composicaoLancamentosContabeisService.update(it)
+            }
+        }
+        add(crud)
+        return crud
+    }
+
     private fun setupEmpresa(): GridCrud<Empresa> {
         val cookieFactory = CookieFactory(VaadinResponse.getCurrent())
-        val empresaGroupID = cookieFactory.getCookieInteger("responsavel-id")
+        val empresaGroupID = cookieFactory.getCookieInteger("company-group-id")
 
         val formFactory = DefaultCrudFormFactory(Empresa::class.java)
         formFactory.setVisibleProperties("nomeEmpresa", "cnpj", "email")

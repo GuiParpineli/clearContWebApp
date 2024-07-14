@@ -10,6 +10,7 @@ import br.com.clearcont.clearcontwebapp.repository.ComposicaoLancamentosContabei
 import br.com.clearcont.clearcontwebapp.repository.ResponsavelRepository
 import jakarta.transaction.Transactional
 import org.jboss.logging.Logger
+import org.springframework.data.jpa.domain.AbstractPersistable_.id
 import org.springframework.stereotype.Service
 import org.vaadin.crudui.crud.impl.GridCrud
 import java.util.*
@@ -64,7 +65,7 @@ class ComposicaoLancamentosContabeisService(
     }
 
     fun <T> getByYearMonthAndCnpj(cnpj: String?, year: Int?, month: String?, output: Class<T>): List<T> {
-        return repository.findComposicaoLancamentosContabeisByBalancete_Empresa_CnpjAndBalancete_AnoAndBalancete_Mes(
+        return repository.findcomposicaolancamentoscontabeisbybalanceteEmpresaCnpjandbalanceteAnoandbalanceteMes(
             cnpj,
             year,
             month,
@@ -88,7 +89,7 @@ class ComposicaoLancamentosContabeisService(
     }
 
     fun getTotalOpen(responsavelID: Long?): Int {
-        val contabeisList = repository.findComposicaoLancamentosContabeisByResponsavel_Id(
+        val contabeisList = repository.findcomposicaolancamentoscontabeisbyresponsavelId(
             responsavelID,
             ComposicaoLancamentosContabeis::class.java
         )
@@ -102,7 +103,7 @@ class ComposicaoLancamentosContabeisService(
     }
 
     fun getTotalProgress(responsavelID: Long?): Int {
-        val contabeisList = repository.findComposicaoLancamentosContabeisByResponsavel_Id(
+        val contabeisList = repository.findcomposicaolancamentoscontabeisbyresponsavelId(
             responsavelID,
             ComposicaoLancamentosContabeis::class.java
         )
@@ -116,7 +117,7 @@ class ComposicaoLancamentosContabeisService(
     }
 
     fun getTotalFinish(responsavelID: Long?): Int {
-        val contabeisList = repository.findComposicaoLancamentosContabeisByResponsavel_Id(
+        val contabeisList = repository.findcomposicaolancamentoscontabeisbyresponsavelId(
             responsavelID,
             ComposicaoLancamentosContabeis::class.java
         )
@@ -143,10 +144,15 @@ class ComposicaoLancamentosContabeisService(
     @Transactional
     fun saveAll(empresaID: Long, composicoesList: MutableList<ComposicaoLancamentosContabeis>) {
         log.info("BUSCANDO BALANCETE id: $empresaID para upload de grid")
-        val composicoes = repository.findByBalancete_Empresa_Id(empresaID)
+        val composicoes = repository.findbybalanceteEmpresaId(empresaID)
         composicoesList.forEach { it.balancete = balanceteRepository.findById(it.balancete!!.id!!).orElseThrow() }
         log.info("SALVANDO COMPOSICOES: $composicoesList")
         repository.saveAll(composicoesList)
         composicoes.forEach { deleteByID(it.id!!) }
+    }
+
+    fun findAllStatusReopen(id: Long): List<ComposicaoLancamentosContabeis> {
+        return repository.findbybalanceteEmpresaId(id).toList()
+            .filter { it.status == StatusConciliacao.PENDENT_REOPEN }
     }
 }

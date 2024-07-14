@@ -3,30 +3,41 @@ package br.com.clearcont.clearcontwebapp.repository
 import br.com.clearcont.clearcontwebapp.helpers.CNPJ
 import br.com.clearcont.clearcontwebapp.models.ComposicaoLancamentosContabeis
 import jakarta.transaction.Transactional
-import org.apache.poi.ss.formula.functions.T
 import org.springframework.data.jpa.repository.JpaRepository
+import org.springframework.data.jpa.repository.Modifying
 import org.springframework.data.jpa.repository.Query
 import org.springframework.stereotype.Repository
 import java.util.*
 
 @Repository
 interface ComposicaoLancamentosContabeisRepository : JpaRepository<ComposicaoLancamentosContabeis, UUID> {
+
     @Query("SELECT c FROM ComposicaoLancamentosContabeis c WHERE c.balancete.id = ?1")
-    fun  findByBalanceteId(id: Long?): List<ComposicaoLancamentosContabeis>
+    fun findByBalanceteId(id: Long?): List<ComposicaoLancamentosContabeis>
+
+    @Query("select c from ComposicaoLancamentosContabeis c where c.balancete.empresa.id = ?1")
+    fun findallbybalanceteEmpresaId(id: Long?): List<ComposicaoLancamentosContabeis>
 
     fun <T> findById(id: UUID, projection: Class<T>): Optional<T>
 
-    fun <T> findComposicaoLancamentosContabeisByBalancete_Empresa_CnpjAndBalancete_AnoAndBalancete_Mes(
-        balancete_empresa_cnpj: @CNPJ String?,
-        balancete_ano: Int?,
-        balancete_mes: String?,
-        projection: Class<T>
+    @Query(
+        """select c from ComposicaoLancamentosContabeis c
+where c.balancete.empresa.cnpj = ?1 and c.balancete.ano = ?2 and c.balancete.mes = ?3"""
+    )
+    fun <T> findcomposicaolancamentoscontabeisbybalanceteEmpresaCnpjandbalanceteAnoandbalanceteMes(
+        balanceteEmpresaCnpj: @CNPJ String?, balanceteAno: Int?, balanceteMes: String?, projection: Class<T>
     ): List<T>
 
-    fun <T> findComposicaoLancamentosContabeisByResponsavel_Id(responsavel_id: Long?, projection: Class<T>): List<T>
-    @Transactional
-    fun deleteAllByBalancete_Id(id: Long)
+    @Query("select c from ComposicaoLancamentosContabeis c where c.responsavel.id = ?1")
+    fun <T> findcomposicaolancamentoscontabeisbyresponsavelId(responsavelId: Long?, projection: Class<T>): List<T>
 
+    @Modifying
+    @org.springframework.transaction.annotation.Transactional
+    @Query("delete from ComposicaoLancamentosContabeis c where c.balancete.id = ?1")
     @Transactional
-    fun findByBalancete_Empresa_Id(id: Long): List<ComposicaoLancamentosContabeis>
+    fun deleteallbybalanceteId(id: Long)
+
+    @Query("select c from ComposicaoLancamentosContabeis c where c.balancete.empresa.id = ?1")
+    @Transactional
+    fun findbybalanceteEmpresaId(id: Long): List<ComposicaoLancamentosContabeis>
 }

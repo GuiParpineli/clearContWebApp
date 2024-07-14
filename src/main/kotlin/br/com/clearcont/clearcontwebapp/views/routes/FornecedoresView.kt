@@ -67,7 +67,6 @@ class FornecedoresView(
                     responsavel,
                     getMonthByPeriodoString(month),
                     balanceteService,
-                    empresa
                 )
 
                 val clientes = createTitle("Fornecedores").apply { width = "50%" }

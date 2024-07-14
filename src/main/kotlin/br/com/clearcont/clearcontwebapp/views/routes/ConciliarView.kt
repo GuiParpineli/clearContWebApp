@@ -1,22 +1,26 @@
 package br.com.clearcont.clearcontwebapp.views.routes
 
 
+import br.com.clearcont.clearcontwebapp.configs.security.AuthenticatedUser
 import br.com.clearcont.clearcontwebapp.helpers.CookieFactory
 import br.com.clearcont.clearcontwebapp.helpers.generateExcelDownloadLink
-import br.com.clearcont.clearcontwebapp.models.*
+import br.com.clearcont.clearcontwebapp.models.Balancete
+import br.com.clearcont.clearcontwebapp.models.ComposicaoLancamentosContabeisDTO
+import br.com.clearcont.clearcontwebapp.models.enums.Role
 import br.com.clearcont.clearcontwebapp.models.enums.StatusConciliacao
+import br.com.clearcont.clearcontwebapp.models.toDTO
+import br.com.clearcont.clearcontwebapp.models.toEntity
 import br.com.clearcont.clearcontwebapp.repository.EmpresaRepository
 import br.com.clearcont.clearcontwebapp.repository.ResponsavelRepository
 import br.com.clearcont.clearcontwebapp.service.BalanceteService
 import br.com.clearcont.clearcontwebapp.service.ComposicaoLancamentosContabeisService
 import br.com.clearcont.clearcontwebapp.service.FileUploadServiceImplement
-import br.com.clearcont.clearcontwebapp.views.components.MainLayout
 import br.com.clearcont.clearcontwebapp.views.components.GridConciliar
+import br.com.clearcont.clearcontwebapp.views.components.MainLayout
 import br.com.clearcont.clearcontwebapp.views.components.details.BalanceteDetailsLayout
 import com.vaadin.flow.component.UI
 import com.vaadin.flow.component.button.Button
 import com.vaadin.flow.component.confirmdialog.ConfirmDialog
-import com.vaadin.flow.component.confirmdialog.ConfirmDialog.ConfirmEvent
 import com.vaadin.flow.component.html.H1
 import com.vaadin.flow.component.icon.Icon
 import com.vaadin.flow.component.notification.Notification
@@ -34,6 +38,12 @@ import jakarta.annotation.security.PermitAll
 import org.springframework.beans.factory.annotation.Autowired
 import java.util.logging.Logger
 
+private const val CLOSE_CONCILIATION = "Fechar Conciliação"
+private const val REOPEN_CONCILIATION = "Reabrir Conciliação"
+private const val REQUEST_REOPEN_CONCILIATION = "Requisitar Abertura de Conciliação"
+private const val START_CONCILIATION = "Iniciar Conciliação"
+private const val WAITING_REOPEN = "Aguardando Reabertura"
+
 @Route(value = "conciliar", layout = MainLayout::class)
 @PermitAll
 @PageTitle("Conciliar")
@@ -43,7 +53,8 @@ class ConciliarView @Autowired constructor(
     private val anexoStorageService: FileUploadServiceImplement,
     private val responsavelRepository: ResponsavelRepository,
     private val balanceteService: BalanceteService,
-    private val empresaRepository: EmpresaRepository
+    private val empresaRepository: EmpresaRepository,
+    private val authenticatedUser: AuthenticatedUser
 ) : VerticalLayout(), HasUrlParameter<String> {
 
     var log: Logger = Logger.getLogger(javaClass.name)
@@ -69,20 +80,28 @@ class ConciliarView @Autowired constructor(
             conciliacaoList.last()
         }
         val infoCards = BalanceteDetailsLayout(balancete!!, conciliacao.toEntity(), saldoContabil, anexoStorageService)
-        val crud = GridConciliar(balancete, contabeisService, balanceteId, responsavelRepository, infoCards, empresaRepository)
 
-        val finalConciliacaoList = conciliacaoList
-        val isf = InputStreamFactory { crud.exportToExcel(finalConciliacaoList) }
+        val crud = GridConciliar(
+            balancete,
+            contabeisService,
+            balanceteId,
+            responsavelRepository,
+            infoCards,
+            empresaRepository
+        ).also {
+            it.isEnabled = conciliacao.status != StatusConciliacao.OPEN && conciliacao.status != StatusConciliacao.CLOSED
+        }
+
+        val isf = InputStreamFactory { crud.exportToExcel(conciliacaoList) }
         val excelStreamResource = StreamResource("grid_data.xlsx", isf)
         val downloadLink = generateExcelDownloadLink(excelStreamResource)
 
         val btns = HorizontalLayout(startBtn, finishBtn, downloadLink)
         checkStatusforDisableorEnableBtn(conciliacao)
 
-        crud.isEnabled = conciliacao.status != StatusConciliacao.OPEN && conciliacao.status != StatusConciliacao.CLOSED
 
         log.info("RESPONSAVEL NOME: " + responsavel.nome)
-        val dialogStart = getConfirmDialogStart(conciliacao, balancete)
+        val dialogStart = getConfirmDialogStart(crud, startBtn, conciliacao, balancete)
         val dialogEnd = getConfirmDialogEnd(balancete)
 
         startBtn.addClickListener { dialogStart.open() }
@@ -97,30 +116,56 @@ class ConciliarView @Autowired constructor(
     }
 
     private fun checkStatusforDisableorEnableBtn(conciliacao: ComposicaoLancamentosContabeisDTO) {
-        if (conciliacao.status == StatusConciliacao.PROGRESS || conciliacao.status == StatusConciliacao.CLOSED) {
-            startBtn.element.setEnabled(false)
-        }
+        when (conciliacao.status) {
+            StatusConciliacao.OPEN -> {
+                startBtn.element.setEnabled(true)
+                finishBtn.element.setEnabled(false)
+                startBtn.element.setText(START_CONCILIATION)
+            }
 
-        if (conciliacao.status == StatusConciliacao.OPEN || conciliacao.status == StatusConciliacao.CLOSED) {
-            finishBtn.element.setEnabled(false)
+            StatusConciliacao.PROGRESS -> {
+                startBtn.element.setEnabled(false)
+                finishBtn.element.setEnabled(true)
+                startBtn.element.setText(START_CONCILIATION)
+            }
+
+            StatusConciliacao.PENDENT_REOPEN -> {
+                startBtn.element.setEnabled(false)
+                finishBtn.element.setEnabled(false)
+                startBtn.element.setText(WAITING_REOPEN)
+            }
+
+            StatusConciliacao.CLOSED -> {
+                if (authenticatedUser.get().isPresent && authenticatedUser.get().get().roles.contains(Role.ADMIN)) {
+                    startBtn.element.setEnabled(true)
+                    finishBtn.element.setEnabled(false)
+                    startBtn.element.setText(REOPEN_CONCILIATION)
+                } else {
+                    startBtn.element.setEnabled(true)
+                    finishBtn.element.setEnabled(false)
+                    startBtn.element.setText(REQUEST_REOPEN_CONCILIATION)
+                }
+            }
         }
     }
 
     private fun getStartBtn(): Button {
-        val startBtn = Button("Iniciar Conciliação")
+        val startBtn = Button(START_CONCILIATION)
         startBtn.icon = Icon("calc")
         startBtn.style.setBackground("#0fc90f")
         return startBtn
     }
 
     private fun getFinishBtn(): Button {
-        val finishBtn = Button("Fechar Conciliação")
+        val finishBtn = Button(CLOSE_CONCILIATION)
         finishBtn.icon = Icon("chevron-down")
         finishBtn.style.setBackground("#ff4000c2")
         return finishBtn
     }
 
     private fun getConfirmDialogStart(
+        crud: GridConciliar,
+        startBtn: Button,
         conciliacao: ComposicaoLancamentosContabeisDTO,
         balancete: Balancete,
     ): ConfirmDialog {
@@ -128,21 +173,40 @@ class ConciliarView @Autowired constructor(
         val ui = UI.getCurrent()
         val page = ui.page
 
-        dialog.setHeader("Iniciar conciliação")
-        dialog.setText("Você tem certeza que deseja iniciar? Essa alteração não pode ser desfeita.")
-        dialog.setCancelable(true)
-        dialog.setCancelText("Cancelar")
-        dialog.setConfirmText("Confirmar")
-        dialog.addConfirmListener {
-            if (balancete.lancamentosContabeisList.isEmpty()) {
-                contabeisService.createNewAndUpdate(balancete.id, conciliacao.responsavel?.id)
+        if (startBtn.element.text.equals(START_CONCILIATION)) {
+            dialog.setHeader("Iniciar conciliação")
+            dialog.setText("Você tem certeza que deseja iniciar? Essa alteração não pode ser desfeita.")
+            dialog.setCancelable(true)
+            dialog.setCancelText("Cancelar")
+            dialog.setConfirmText("Confirmar")
+            dialog.addConfirmListener {
+                if (balancete.lancamentosContabeisList.isEmpty()) {
+                    contabeisService.createNewAndUpdate(balancete.id, conciliacao.responsavel?.id)
+                }
+                balancete.status = StatusConciliacao.PROGRESS
+                checkStatusforDisableorEnableBtn(conciliacao)
+                balanceteService.update(balancete)
+                Notification.show("CONCIALIAÇÃO EM ANDAMENTO")
+                page.reload()
             }
-            checkStatusforDisableorEnableBtn(conciliacao)
-            balancete.status = StatusConciliacao.PROGRESS
-            balanceteService.update(balancete)
-            Notification.show("CONCIALIAÇÃO EM ANDAMENTO")
-            page.reload()
+        } else {
+            dialog.setHeader("Reabrir conciliação")
+            dialog.setText("Você tem certeza que deseja reabrir? Um Administrador irá analisar a solicitação.")
+            dialog.setCancelable(true)
+            dialog.setCancelText("Cancelar")
+            dialog.setConfirmText("Confirmar")
+            dialog.addConfirmListener {
+                if (balancete.lancamentosContabeisList.isEmpty()) {
+                    contabeisService.createNewAndUpdate(balancete.id, conciliacao.responsavel?.id)
+                }
+                balancete.status = StatusConciliacao.PENDENT_REOPEN
+                checkStatusforDisableorEnableBtn(conciliacao)
+                balanceteService.update(balancete)
+                Notification.show("REQUISIÇÃO DE REABERTURA ENVIADA")
+                page.reload()
+            }
         }
+
         return dialog
     }
 
