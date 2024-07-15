@@ -10,6 +10,7 @@ import br.com.clearcont.clearcontwebapp.repository.EmpresaRepository
 import br.com.clearcont.clearcontwebapp.repository.ResponsavelRepository
 import br.com.clearcont.clearcontwebapp.service.BalanceteService
 import br.com.clearcont.clearcontwebapp.service.ComposicaoLancamentosContabeisService
+import br.com.clearcont.clearcontwebapp.shared.RESPONSAVEL_ID
 import br.com.clearcont.clearcontwebapp.views.components.GridFornecedores
 import br.com.clearcont.clearcontwebapp.views.components.MainLayout
 import com.vaadin.flow.component.UI
@@ -53,7 +54,7 @@ class FornecedoresView(
             getMonth { month: String? ->
                 verifySelectedCompanyAndMonthExistAndNavigate(empresa, month)
                 val cookieFactory = CookieFactory(VaadinResponse.getCurrent())
-                val responsavelID = cookieFactory.getCookieInteger("responsavel-id")
+                val responsavelID = cookieFactory.getCookieInteger(RESPONSAVEL_ID)
                 val responsavel = responsavelRepository.findById(responsavelID).orElseThrow()
                 val empresaId = empresa!!.id
                 val balanceteData =

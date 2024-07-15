@@ -2,6 +2,8 @@ package br.com.clearcont.clearcontwebapp.views.routes
 
 import br.com.clearcont.clearcontwebapp.helpers.CookieFactory
 import br.com.clearcont.clearcontwebapp.service.UserAppService
+import br.com.clearcont.clearcontwebapp.shared.COMPANY_GROUP_ID
+import br.com.clearcont.clearcontwebapp.shared.RESPONSAVEL_ID
 import com.vaadin.flow.component.dependency.CssImport
 import com.vaadin.flow.component.html.Image
 import com.vaadin.flow.component.login.LoginForm
@@ -46,9 +48,9 @@ class LoginView(service: UserAppService) : VerticalLayout(), BeforeEnterObserver
             val user = service.getUserByUserName(it.username)
             if (user != null) {
                 val cookieFactory = CookieFactory(VaadinResponse.getCurrent())
-                cookieFactory.setCookie("company-group-id", user.empresaGroup.id.toString())
-                cookieFactory.setCookie("username",it.username)
-                cookieFactory.setCookie("responsavel-id", user.responsavel?.id.toString())
+                cookieFactory.setCookie(COMPANY_GROUP_ID, user.empresaGroup.id.toString())
+                cookieFactory.setCookie("username", it.username)
+                cookieFactory.setCookie(RESPONSAVEL_ID, user.responsavel?.id.toString())
             } else {
                 Notification.show("Senha incorreta", 2000, Notification.Position.MIDDLE)
             }

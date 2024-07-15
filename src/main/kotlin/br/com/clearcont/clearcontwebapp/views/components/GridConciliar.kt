@@ -6,6 +6,7 @@ import br.com.clearcont.clearcontwebapp.models.enums.StatusConciliacao
 import br.com.clearcont.clearcontwebapp.repository.EmpresaRepository
 import br.com.clearcont.clearcontwebapp.repository.ResponsavelRepository
 import br.com.clearcont.clearcontwebapp.service.ComposicaoLancamentosContabeisService
+import br.com.clearcont.clearcontwebapp.shared.RESPONSAVEL_ID
 import br.com.clearcont.clearcontwebapp.views.components.details.BalanceteDetailsLayout
 import com.vaadin.flow.component.UI
 import com.vaadin.flow.component.datepicker.DatePicker
@@ -26,7 +27,6 @@ import java.time.format.DateTimeFormatter
 import java.util.*
 import java.util.logging.Logger
 
-
 class GridConciliar(
     balancete: Balancete,
     service: ComposicaoLancamentosContabeisService,
@@ -43,7 +43,7 @@ class GridConciliar(
         this.getCompany(empresaRepository) { empresa: Empresa? ->
             getMonth {
                 val cookieFactory = CookieFactory(VaadinResponse.getCurrent())
-                val responsavelID = cookieFactory.getCookieInteger("responsavel-id")
+                val responsavelID = cookieFactory.getCookieInteger(RESPONSAVEL_ID)
                 val responsavel = responsavelRepository.findById(responsavelID).orElseThrow()
                 val crud = GridCrud(ComposicaoLancamentosContabeisDTO::class.java)
                 val formFactory = DefaultCrudFormFactory(ComposicaoLancamentosContabeisDTO::class.java)

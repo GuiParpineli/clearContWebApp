@@ -12,6 +12,7 @@ import br.com.clearcont.clearcontwebapp.models.enums.TypeCount
 import br.com.clearcont.clearcontwebapp.repository.EmpresaRepository
 import br.com.clearcont.clearcontwebapp.repository.ResponsavelRepository
 import br.com.clearcont.clearcontwebapp.service.BalanceteService
+import br.com.clearcont.clearcontwebapp.shared.RESPONSAVEL_ID
 import br.com.clearcont.clearcontwebapp.views.components.MainLayout
 import com.vaadin.flow.component.UI
 import com.vaadin.flow.component.button.Button
@@ -58,7 +59,7 @@ class BalanceteView(
         this.getCompany(empresaRepository) { empresa: Empresa? ->
             getMonth { month: String? ->
                 verifySelectedCompanyAndMonthExistAndNavigate(empresa, month)
-                val responsavelID = cookieFactory.getCookieInteger("responsavel-id")
+                val responsavelID = cookieFactory.getCookieInteger(RESPONSAVEL_ID)
                 val responsavel = responsavelRepository.findById(responsavelID).orElseThrow()
                 val id = empresa?.id
                 val companyName = empresa?.nomeEmpresa

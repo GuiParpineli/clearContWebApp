@@ -15,6 +15,7 @@ import br.com.clearcont.clearcontwebapp.repository.ResponsavelRepository
 import br.com.clearcont.clearcontwebapp.service.BalanceteService
 import br.com.clearcont.clearcontwebapp.service.ComposicaoLancamentosContabeisService
 import br.com.clearcont.clearcontwebapp.service.FileUploadServiceImplement
+import br.com.clearcont.clearcontwebapp.shared.RESPONSAVEL_ID
 import br.com.clearcont.clearcontwebapp.views.components.GridConciliar
 import br.com.clearcont.clearcontwebapp.views.components.MainLayout
 import br.com.clearcont.clearcontwebapp.views.components.details.BalanceteDetailsLayout
@@ -47,7 +48,7 @@ private const val WAITING_REOPEN = "Aguardando Reabertura"
 @Route(value = "conciliar", layout = MainLayout::class)
 @PermitAll
 @PageTitle("Conciliar")
-class ConciliarView @Autowired constructor(
+class ConciliarView(
     private val service: BalanceteService,
     private val contabeisService: ComposicaoLancamentosContabeisService,
     private val anexoStorageService: FileUploadServiceImplement,
@@ -65,7 +66,7 @@ class ConciliarView @Autowired constructor(
         val cookieFactory = CookieFactory(VaadinResponse.getCurrent())
         val balanceteId = parameter.toLong()
         val balancete = service.getById(balanceteId)
-        val responsavel = responsavelRepository.findById(cookieFactory.getCookieInteger("responsavel-id")).orElseThrow()
+        val responsavel = responsavelRepository.findById(cookieFactory.getCookieInteger(RESPONSAVEL_ID)).orElseThrow()
 
         log.info("BALANCETE ID: $balanceteId")
         log.info("BALANCETE NOME DA CONTA:  ${balancete?.nomeConta}")
@@ -89,7 +90,8 @@ class ConciliarView @Autowired constructor(
             infoCards,
             empresaRepository
         ).also {
-            it.isEnabled = conciliacao.status != StatusConciliacao.OPEN && conciliacao.status != StatusConciliacao.CLOSED
+            it.isEnabled =
+                conciliacao.status != StatusConciliacao.OPEN && conciliacao.status != StatusConciliacao.CLOSED
         }
 
         val isf = InputStreamFactory { crud.exportToExcel(conciliacaoList) }
@@ -101,7 +103,7 @@ class ConciliarView @Autowired constructor(
 
 
         log.info("RESPONSAVEL NOME: " + responsavel.nome)
-        val dialogStart = getConfirmDialogStart(crud, startBtn, conciliacao, balancete)
+        val dialogStart = getConfirmDialogStart(startBtn, conciliacao, balancete)
         val dialogEnd = getConfirmDialogEnd(balancete)
 
         startBtn.addClickListener { dialogStart.open() }
@@ -164,7 +166,6 @@ class ConciliarView @Autowired constructor(
     }
 
     private fun getConfirmDialogStart(
-        crud: GridConciliar,
         startBtn: Button,
         conciliacao: ComposicaoLancamentosContabeisDTO,
         balancete: Balancete,
@@ -174,7 +175,7 @@ class ConciliarView @Autowired constructor(
         val page = ui.page
 
         if (startBtn.element.text.equals(START_CONCILIATION)) {
-            dialog.setHeader("Iniciar conciliação")
+            dialog.setHeader(START_CONCILIATION)
             dialog.setText("Você tem certeza que deseja iniciar? Essa alteração não pode ser desfeita.")
             dialog.setCancelable(true)
             dialog.setCancelText("Cancelar")
@@ -190,7 +191,7 @@ class ConciliarView @Autowired constructor(
                 page.reload()
             }
         } else {
-            dialog.setHeader("Reabrir conciliação")
+            dialog.setHeader(REOPEN_CONCILIATION)
             dialog.setText("Você tem certeza que deseja reabrir? Um Administrador irá analisar a solicitação.")
             dialog.setCancelable(true)
             dialog.setCancelText("Cancelar")
@@ -217,7 +218,7 @@ class ConciliarView @Autowired constructor(
         val ui = UI.getCurrent()
         val page = ui.page
 
-        dialog.setHeader("Finalizar conciliação")
+        dialog.setHeader(CLOSE_CONCILIATION)
         dialog.setText("Você tem certeza que deseja finalizar? Essa alteração não pode ser desfeita.")
         dialog.setCancelable(true)
         dialog.setCancelText("Cancelar")

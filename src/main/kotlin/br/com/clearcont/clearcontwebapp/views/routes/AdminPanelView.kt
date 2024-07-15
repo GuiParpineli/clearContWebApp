@@ -5,9 +5,9 @@ import br.com.clearcont.clearcontwebapp.helpers.MonthAndCompany
 import br.com.clearcont.clearcontwebapp.helpers.createTitle
 import br.com.clearcont.clearcontwebapp.models.*
 import br.com.clearcont.clearcontwebapp.models.enums.Role
-import br.com.clearcont.clearcontwebapp.models.enums.StatusConciliacao
 import br.com.clearcont.clearcontwebapp.repository.ResponsavelRepository
 import br.com.clearcont.clearcontwebapp.service.*
+import br.com.clearcont.clearcontwebapp.shared.COMPANY_GROUP_ID
 import br.com.clearcont.clearcontwebapp.views.components.MainLayout
 import com.vaadin.flow.component.Component
 import com.vaadin.flow.component.button.Button
@@ -54,9 +54,7 @@ class AdminPanelView(
     init {
         val title = createTitle("Admin Panel").apply { width = "50%" }
 
-        val addCard = Button("Adicionar Usuário").apply {
-            addClickListener { showForm(addUserForm) }
-        }
+        val addCard = Button("Adicionar Usuário").apply { addClickListener { showForm(addUserForm) } }
 
         val removeCard = Button("Remover Usuário / Atualizar Usuário ").apply {
             addClickListener { showForm(removeUserForm) }
@@ -87,15 +85,15 @@ class AdminPanelView(
 
     private fun setupConciliarForm(): GridCrud<ComposicaoLancamentosContabeis> {
         val cookieFactory = CookieFactory(VaadinResponse.getCurrent())
-        val empresaGroupID = cookieFactory.getCookieInteger("company-group-id")
+        val empresaGroupID = cookieFactory.getCookieInteger(COMPANY_GROUP_ID)
         val formFactory = DefaultCrudFormFactory(ComposicaoLancamentosContabeis::class.java).apply {
             setVisibleProperties("status")
         }
         val crud = GridCrud(ComposicaoLancamentosContabeis::class.java).apply {
             crudFormFactory = formFactory
-            grid.setColumns("status", "balancete.nomeConta", "balancete.ano","balancete.mes")
+            grid.setColumns("status", "balancete.nomeConta", "balancete.ano", "balancete.mes")
             setFindAllOperation { composicaoLancamentosContabeisService.findAllStatusReopen(empresaGroupID) }
-            setUpdateOperation{
+            setUpdateOperation {
                 it.balancete!!.status = it.status!!
                 balanceteService.update(it.balancete!!)
                 composicaoLancamentosContabeisService.update(it)
@@ -107,7 +105,7 @@ class AdminPanelView(
 
     private fun setupEmpresa(): GridCrud<Empresa> {
         val cookieFactory = CookieFactory(VaadinResponse.getCurrent())
-        val empresaGroupID = cookieFactory.getCookieInteger("company-group-id")
+        val empresaGroupID = cookieFactory.getCookieInteger(COMPANY_GROUP_ID)
 
         val formFactory = DefaultCrudFormFactory(Empresa::class.java)
         formFactory.setVisibleProperties("nomeEmpresa", "cnpj", "email")
@@ -165,7 +163,7 @@ class AdminPanelView(
     private fun setupAddUserForm(): FormLayout {
         val cookieFactory = CookieFactory(VaadinResponse.getCurrent())
         val userForm = FormLayout()
-        val id = cookieFactory.getCookieInteger("company-group-id")
+        val id = cookieFactory.getCookieInteger(COMPANY_GROUP_ID)
 
         val usernameField = TextField("Username")
         val nameField = TextField("Name")
