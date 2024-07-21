@@ -145,7 +145,6 @@ class DataLoader(
         if (responsavelRepository.findAll().isEmpty()) {
             responsavelAdmin = responsavelRepository.save(
                 Responsavel(
-                    null,
                     "Admin",
                     "admin@gmail.com",
                     empresaRepository.findById(1L).get()
@@ -153,7 +152,6 @@ class DataLoader(
             )
             responsavel = responsavelRepository.save(
                 Responsavel(
-                    null,
                     "Carlos",
                     "carlos@gmail.com",
                     empresaRepository.findById(1L).get()
@@ -161,7 +159,6 @@ class DataLoader(
             )
             responsavel2 = responsavelRepository.save(
                 Responsavel(
-                    null,
                     "Alberto",
                     "alberto@gmail.com",
                     empresaRepository.findById(1L).get()
@@ -169,7 +166,6 @@ class DataLoader(
             )
             responsavel3 = responsavelRepository.save(
                 Responsavel(
-                    null,
                     "Jessica",
                     "jessica@gmail.com",
                     empresaRepository.findById(1L).get()
@@ -177,7 +173,6 @@ class DataLoader(
             )
             responsavel4 = responsavelRepository.save(
                 Responsavel(
-                    null,
                     "Jose",
                     "jose@gmail.com",
                     empresaRepository.findById(2L).get()

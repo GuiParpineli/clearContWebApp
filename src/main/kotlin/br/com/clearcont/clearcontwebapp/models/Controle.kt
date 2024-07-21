@@ -12,6 +12,7 @@ class Controle(
     val id: Long? = null,
     val subGrupo: String? = null,
     val circulante: TypeCount? = null,
+    @Column(length = 30)
     val nomeConta: String? = null,
     val doubleSaldoBalancete: Double = 0.0,
     val doubleSaldoAnalise: Double= 0.0,

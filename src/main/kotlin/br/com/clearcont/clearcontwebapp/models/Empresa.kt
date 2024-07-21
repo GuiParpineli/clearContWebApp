@@ -1,9 +1,6 @@
 package br.com.clearcont.clearcontwebapp.models
 
-import jakarta.persistence.Entity
-import jakarta.persistence.GeneratedValue
-import jakarta.persistence.GenerationType
-import jakarta.persistence.Id
+import jakarta.persistence.*
 import jakarta.validation.constraints.Email
 import org.hibernate.validator.constraints.br.CNPJ
 
@@ -13,6 +10,7 @@ class Empresa(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long? = null,
+    @Column(length = 50)
     var nomeEmpresa: String? = null,
     @CNPJ
     var cnpj: String? = null,

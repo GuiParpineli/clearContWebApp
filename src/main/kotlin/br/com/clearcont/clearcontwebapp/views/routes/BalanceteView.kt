@@ -91,67 +91,57 @@ class BalanceteView(
         }
     }
 
-    private fun getUpload(
-        service: BalanceteService,
-        empresa: Empresa,
-        month: String,
-        responsavel: Responsavel
-    ): Upload {
-        val memoryBuffer = MemoryBuffer()
-        val singleFileUpload = Upload(memoryBuffer)
+private fun getUpload(
+    service: BalanceteService,
+    empresa: Empresa,
+    month: String,
+    responsavel: Responsavel
+): Upload {
+    val memoryBuffer = MemoryBuffer()
+    val singleFileUpload = Upload(memoryBuffer)
 
-        singleFileUpload.addSucceededListener {
-            try {
-                val workbook: Workbook = XSSFWorkbook(memoryBuffer.inputStream)
-                val sheet = workbook.getSheetAt(0)
-                val rowIterator: Iterator<Row> = sheet.iterator()
-                if (rowIterator.hasNext()) rowIterator.next()
-                val balancetes: MutableList<Balancete> = ArrayList()
+    singleFileUpload.addSucceededListener {
+        try {
+            val workbook: Workbook = XSSFWorkbook(memoryBuffer.inputStream)
+            val sheet = workbook.getSheetAt(0)
+            val balancetes = mutableListOf<Balancete>()
 
-                while (rowIterator.hasNext()) {
+            sheet.drop(1).forEach { row ->
+                val nomeConta = row.getCell(0)?.stringCellValue
+                val numeroConta = row.getCell(1)?.numericCellValue?.toInt()
+                val totalBalancete = row.getCell(2)?.numericCellValue
+                val classificacao = row.getCell(3)?.stringCellValue?.uppercase()?.let { TypeCount.valueOf(it) }
+                val tipo = row.getCell(4)?.stringCellValue?.uppercase()?.let { TipoConta.valueOf(it) } ?: TipoConta.INDEFINIDO
 
-                    val row = rowIterator.next()
-
-                    row.getCell(0)?.stringCellValue?.let { nomeConta ->
-                        row.getCell(1)?.numericCellValue?.let { numeroConta ->
-                            row.getCell(2)?.numericCellValue?.let { totalBalancete ->
-                                row.getCell(3)?.stringCellValue?.let { classificacao ->
-                                    Balancete(
-                                        id = 0L,
-                                        empresa = empresa,
-                                        nomeConta = nomeConta,
-                                        numeroConta = numeroConta.toInt(),
-                                        totalBalancete = totalBalancete,
-                                        classificacao = TypeCount.valueOf(classificacao.uppercase()),
-                                        mes = month,
-                                        ano = LocalDate.now().year,
-                                        lancamentosContabeisList = mutableListOf(
-                                            ComposicaoLancamentosContabeis(
-                                                responsavel
-                                            )
-                                        ),
-                                        tipo = row.getCell(4)?.stringCellValue?.uppercase()
-                                            ?.let { TipoConta.valueOf(it) } ?: TipoConta.INDEFINIDO
-                                    )
-                                }
-                            }
-                        }
-                    }?.let { element -> balancetes.add(element) }
+                if (nomeConta != null && numeroConta != null && totalBalancete != null && classificacao != null) {
+                    balancetes.add(
+                        Balancete(
+                            id = 0L,
+                            empresa = empresa,
+                            nomeConta = nomeConta,
+                            numeroConta = numeroConta,
+                            totalBalancete = totalBalancete,
+                            classificacao = classificacao,
+                            mes = month,
+                            ano = LocalDate.now().year,
+                            lancamentosContabeisList = mutableListOf(ComposicaoLancamentosContabeis(responsavel)),
+                            tipo = tipo
+                        )
+                    )
                 }
-
-                log.info("TAMANHO BALANTE INSERIDO : ${balancetes.size}")
-
-                workbook.close()
-                service.saveAll(empresa.id!!, balancetes)
-                UI.getCurrent().page.reload()
-
-            } catch (e: IOException) {
-                log.info("ERRO: ${e.message}")
             }
-        }
 
-        return singleFileUpload
+            log.info("TAMANHO BALANTE INSERIDO : ${balancetes.size}")
+            workbook.close()
+            service.saveAll(empresa.id!!, balancetes)
+            UI.getCurrent().page.reload()
+        } catch (e: IOException) {
+            log.info("ERRO: ${e.message}")
+        }
     }
+
+    return singleFileUpload
+}
 
     private fun getBalanceteGridCrud(service: BalanceteService, balanceteData: List<Balancete>): GridCrud<Balancete> {
         val formFactory = DefaultCrudFormFactory(Balancete::class.java)

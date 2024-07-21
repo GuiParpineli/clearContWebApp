@@ -8,7 +8,9 @@ class FileUpload {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long? = null
+    @Column(length = 50)
     var name: String? = null
+    @Column(length = 10)
     var ext: String? = null
     var createdTime: Timestamp? = null
 

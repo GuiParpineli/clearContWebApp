@@ -5,6 +5,7 @@ import br.com.clearcont.clearcontwebapp.helpers.MonthAndCompany
 import br.com.clearcont.clearcontwebapp.helpers.createTitle
 import br.com.clearcont.clearcontwebapp.models.*
 import br.com.clearcont.clearcontwebapp.models.enums.Role
+import br.com.clearcont.clearcontwebapp.models.enums.StatusConciliacao
 import br.com.clearcont.clearcontwebapp.repository.ResponsavelRepository
 import br.com.clearcont.clearcontwebapp.service.*
 import br.com.clearcont.clearcontwebapp.shared.COMPANY_GROUP_ID
@@ -12,6 +13,7 @@ import br.com.clearcont.clearcontwebapp.views.components.MainLayout
 import com.vaadin.flow.component.Component
 import com.vaadin.flow.component.button.Button
 import com.vaadin.flow.component.formlayout.FormLayout
+import com.vaadin.flow.component.grid.Grid
 import com.vaadin.flow.component.html.Div
 import com.vaadin.flow.component.notification.Notification
 import com.vaadin.flow.component.orderedlayout.FlexComponent
@@ -23,6 +25,7 @@ import com.vaadin.flow.component.textfield.PasswordField
 import com.vaadin.flow.component.textfield.TextField
 import com.vaadin.flow.router.PageTitle
 import com.vaadin.flow.router.Route
+import com.vaadin.flow.server.VaadinConfig
 import com.vaadin.flow.server.VaadinResponse
 import jakarta.annotation.security.RolesAllowed
 import org.vaadin.crudui.crud.CrudOperation
@@ -49,7 +52,7 @@ class AdminPanelView(
     private val addUserForm: FormLayout by lazy { setupAddUserForm() }
     private val removeUserForm: GridCrud<ApplicationUser> by lazy { setupRemoveUpdateUserForm() }
     private val setupCompany: GridCrud<Empresa> by lazy { setupEmpresa() }
-    private val setupConciliar: GridCrud<ComposicaoLancamentosContabeis> by lazy { setupConciliarForm() }
+    private val setupConciliar: Grid<Balancete> by lazy { setupConciliarForm() }
 
     init {
         val title = createTitle("Admin Panel").apply { width = "50%" }
@@ -83,24 +86,55 @@ class AdminPanelView(
         log.info("Showing form")
     }
 
-    private fun setupConciliarForm(): GridCrud<ComposicaoLancamentosContabeis> {
+    private fun setupConciliarForm(): Grid<Balancete> {
+
         val cookieFactory = CookieFactory(VaadinResponse.getCurrent())
         val empresaGroupID = cookieFactory.getCookieInteger(COMPANY_GROUP_ID)
-        val formFactory = DefaultCrudFormFactory(ComposicaoLancamentosContabeis::class.java).apply {
-            setVisibleProperties("status")
-        }
-        val crud = GridCrud(ComposicaoLancamentosContabeis::class.java).apply {
-            crudFormFactory = formFactory
-            grid.setColumns("status", "balancete.nomeConta", "balancete.ano", "balancete.mes")
-            setFindAllOperation { composicaoLancamentosContabeisService.findAllStatusReopen(empresaGroupID) }
-            setUpdateOperation {
-                it.balancete!!.status = it.status!!
-                balanceteService.update(it.balancete!!)
-                composicaoLancamentosContabeisService.update(it)
+        val compositionForReopen = composicaoLancamentosContabeisService.findAllStatusReopen(empresaGroupID)
+
+        val grid = Grid(Balancete::class.java, false).apply {
+            if (compositionForReopen.isNotEmpty()) {
+                addColumn { it.status.value }.setHeader("Status")
+                addColumn { it.nomeConta }.setHeader("Nome da Conta")
+                addColumn { it.numeroConta }.setHeader("Numero da Conta")
+                addColumn { compositionForReopen.first().responsavel }.setHeader("Responsavel")
             }
         }
-        add(crud)
-        return crud
+
+        grid.addComponentColumn { item ->
+            Button("Reabrir") {
+                item.status = StatusConciliacao.PROGRESS
+                balanceteService.update(item)
+                refreshGrid(grid)
+            }.apply { style.setColor("--lumo-primary-color") }
+        }.setHeader("Ações")
+
+        add(grid)
+        refreshGrid(grid)
+        return grid
+    }
+
+    private fun updateGridVisibility(
+        grid: Grid<Balancete>,
+        compositionForReopen: List<ComposicaoLancamentosContabeis>
+    ) {
+        grid.isEnabled = compositionForReopen.isNotEmpty()
+    }
+
+    private fun refreshGrid(grid: Grid<Balancete>) {
+        val cookieFactory = CookieFactory(VaadinResponse.getCurrent())
+        val empresaGroupID = cookieFactory.getCookieInteger(COMPANY_GROUP_ID)
+        val compositionForReopen = composicaoLancamentosContabeisService.findAllStatusReopen(empresaGroupID)
+
+        val balancete = if (compositionForReopen.isEmpty()) {
+            Notification.show("Nenhuma conciliação para reabrir")
+            emptyList()
+        } else {
+            listOf(compositionForReopen.map { it.balancete }.firstOrNull())
+        }
+
+        grid.setItems(balancete)
+        updateGridVisibility(grid, compositionForReopen)
     }
 
     private fun setupEmpresa(): GridCrud<Empresa> {

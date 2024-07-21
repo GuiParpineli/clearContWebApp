@@ -16,11 +16,12 @@ class Balancete(
     val id: Long? = null,
     @ManyToOne
     var empresa: Empresa? = null,
-    var nomeConta: String = "",
+    @Column(length = 30) var nomeConta: String = "",
     var numeroConta: Int = 0,
     private var totalBalancete: Double = 0.0,
     @Enumerated(EnumType.STRING)
     var classificacao: TypeCount = TypeCount.ATIVO,
+    @Column(length = 30)
     var mes: String = Period.getPortugueseMonthName(LocalDate.now().month),
     val ano: Int = LocalDate.now().year,
     @OneToMany(

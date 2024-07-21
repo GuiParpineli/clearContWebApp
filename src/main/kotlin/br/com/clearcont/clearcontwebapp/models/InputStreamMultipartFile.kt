@@ -8,7 +8,7 @@ import java.io.IOException
 import java.io.InputStream
 
 class InputStreamMultipartFile() : MultipartFile {
-    constructor(inputStream: InputStream, FileName: String) : this() {
+    constructor(inputStream: InputStream, fileName: String) : this() {
     }
 
     override fun getName(): String {

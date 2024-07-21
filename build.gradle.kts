@@ -38,8 +38,8 @@ repositories {
     }
 }
 
-extra["springBootAdminVersion"] = "3.2.3"
-extra["vaadinVersion"] = "24.3.8"
+extra["springBootAdminVersion"] = "3.3.3"
+extra["vaadinVersion"] = "24.4.6"
 
 dependencies {
     implementation("org.springframework.boot:spring-boot-starter-actuator:3.2.5")
@@ -57,8 +57,11 @@ dependencies {
     implementation("jakarta.servlet:jakarta.servlet-api:6.0.0")
     implementation("de.codecentric:spring-boot-admin-starter-client:3.2.3")
     implementation("commons-io:commons-io:2.16.1")
-    implementation("org.jetbrains.kotlin:kotlin-reflect:1.9.23")
-    implementation("com.amazonaws:aws-java-sdk-s3:1.12.706")
+    implementation("org.jetbrains.kotlin:kotlin-reflect:2.0.0")
+    implementation("com.amazonaws:aws-java-sdk-s3:1.12.761")
+
+    implementation("org.flywaydb:flyway-core:10.15.2")
+    implementation("org.flywaydb:flyway-mysql:10.15.2")
 
     developmentOnly("org.springframework.boot:spring-boot-devtools:3.2.5")
     runtimeOnly("com.mysql:mysql-connector-j:8.3.0")
