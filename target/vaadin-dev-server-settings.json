@@ -1,0 +1,17 @@
+{
+  "frontendFolder": "C:/Users/guipa/IdeaProjects/clearContWebApp/./frontend",
+  "themeFolder": "themes",
+  "themeResourceFolder": "C:/Users/guipa/IdeaProjects/clearContWebApp/./frontend/generated/jar-resources",
+  "staticOutput": "C:/Users/guipa/IdeaProjects/clearContWebApp/target/classes/META-INF/VAADIN/webapp/VAADIN/static",
+  "generatedFolder": "generated",
+  "statsOutput": "C:\\Users\\guipa\\IdeaProjects\\clearContWebApp\\target\\classes\\META-INF\\VAADIN\\config",
+  "frontendBundleOutput": "C:\\Users\\guipa\\IdeaProjects\\clearContWebApp\\target\\classes\\META-INF\\VAADIN\\webapp",
+  "devBundleOutput": "C:/Users/guipa/IdeaProjects/clearContWebApp/target/dev-bundle/webapp",
+  "devBundleStatsOutput": "C:/Users/guipa/IdeaProjects/clearContWebApp/target/dev-bundle/config",
+  "jarResourcesFolder": "C:/Users/guipa/IdeaProjects/clearContWebApp/./frontend/generated/jar-resources",
+  "themeName": "",
+  "clientServiceWorkerSource": "C:\\Users\\guipa\\IdeaProjects\\clearContWebApp\\target\\sw.ts",
+  "pwaEnabled": false,
+  "offlineEnabled": false,
+  "offlinePath": "'offline.html'"
+}
