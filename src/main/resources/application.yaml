@@ -34,4 +34,4 @@ logging:
   file:
     path: /logs
 
-version: 0.9.12
+version: 0.9.8
