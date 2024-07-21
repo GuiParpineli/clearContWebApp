@@ -25,6 +25,7 @@ import com.vaadin.flow.component.confirmdialog.ConfirmDialog
 import com.vaadin.flow.component.html.H1
 import com.vaadin.flow.component.icon.Icon
 import com.vaadin.flow.component.notification.Notification
+import com.vaadin.flow.component.notification.NotificationVariant
 import com.vaadin.flow.component.orderedlayout.FlexComponent
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout
 import com.vaadin.flow.component.orderedlayout.VerticalLayout
@@ -186,7 +187,11 @@ class ConciliarView(
                 balancete.status = StatusConciliacao.PROGRESS
                 checkStatusforDisableorEnableBtn(conciliacao)
                 balanceteService.update(balancete)
-                Notification.show("CONCIALIAÇÃO EM ANDAMENTO")
+                Notification.show("CONCIALIAÇÃO EM ANDAMENTO").apply {
+                    addThemeVariants(NotificationVariant.LUMO_SUCCESS)
+                    duration = 2000
+                    position = Notification.Position.TOP_CENTER
+                }
                 page.reload()
             }
         } else if (authenticatedUser.get().isPresent && authenticatedUser.get().get().roles.contains(Role.ADMIN)) {
@@ -202,7 +207,11 @@ class ConciliarView(
                 balancete.status = StatusConciliacao.PROGRESS
                 checkStatusforDisableorEnableBtn(conciliacao)
                 balanceteService.update(balancete)
-                Notification.show("Conciliação Reaberta : Em progresso")
+                Notification.show("Conciliação Reaberta : Em progresso").apply {
+                    addThemeVariants(NotificationVariant.LUMO_SUCCESS)
+                    duration = 2000
+                    position = Notification.Position.TOP_CENTER
+                }
                 page.reload()
             }
         } else if (startBtn.element.text.equals(REOPEN_CONCILIATION)) {
@@ -218,7 +227,11 @@ class ConciliarView(
                 balancete.status = StatusConciliacao.PENDENT_REOPEN
                 checkStatusforDisableorEnableBtn(conciliacao)
                 balanceteService.update(balancete)
-                Notification.show("REQUISIÇÃO DE REABERTURA ENVIADA")
+                Notification.show("REQUISIÇÃO DE REABERTURA ENVIADA").apply {
+                    addThemeVariants(NotificationVariant.LUMO_SUCCESS)
+                    duration = 2000
+                    position = Notification.Position.TOP_CENTER
+                }
                 page.reload()
             }
         }
@@ -241,7 +254,11 @@ class ConciliarView(
         dialog.addConfirmListener {
             balancete.status = StatusConciliacao.CLOSED
             balanceteService.update(balancete)
-            Notification.show("CONCIALIAÇÃO FINALIZADA")
+            Notification.show("CONCIALIAÇÃO FINALIZADA").apply {
+                addThemeVariants(NotificationVariant.LUMO_SUCCESS)
+                duration = 2000
+                position = Notification.Position.TOP_CENTER
+            }
             page.reload()
         }
         return dialog

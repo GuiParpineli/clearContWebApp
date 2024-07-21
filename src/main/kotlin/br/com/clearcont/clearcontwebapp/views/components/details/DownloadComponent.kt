@@ -13,6 +13,7 @@ import com.vaadin.flow.component.html.H3
 import com.vaadin.flow.component.icon.Icon
 import com.vaadin.flow.component.icon.VaadinIcon
 import com.vaadin.flow.component.notification.Notification
+import com.vaadin.flow.component.notification.NotificationVariant
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout
 import com.vaadin.flow.component.orderedlayout.VerticalLayout
 import com.vaadin.flow.component.upload.SucceededEvent
@@ -64,7 +65,11 @@ class DownloadComponent(
                 val inputStream = multiFileMemoryBuffer.getInputStream(event.fileName)
                 val multipartFile: MultipartFile = InputStreamMultipartFile(inputStream, event.fileName)
                 anexoStorageService.saveFile(multipartFile, lancamentosContabeis, companyName)
-                Notification.show("Arquivo Anexado")
+                Notification.show("Arquivo Anexado").apply {
+                    addThemeVariants(NotificationVariant.LUMO_SUCCESS)
+                    duration = 2000
+                    position = Notification.Position.TOP_CENTER
+                }
                 addDownloadButtons(lancamentosContabeis.id)
 
                 // Aqui para limpar o campo após o upload
@@ -114,7 +119,11 @@ class DownloadComponent(
                 val removeButton = Button("Remover", Icon(VaadinIcon.TRASH))
                 removeButton.addClickListener {
                     anexoStorageService.deleteFile(anexo.id, companyName)
-                    Notification.show("Arquivo removido")
+                    Notification.show("Arquivo removido").apply {
+                        addThemeVariants(NotificationVariant.LUMO_SUCCESS)
+                        duration = 2000
+                        position = Notification.Position.TOP_CENTER
+                    }
                     addDownloadButtons(composicaoId)
                 }
 

@@ -13,6 +13,7 @@ import com.vaadin.flow.component.UI
 import com.vaadin.flow.component.grid.Grid
 import com.vaadin.flow.component.html.Div
 import com.vaadin.flow.component.notification.Notification
+import com.vaadin.flow.component.notification.NotificationVariant
 import com.vaadin.flow.component.orderedlayout.FlexComponent
 import com.vaadin.flow.component.orderedlayout.VerticalLayout
 import com.vaadin.flow.router.PageTitle
@@ -87,7 +88,11 @@ class ControleView(service: ControleService, empresaRepository: EmpresaRepositor
 
     private fun verifySelectedCompanyAndMonthExistAndNavigate(empresa: Empresa?, month: String?) {
         if (empresa == null || month == null || empresa.nomeEmpresa == null) {
-            Notification.show("Selecione uma empresa e periodo")
+            Notification.show("Selecione uma empresa e periodo").apply {
+                addThemeVariants(NotificationVariant.LUMO_WARNING)
+                duration = 2000
+                position = Notification.Position.TOP_CENTER
+            }
             UI.getCurrent().navigate("/")
         }
     }

@@ -16,6 +16,7 @@ import com.vaadin.flow.component.formlayout.FormLayout
 import com.vaadin.flow.component.grid.Grid
 import com.vaadin.flow.component.html.Div
 import com.vaadin.flow.component.notification.Notification
+import com.vaadin.flow.component.notification.NotificationVariant
 import com.vaadin.flow.component.orderedlayout.FlexComponent
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout
 import com.vaadin.flow.component.orderedlayout.VerticalLayout
@@ -82,6 +83,7 @@ class AdminPanelView(
         addUserForm.isVisible = false
         removeUserForm.isVisible = false
         setupCompany.isVisible = false
+        setupConciliar.isVisible = false
         component.isVisible = true
         log.info("Showing form")
     }
@@ -110,6 +112,7 @@ class AdminPanelView(
         }.setHeader("Ações")
 
         add(grid)
+        grid.isVisible = false
         refreshGrid(grid)
         return grid
     }
@@ -127,7 +130,11 @@ class AdminPanelView(
         val compositionForReopen = composicaoLancamentosContabeisService.findAllStatusReopen(empresaGroupID)
 
         val balancete = if (compositionForReopen.isEmpty()) {
-            Notification.show("Nenhuma conciliação para reabrir")
+            Notification.show("Nenhuma conciliação para reabrir").apply {
+                addThemeVariants(NotificationVariant.LUMO_WARNING)
+                duration = 2000
+                position = Notification.Position.TOP_CENTER
+            }
             emptyList()
         } else {
             listOf(compositionForReopen.map { it.balancete }.firstOrNull())
@@ -228,7 +235,11 @@ class AdminPanelView(
                 )
                 userService.save(user)
                 responsavelRepository.save(Responsavel(email.value, user, empresaPicker.value))
-                Notification.show("Usuario salvo com sucesso!")
+                Notification.show("Usuario salvo com sucesso!").apply {
+                    addThemeVariants(NotificationVariant.LUMO_SUCCESS)
+                    duration = 2000
+                    position = Notification.Position.TOP_CENTER
+                }
 
                 cleanInputs(usernameField, nameField, passwordField, rolesField, empresaPicker, email)
             }
@@ -269,46 +280,4 @@ class AdminPanelView(
         empresaPicker.clear()
         email.clear()
     }
-
-//    private fun setupComposicaoForm(): FormLayout {
-//        val composicaoForm = FormLayout()
-//
-//        val dataField = DatePicker("Data")
-//        val historicoField = TextField("Historico")
-//        val debitoField = NumberField("Debito")
-//        val creditoField = NumberField("Credito")
-//        val saldoContabilField = NumberField("Saldo Contabil")
-//        val statusField = Select<StatusConciliacao>().apply {
-//            label = "Status"
-//            setItems(StatusConciliacao.entries)
-//        }
-//
-//        val saveButton = Button("Save").apply {
-//            addClickListener {
-//                val composicao = ComposicaoLancamentosContabeis(
-//                    data = dataField.value,
-//                    historico = historicoField.value,
-//                    debito = debitoField.value,
-//                    credito = creditoField.value,
-//                    doubleSaldoContabil = saldoContabilField.value,
-//                    balancete = null,
-//                    responsavel = Responsavel(),
-//                    composicaoLancamentosContabeisFull = ComposicaoLancamentosContabeis()
-//                )
-//                composicaoService.save(composicao)
-//            }
-//        }
-//
-//        composicaoForm.add(
-//            dataField,
-//            historicoField,
-//            debitoField,
-//            creditoField,
-//            saldoContabilField,
-//            statusField,
-//            saveButton
-//        )
-//
-//        return composicaoForm
-//    }
 }

@@ -9,6 +9,7 @@ import com.vaadin.flow.component.html.Image
 import com.vaadin.flow.component.login.LoginForm
 import com.vaadin.flow.component.login.LoginI18n
 import com.vaadin.flow.component.notification.Notification
+import com.vaadin.flow.component.notification.NotificationVariant
 import com.vaadin.flow.component.orderedlayout.FlexComponent
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout
 import com.vaadin.flow.component.orderedlayout.VerticalLayout
@@ -52,7 +53,11 @@ class LoginView(service: UserAppService) : VerticalLayout(), BeforeEnterObserver
                 cookieFactory.setCookie("username", it.username)
                 cookieFactory.setCookie(RESPONSAVEL_ID, user.responsavel?.id.toString())
             } else {
-                Notification.show("Senha incorreta", 2000, Notification.Position.MIDDLE)
+                Notification.show("Senha incorreta").apply {
+                    addThemeVariants(NotificationVariant.LUMO_ERROR)
+                    duration = 2000
+                    position = Notification.Position.TOP_CENTER
+                }
             }
         }
         val logo = Image("./images/logo-clear-black.png", "Logo").apply {
