@@ -25,7 +25,7 @@ spring:
         dialect: org.hibernate.dialect.MySQLDialect
         format_sql: true
     hibernate:
-      ddl-auto: update
+      ddl-auto: none
 jwt:
   auth:
     secret: J6GOtcwC2NJI1l0VkHu20PacPFGTxpirBxWwynoHjsc=
