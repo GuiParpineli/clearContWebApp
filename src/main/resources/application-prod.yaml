@@ -26,8 +26,6 @@ spring:
         format_sql: true
     hibernate:
       ddl-auto: update
-vaadin:
-  whitelisted-packages: com.vaadin, org.vaadin, com.storedobject
 jwt:
   auth:
     secret: J6GOtcwC2NJI1l0VkHu20PacPFGTxpirBxWwynoHjsc=

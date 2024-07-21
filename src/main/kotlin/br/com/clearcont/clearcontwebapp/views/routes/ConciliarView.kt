@@ -36,7 +36,6 @@ import com.vaadin.flow.server.InputStreamFactory
 import com.vaadin.flow.server.StreamResource
 import com.vaadin.flow.server.VaadinResponse
 import jakarta.annotation.security.PermitAll
-import org.springframework.beans.factory.annotation.Autowired
 import java.util.logging.Logger
 
 private const val CLOSE_CONCILIATION = "Fechar Conciliação"
@@ -190,7 +189,23 @@ class ConciliarView(
                 Notification.show("CONCIALIAÇÃO EM ANDAMENTO")
                 page.reload()
             }
-        } else {
+        } else if (authenticatedUser.get().isPresent && authenticatedUser.get().get().roles.contains(Role.ADMIN)) {
+            dialog.setHeader(REOPEN_CONCILIATION)
+            dialog.setText("Você tem certeza que deseja reabrir?")
+            dialog.setCancelable(true)
+            dialog.setCancelText("Cancelar")
+            dialog.setConfirmText("Confirmar")
+            dialog.addConfirmListener {
+                if (balancete.lancamentosContabeisList.isEmpty()) {
+                    contabeisService.createNewAndUpdate(balancete.id, conciliacao.responsavel?.id)
+                }
+                balancete.status = StatusConciliacao.PROGRESS
+                checkStatusforDisableorEnableBtn(conciliacao)
+                balanceteService.update(balancete)
+                Notification.show("Conciliação Reaberta : Em progresso")
+                page.reload()
+            }
+        } else if (startBtn.element.text.equals(REOPEN_CONCILIATION)) {
             dialog.setHeader(REOPEN_CONCILIATION)
             dialog.setText("Você tem certeza que deseja reabrir? Um Administrador irá analisar a solicitação.")
             dialog.setCancelable(true)
