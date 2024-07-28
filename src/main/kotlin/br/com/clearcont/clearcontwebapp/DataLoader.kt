@@ -5,8 +5,8 @@ import br.com.clearcont.clearcontwebapp.models.enums.Role
 import br.com.clearcont.clearcontwebapp.models.enums.StatusConciliacao
 import br.com.clearcont.clearcontwebapp.models.enums.TipoConta
 import br.com.clearcont.clearcontwebapp.models.enums.TypeCount
-import br.com.clearcont.clearcontwebapp.repository.*
-import br.com.clearcont.clearcontwebapp.service.ComposicaoLancamentosContabeisService
+import br.com.clearcont.clearcontwebapp.repositories.*
+import br.com.clearcont.clearcontwebapp.services.impl.ComposicaoLancamentosContabeisService
 import jakarta.transaction.Transactional
 import org.springframework.boot.ApplicationArguments
 import org.springframework.boot.ApplicationRunner

@@ -1,10 +1,9 @@
 package br.com.clearcont.clearcontwebapp.views.components.details
 
-import br.com.clearcont.clearcontwebapp.helpers.formatCurrencyBR
+import br.com.clearcont.clearcontwebapp.utils.helpers.formatCurrencyBR
 import br.com.clearcont.clearcontwebapp.models.Balancete
 import br.com.clearcont.clearcontwebapp.models.ComposicaoLancamentosContabeis
-import br.com.clearcont.clearcontwebapp.models.ComposicaoLancamentosContabeisDTO
-import br.com.clearcont.clearcontwebapp.service.FileUploadServiceImplement
+import br.com.clearcont.clearcontwebapp.services.impl.FileUploadServiceImplement
 import com.vaadin.flow.component.Text
 import com.vaadin.flow.component.html.Div
 import com.vaadin.flow.component.html.H3

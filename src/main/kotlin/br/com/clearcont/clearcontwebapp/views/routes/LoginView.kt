@@ -1,9 +1,9 @@
 package br.com.clearcont.clearcontwebapp.views.routes
 
-import br.com.clearcont.clearcontwebapp.helpers.CookieFactory
-import br.com.clearcont.clearcontwebapp.service.UserAppService
-import br.com.clearcont.clearcontwebapp.shared.COMPANY_GROUP_ID
-import br.com.clearcont.clearcontwebapp.shared.RESPONSAVEL_ID
+import br.com.clearcont.clearcontwebapp.utils.helpers.CookieFactory
+import br.com.clearcont.clearcontwebapp.services.impl.UserAppService
+import br.com.clearcont.clearcontwebapp.utils.shared.COMPANY_GROUP_ID
+import br.com.clearcont.clearcontwebapp.utils.shared.RESPONSAVEL_ID
 import com.vaadin.flow.component.dependency.CssImport
 import com.vaadin.flow.component.html.Image
 import com.vaadin.flow.component.login.LoginForm

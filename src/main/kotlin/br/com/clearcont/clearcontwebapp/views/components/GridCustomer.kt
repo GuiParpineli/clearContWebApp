@@ -1,13 +1,13 @@
 package br.com.clearcont.clearcontwebapp.views.components
 
-import br.com.clearcont.clearcontwebapp.helpers.generateExcelDownloadLink
-import br.com.clearcont.clearcontwebapp.helpers.unformatCurrencyBR
-import br.com.clearcont.clearcontwebapp.helpers.writeWorkbookToByteArrayInputStream
+import br.com.clearcont.clearcontwebapp.utils.helpers.generateExcelDownloadLink
+import br.com.clearcont.clearcontwebapp.utils.helpers.unformatCurrencyBR
+import br.com.clearcont.clearcontwebapp.utils.helpers.writeWorkbookToByteArrayInputStream
 import br.com.clearcont.clearcontwebapp.models.*
 import br.com.clearcont.clearcontwebapp.models.enums.StatusConciliacao
 import br.com.clearcont.clearcontwebapp.models.enums.TipoConta
-import br.com.clearcont.clearcontwebapp.service.BalanceteService
-import br.com.clearcont.clearcontwebapp.service.ComposicaoLancamentosContabeisService
+import br.com.clearcont.clearcontwebapp.services.impl.BalanceteService
+import br.com.clearcont.clearcontwebapp.services.impl.ComposicaoLancamentosContabeisService
 import com.vaadin.flow.component.UI
 import com.vaadin.flow.component.combobox.ComboBox
 import com.vaadin.flow.component.datepicker.DatePicker

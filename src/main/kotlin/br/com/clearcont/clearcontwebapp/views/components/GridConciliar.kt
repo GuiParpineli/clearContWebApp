@@ -1,12 +1,12 @@
 package br.com.clearcont.clearcontwebapp.views.components
 
-import br.com.clearcont.clearcontwebapp.helpers.*
 import br.com.clearcont.clearcontwebapp.models.*
 import br.com.clearcont.clearcontwebapp.models.enums.StatusConciliacao
-import br.com.clearcont.clearcontwebapp.repository.EmpresaRepository
-import br.com.clearcont.clearcontwebapp.repository.ResponsavelRepository
-import br.com.clearcont.clearcontwebapp.service.ComposicaoLancamentosContabeisService
-import br.com.clearcont.clearcontwebapp.shared.RESPONSAVEL_ID
+import br.com.clearcont.clearcontwebapp.repositories.EmpresaRepository
+import br.com.clearcont.clearcontwebapp.repositories.ResponsavelRepository
+import br.com.clearcont.clearcontwebapp.services.impl.ComposicaoLancamentosContabeisService
+import br.com.clearcont.clearcontwebapp.utils.helpers.*
+import br.com.clearcont.clearcontwebapp.utils.shared.RESPONSAVEL_ID
 import br.com.clearcont.clearcontwebapp.views.components.details.BalanceteDetailsLayout
 import com.vaadin.flow.component.UI
 import com.vaadin.flow.component.datepicker.DatePicker

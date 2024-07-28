@@ -1,10 +1,9 @@
 package br.com.clearcont.clearcontwebapp.views.components.details
 
 import br.com.clearcont.clearcontwebapp.models.ComposicaoLancamentosContabeis
-import br.com.clearcont.clearcontwebapp.models.ComposicaoLancamentosContabeisDTO
 import br.com.clearcont.clearcontwebapp.models.FileUpload
 import br.com.clearcont.clearcontwebapp.models.InputStreamMultipartFile
-import br.com.clearcont.clearcontwebapp.service.FileUploadServiceImplement
+import br.com.clearcont.clearcontwebapp.services.impl.FileUploadServiceImplement
 import com.vaadin.flow.component.Text
 import com.vaadin.flow.component.button.Button
 import com.vaadin.flow.component.html.Anchor
@@ -72,7 +71,6 @@ class DownloadComponent(
                 }
                 addDownloadButtons(lancamentosContabeis.id)
 
-                // Aqui para limpar o campo após o upload
                 multiFileUpload.element.setPropertyJson("files", Json.createArray())
             }
 

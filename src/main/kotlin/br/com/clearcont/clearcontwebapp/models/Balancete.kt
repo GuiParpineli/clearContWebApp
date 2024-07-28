@@ -1,7 +1,7 @@
 package br.com.clearcont.clearcontwebapp.models
 
-import br.com.clearcont.clearcontwebapp.helpers.Period
-import br.com.clearcont.clearcontwebapp.helpers.formatCurrencyBR
+import br.com.clearcont.clearcontwebapp.utils.helpers.Period
+import br.com.clearcont.clearcontwebapp.utils.helpers.formatCurrencyBR
 import br.com.clearcont.clearcontwebapp.models.enums.StatusConciliacao
 import br.com.clearcont.clearcontwebapp.models.enums.TipoConta
 import br.com.clearcont.clearcontwebapp.models.enums.TypeCount

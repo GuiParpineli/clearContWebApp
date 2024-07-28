@@ -1,7 +1,7 @@
 package br.com.clearcont.clearcontwebapp.models
 
-import br.com.clearcont.clearcontwebapp.helpers.formatCurrencyBR
-import br.com.clearcont.clearcontwebapp.helpers.unformatCurrencyBR
+import br.com.clearcont.clearcontwebapp.utils.helpers.formatCurrencyBR
+import br.com.clearcont.clearcontwebapp.utils.helpers.unformatCurrencyBR
 import br.com.clearcont.clearcontwebapp.models.enums.StatusConciliacao
 import jakarta.persistence.EnumType
 import jakarta.persistence.Enumerated

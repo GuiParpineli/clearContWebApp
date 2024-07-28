@@ -1,11 +1,11 @@
 package br.com.clearcont.clearcontwebapp.views.routes
 
-import br.com.clearcont.clearcontwebapp.helpers.CookieFactory
-import br.com.clearcont.clearcontwebapp.helpers.MonthAndCompany
+import br.com.clearcont.clearcontwebapp.utils.helpers.CookieFactory
+import br.com.clearcont.clearcontwebapp.utils.helpers.MonthAndCompany
 import br.com.clearcont.clearcontwebapp.models.Empresa
 import br.com.clearcont.clearcontwebapp.models.EmpresaGroup
-import br.com.clearcont.clearcontwebapp.repository.EmpresaRepository
-import br.com.clearcont.clearcontwebapp.service.EmpresaGroupService
+import br.com.clearcont.clearcontwebapp.repositories.EmpresaRepository
+import br.com.clearcont.clearcontwebapp.services.impl.EmpresaGroupService
 import br.com.clearcont.clearcontwebapp.views.components.MainLayout
 import com.vaadin.flow.component.AbstractField.ComponentValueChangeEvent
 import com.vaadin.flow.component.UI

@@ -4,13 +4,14 @@ plugins {
     id("org.springframework.boot") version "3.2.5"
     id("io.spring.dependency-management") version "1.1.4"
     id("com.vaadin") version "24.3.8"
+    id("org.graalvm.buildtools.native") version "0.10.2"
     kotlin("jvm") version "1.9.23"
     kotlin("plugin.spring") version "1.9.23"
     kotlin("plugin.jpa") version "1.9.23"
 }
 
 group = "br.com.clearcont"
-version = "0.9.12"
+version = "0.9.8"
 
 java {
     sourceCompatibility = JavaVersion.VERSION_21
@@ -26,6 +27,10 @@ vaadin {
 }
 
 repositories {
+    maven {
+        url = uri("https://raw.githubusercontent.com/graalvm/native-build-tools/snapshots")
+    }
+    gradlePluginPortal()
     mavenCentral()
     maven {
         url = uri("https://maven.vaadin.com/vaadin-addons")
@@ -48,6 +53,8 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-mail:3.2.4")
     implementation("org.springframework.security:spring-security-oauth2-jose:6.2.4")
     implementation("org.springframework.security:spring-security-oauth2-resource-server:6.2.3")
+    implementation("software.amazon.jdbc:aws-advanced-jdbc-wrapper:2.3.7")
+
     implementation("org.springframework.boot:spring-boot-starter-web:3.2.4")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.17.0")
     implementation("org.vaadin.crudui:crudui:7.1.0")
@@ -59,6 +66,7 @@ dependencies {
     implementation("commons-io:commons-io:2.16.1")
     implementation("org.jetbrains.kotlin:kotlin-reflect:2.0.0")
     implementation("com.amazonaws:aws-java-sdk-s3:1.12.761")
+
 
     implementation("org.flywaydb:flyway-core:10.15.2")
     implementation("org.flywaydb:flyway-mysql:10.15.2")

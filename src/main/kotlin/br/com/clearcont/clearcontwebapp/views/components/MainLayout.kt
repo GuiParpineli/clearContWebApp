@@ -1,6 +1,6 @@
 package br.com.clearcont.clearcontwebapp.views.components
 
-import br.com.clearcont.clearcontwebapp.configs.security.AuthenticatedUser
+import br.com.clearcont.clearcontwebapp.config.security.AuthenticatedUser
 import br.com.clearcont.clearcontwebapp.models.enums.Role
 import br.com.clearcont.clearcontwebapp.views.routes.*
 import com.vaadin.flow.component.Component

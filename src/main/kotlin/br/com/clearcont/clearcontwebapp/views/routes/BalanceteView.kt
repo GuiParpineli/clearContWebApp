@@ -1,18 +1,18 @@
 package br.com.clearcont.clearcontwebapp.views.routes
 
-import br.com.clearcont.clearcontwebapp.helpers.CookieFactory
-import br.com.clearcont.clearcontwebapp.helpers.MonthAndCompany
-import br.com.clearcont.clearcontwebapp.helpers.createTitle
+import br.com.clearcont.clearcontwebapp.utils.helpers.CookieFactory
+import br.com.clearcont.clearcontwebapp.utils.helpers.MonthAndCompany
+import br.com.clearcont.clearcontwebapp.utils.helpers.createTitle
 import br.com.clearcont.clearcontwebapp.models.Balancete
 import br.com.clearcont.clearcontwebapp.models.ComposicaoLancamentosContabeis
 import br.com.clearcont.clearcontwebapp.models.Empresa
 import br.com.clearcont.clearcontwebapp.models.Responsavel
 import br.com.clearcont.clearcontwebapp.models.enums.TipoConta
 import br.com.clearcont.clearcontwebapp.models.enums.TypeCount
-import br.com.clearcont.clearcontwebapp.repository.EmpresaRepository
-import br.com.clearcont.clearcontwebapp.repository.ResponsavelRepository
-import br.com.clearcont.clearcontwebapp.service.BalanceteService
-import br.com.clearcont.clearcontwebapp.shared.RESPONSAVEL_ID
+import br.com.clearcont.clearcontwebapp.repositories.EmpresaRepository
+import br.com.clearcont.clearcontwebapp.repositories.ResponsavelRepository
+import br.com.clearcont.clearcontwebapp.services.impl.BalanceteService
+import br.com.clearcont.clearcontwebapp.utils.shared.RESPONSAVEL_ID
 import br.com.clearcont.clearcontwebapp.views.components.MainLayout
 import com.vaadin.flow.component.UI
 import com.vaadin.flow.component.button.Button
@@ -28,7 +28,6 @@ import com.vaadin.flow.router.Route
 import com.vaadin.flow.server.VaadinResponse
 import jakarta.annotation.security.PermitAll
 import jakarta.transaction.Transactional
-import org.apache.poi.ss.usermodel.Row
 import org.apache.poi.ss.usermodel.Workbook
 import org.apache.poi.xssf.usermodel.XSSFWorkbook
 import org.vaadin.crudui.crud.impl.GridCrud

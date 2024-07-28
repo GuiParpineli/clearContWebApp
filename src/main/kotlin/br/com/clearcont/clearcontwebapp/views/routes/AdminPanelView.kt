@@ -1,14 +1,14 @@
 package br.com.clearcont.clearcontwebapp.views.routes
 
-import br.com.clearcont.clearcontwebapp.helpers.CookieFactory
-import br.com.clearcont.clearcontwebapp.helpers.MonthAndCompany
-import br.com.clearcont.clearcontwebapp.helpers.createTitle
+import br.com.clearcont.clearcontwebapp.utils.helpers.CookieFactory
+import br.com.clearcont.clearcontwebapp.utils.helpers.MonthAndCompany
+import br.com.clearcont.clearcontwebapp.utils.helpers.createTitle
 import br.com.clearcont.clearcontwebapp.models.*
 import br.com.clearcont.clearcontwebapp.models.enums.Role
 import br.com.clearcont.clearcontwebapp.models.enums.StatusConciliacao
-import br.com.clearcont.clearcontwebapp.repository.ResponsavelRepository
-import br.com.clearcont.clearcontwebapp.service.*
-import br.com.clearcont.clearcontwebapp.shared.COMPANY_GROUP_ID
+import br.com.clearcont.clearcontwebapp.repositories.ResponsavelRepository
+import br.com.clearcont.clearcontwebapp.services.impl.*
+import br.com.clearcont.clearcontwebapp.utils.shared.COMPANY_GROUP_ID
 import br.com.clearcont.clearcontwebapp.views.components.MainLayout
 import com.vaadin.flow.component.Component
 import com.vaadin.flow.component.button.Button
@@ -26,7 +26,6 @@ import com.vaadin.flow.component.textfield.PasswordField
 import com.vaadin.flow.component.textfield.TextField
 import com.vaadin.flow.router.PageTitle
 import com.vaadin.flow.router.Route
-import com.vaadin.flow.server.VaadinConfig
 import com.vaadin.flow.server.VaadinResponse
 import jakarta.annotation.security.RolesAllowed
 import org.vaadin.crudui.crud.CrudOperation

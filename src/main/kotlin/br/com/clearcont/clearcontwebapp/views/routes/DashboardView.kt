@@ -1,10 +1,10 @@
 package br.com.clearcont.clearcontwebapp.views.routes
 
-import br.com.clearcont.clearcontwebapp.helpers.MonthAndCompany
+import br.com.clearcont.clearcontwebapp.utils.helpers.MonthAndCompany
 import br.com.clearcont.clearcontwebapp.models.Empresa
-import br.com.clearcont.clearcontwebapp.repository.EmpresaRepository
-import br.com.clearcont.clearcontwebapp.repository.ResponsavelRepository
-import br.com.clearcont.clearcontwebapp.service.ComposicaoLancamentosContabeisService
+import br.com.clearcont.clearcontwebapp.repositories.EmpresaRepository
+import br.com.clearcont.clearcontwebapp.repositories.ResponsavelRepository
+import br.com.clearcont.clearcontwebapp.services.impl.ComposicaoLancamentosContabeisService
 import br.com.clearcont.clearcontwebapp.views.components.MainLayout
 import com.storedobject.chart.*
 import com.vaadin.flow.component.UI

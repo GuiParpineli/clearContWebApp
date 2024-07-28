@@ -1,21 +1,21 @@
 package br.com.clearcont.clearcontwebapp.views.routes
 
 
-import br.com.clearcont.clearcontwebapp.configs.security.AuthenticatedUser
-import br.com.clearcont.clearcontwebapp.helpers.CookieFactory
-import br.com.clearcont.clearcontwebapp.helpers.generateExcelDownloadLink
+import br.com.clearcont.clearcontwebapp.config.security.AuthenticatedUser
+import br.com.clearcont.clearcontwebapp.utils.helpers.CookieFactory
+import br.com.clearcont.clearcontwebapp.utils.helpers.generateExcelDownloadLink
 import br.com.clearcont.clearcontwebapp.models.Balancete
 import br.com.clearcont.clearcontwebapp.models.ComposicaoLancamentosContabeisDTO
 import br.com.clearcont.clearcontwebapp.models.enums.Role
 import br.com.clearcont.clearcontwebapp.models.enums.StatusConciliacao
 import br.com.clearcont.clearcontwebapp.models.toDTO
 import br.com.clearcont.clearcontwebapp.models.toEntity
-import br.com.clearcont.clearcontwebapp.repository.EmpresaRepository
-import br.com.clearcont.clearcontwebapp.repository.ResponsavelRepository
-import br.com.clearcont.clearcontwebapp.service.BalanceteService
-import br.com.clearcont.clearcontwebapp.service.ComposicaoLancamentosContabeisService
-import br.com.clearcont.clearcontwebapp.service.FileUploadServiceImplement
-import br.com.clearcont.clearcontwebapp.shared.RESPONSAVEL_ID
+import br.com.clearcont.clearcontwebapp.repositories.EmpresaRepository
+import br.com.clearcont.clearcontwebapp.repositories.ResponsavelRepository
+import br.com.clearcont.clearcontwebapp.services.impl.BalanceteService
+import br.com.clearcont.clearcontwebapp.services.impl.ComposicaoLancamentosContabeisService
+import br.com.clearcont.clearcontwebapp.services.impl.FileUploadServiceImplement
+import br.com.clearcont.clearcontwebapp.utils.shared.RESPONSAVEL_ID
 import br.com.clearcont.clearcontwebapp.views.components.GridConciliar
 import br.com.clearcont.clearcontwebapp.views.components.MainLayout
 import br.com.clearcont.clearcontwebapp.views.components.details.BalanceteDetailsLayout
@@ -214,7 +214,7 @@ class ConciliarView(
                 }
                 page.reload()
             }
-        } else if (startBtn.element.text.equals(REOPEN_CONCILIATION)) {
+        } else {
             dialog.setHeader(REOPEN_CONCILIATION)
             dialog.setText("Você tem certeza que deseja reabrir? Um Administrador irá analisar a solicitação.")
             dialog.setCancelable(true)
