@@ -158,7 +158,10 @@ class HomeView(empresaGroupService: EmpresaGroupService, empresaRepository: Empr
             val confirmButton = Button("Confirmar")
             confirmButton.style.setBackground("green")
             confirmButton.style["color"] = "white"
-            confirmButton.addClickListener { UI.getCurrent().navigate("/balancete") }
+            confirmButton.addClickListener {
+                UI.getCurrent().navigate("/balancete")
+                UI.getCurrent().page.setLocation("/balancete")
+            }
             return confirmButton
         }
 

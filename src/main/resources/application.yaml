@@ -21,7 +21,7 @@ spring:
       hibernate:
         format_sql: true
     hibernate:
-      ddl-auto: create
+      ddl-auto: create-drop
 jwt:
   auth:
     secret: J6GOtcwC2NJI1l0VkHu20PacPFGTxpirBxWwynoHjsc=
@@ -30,7 +30,7 @@ server:
     session:
       tracking-modes: cookie
 
-version: 0.9.8
+version: 0.9.9
 
 #logging:
 #  level:

@@ -1,27 +1,19 @@
-import org.graalvm.buildtools.gradle.tasks.BuildNativeImageTask
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-import org.springframework.core.env.PropertySource.named
 
 plugins {
     id("org.springframework.boot") version "3.2.5"
     id("io.spring.dependency-management") version "1.1.4"
     id("com.vaadin") version "24.3.8"
-    id("org.graalvm.buildtools.native") version "0.10.2"
     kotlin("jvm") version "1.9.23"
     kotlin("plugin.spring") version "1.9.23"
     kotlin("plugin.jpa") version "1.9.23"
-    application
 }
 
 group = "br.com.clearcont"
-version = "0.9.8"
+version = "0.9.9"
 
 java {
     sourceCompatibility = JavaVersion.VERSION_21
-}
-
-application {
-    mainClass.set("br.com.clearcont.clearcontwebapp.ClearContWebAppKtApplicationKt")
 }
 
 configurations {
@@ -51,7 +43,7 @@ repositories {
 }
 
 extra["springBootAdminVersion"] = "3.3.3"
-extra["vaadinVersion"] = "24.4.6"
+extra["vaadinVersion"] = "24.4.8"
 
 dependencies {
     implementation("org.springframework.boot:spring-boot-starter-actuator:3.2.5")
@@ -105,15 +97,6 @@ tasks.jar {
     enabled = false
 }
 
-
-
 tasks.withType<Test> {
     useJUnitPlatform()
-}
-graalvmNative {
-    binaries {
-        named("main") {
-            useFatJar.set(true)
-        }
-    }
 }

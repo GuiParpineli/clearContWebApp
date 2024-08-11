@@ -1,13 +1,10 @@
 package br.com.clearcont.clearcontwebapp.views.routes
 
-import br.com.clearcont.clearcontwebapp.utils.helpers.MonthAndCompany
-import br.com.clearcont.clearcontwebapp.utils.helpers.createTitle
-import br.com.clearcont.clearcontwebapp.utils.helpers.generateExcelDownloadLink
-import br.com.clearcont.clearcontwebapp.utils.helpers.writeWorkbookToByteArrayInputStream
 import br.com.clearcont.clearcontwebapp.models.Controle
 import br.com.clearcont.clearcontwebapp.models.Empresa
 import br.com.clearcont.clearcontwebapp.repositories.EmpresaRepository
 import br.com.clearcont.clearcontwebapp.services.impl.ControleService
+import br.com.clearcont.clearcontwebapp.utils.helpers.*
 import br.com.clearcont.clearcontwebapp.views.components.MainLayout
 import com.vaadin.flow.component.UI
 import com.vaadin.flow.component.grid.Grid
@@ -84,16 +81,5 @@ class ControleView(service: ControleService, empresaRepository: EmpresaRepositor
         }
 
         return writeWorkbookToByteArrayInputStream(workbook, log)
-    }
-
-    private fun verifySelectedCompanyAndMonthExistAndNavigate(empresa: Empresa?, month: String?) {
-        if (empresa == null || month == null || empresa.nomeEmpresa == null) {
-            Notification.show("Selecione uma empresa e periodo").apply {
-                addThemeVariants(NotificationVariant.LUMO_WARNING)
-                duration = 2000
-                position = Notification.Position.TOP_CENTER
-            }
-            UI.getCurrent().navigate("/")
-        }
     }
 }

@@ -1,6 +1,6 @@
 Write-Output BUILDING APPLICATION
 ./gradlew clean
-./gradlew build -x test
+./gradlew bootJar -x test
 
 Write-Output BUILDING DOCKER IMAGE
 docker image remove clearcontwebapp-clearapp

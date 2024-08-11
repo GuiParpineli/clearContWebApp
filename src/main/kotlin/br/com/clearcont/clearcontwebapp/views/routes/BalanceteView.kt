@@ -1,8 +1,5 @@
 package br.com.clearcont.clearcontwebapp.views.routes
 
-import br.com.clearcont.clearcontwebapp.utils.helpers.CookieFactory
-import br.com.clearcont.clearcontwebapp.utils.helpers.MonthAndCompany
-import br.com.clearcont.clearcontwebapp.utils.helpers.createTitle
 import br.com.clearcont.clearcontwebapp.models.Balancete
 import br.com.clearcont.clearcontwebapp.models.ComposicaoLancamentosContabeis
 import br.com.clearcont.clearcontwebapp.models.Empresa
@@ -12,14 +9,16 @@ import br.com.clearcont.clearcontwebapp.models.enums.TypeCount
 import br.com.clearcont.clearcontwebapp.repositories.EmpresaRepository
 import br.com.clearcont.clearcontwebapp.repositories.ResponsavelRepository
 import br.com.clearcont.clearcontwebapp.services.impl.BalanceteService
+import br.com.clearcont.clearcontwebapp.utils.helpers.CookieFactory
+import br.com.clearcont.clearcontwebapp.utils.helpers.MonthAndCompany
+import br.com.clearcont.clearcontwebapp.utils.helpers.createTitle
+import br.com.clearcont.clearcontwebapp.utils.helpers.verifySelectedCompanyAndMonthExistAndNavigate
 import br.com.clearcont.clearcontwebapp.utils.shared.RESPONSAVEL_ID
 import br.com.clearcont.clearcontwebapp.views.components.MainLayout
 import com.vaadin.flow.component.UI
 import com.vaadin.flow.component.button.Button
 import com.vaadin.flow.component.html.Div
 import com.vaadin.flow.component.html.Span
-import com.vaadin.flow.component.notification.Notification
-import com.vaadin.flow.component.notification.NotificationVariant
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout
 import com.vaadin.flow.component.upload.Upload
 import com.vaadin.flow.component.upload.receivers.MemoryBuffer
@@ -84,17 +83,6 @@ class BalanceteView(
         }
     }
 
-    private fun verifySelectedCompanyAndMonthExistAndNavigate(empresa: Empresa?, month: String?) {
-        if (empresa == null || month == null || empresa.nomeEmpresa == null) {
-            Notification.show("Selecione uma empresa e periodo").apply {
-                addThemeVariants(NotificationVariant.LUMO_WARNING)
-                duration = 2000
-                position = Notification.Position.TOP_CENTER
-            }
-            UI.getCurrent().navigate("/")
-        }
-    }
-
 private fun getUpload(
     service: BalanceteService,
     empresa: Empresa,
@@ -149,13 +137,16 @@ private fun getUpload(
 
     private fun getBalanceteGridCrud(service: BalanceteService, balanceteData: List<Balancete>): GridCrud<Balancete> {
         val formFactory = DefaultCrudFormFactory(Balancete::class.java)
-        formFactory.setVisibleProperties("nomeConta", "numeroConta", "totalBalancete", "classificacao", "tipo")
+        formFactory.setVisibleProperties("nomeConta", "numeroConta", "totalBalancete", "classificacao", "tipo", "status")
 
         val grid = GridCrud(Balancete::class.java).apply {
             crudFormFactory = formFactory
             grid.setColumns("nomeConta", "numeroConta", "totalBalancete", "tipo")
             grid.isColumnReorderingAllowed = true
             style["border-radius"] = "10px"
+            grid.addColumn{
+                it.status.value
+            }.setHeader("Status")
 
             setAddOperation {
                 it.empresa = empresa
@@ -178,7 +169,8 @@ private fun getUpload(
 
             grid.addItemDoubleClickListener { event ->
                 val balancete = event.item
-                UI.getCurrent().navigate("conciliar/" + balancete.id)
+                UI.getCurrent().navigate("conciliar/${balancete.id}")
+                UI.getCurrent().page.setLocation("conciliar/${balancete.id}")
             }
 
         }

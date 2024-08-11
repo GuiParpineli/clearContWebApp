@@ -8,7 +8,6 @@ fun createTitle(text: String): Div {
     val title = H3(text).apply {
         addClassNames(
             LumoUtility.FontWeight.BLACK,
-            LumoUtility.TextColor.PRIMARY_CONTRAST
         )
     }
     return getTitleDiv(title)
@@ -16,6 +15,6 @@ fun createTitle(text: String): Div {
 
 private fun getTitleDiv(titleText: H3): Div {
     return Div(titleText).apply {
-        style.setPadding("20px").setBorderRadius("20px").setBackgroundColor("black")
+        style.setPadding("10px").setBorderRadius("20px")
     }
 }

@@ -47,7 +47,8 @@ class GridConciliar(
                 val responsavel = responsavelRepository.findById(responsavelID).orElseThrow()
                 val crud = GridCrud(ComposicaoLancamentosContabeisDTO::class.java)
                 val formFactory = DefaultCrudFormFactory(ComposicaoLancamentosContabeisDTO::class.java)
-                val dateTimeFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy").withLocale(Locale.of("pt", "BR"))
+                val dateTimeFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy")
+                    .withLocale(Locale.of("pt", "BR"))
 
                 formFactory.setVisibleProperties("data", "debito", "credito", "historico")
 
@@ -65,7 +66,8 @@ class GridConciliar(
                 crud.grid.addColumn(ComposicaoLancamentosContabeisDTO::dataFormated).setHeader("Data")
                 crud.grid.addColumn({ it.credito }).setHeader("Credito").setKey("credito")
                 crud.grid.addColumn({ it.debito }).setHeader("Debito")
-                crud.grid.addColumn({ formatCurrencyBR(it.saldoContabil) }).setHeader("Saldo Contabil").setKey("saldoContabil")
+                crud.grid.addColumn({ formatCurrencyBR(it.saldoContabil) }).setHeader("Saldo Contabil")
+                    .setKey("saldoContabil")
                 crud.grid.addColumn({ it.status.value }).setHeader("Status")
                 crud.grid.addColumn({ it.historico.toString() }).setHeader("Historico")
                 val listDataProvider = ListDataProvider(service.getByBalanceteID(balanceteId).map { it.toDTO() })

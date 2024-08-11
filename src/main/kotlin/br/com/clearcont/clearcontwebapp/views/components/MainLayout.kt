@@ -68,7 +68,7 @@ class MainLayout(private val authenticatedUser: AuthenticatedUser) : AppLayout()
             width = "100%"
             isSpacing = true
         }
-
+        primarySection = Section.DRAWER;
         addToNavbar(DrawerToggle(), header)
     }
 
@@ -91,7 +91,10 @@ class MainLayout(private val authenticatedUser: AuthenticatedUser) : AppLayout()
         link.addClassName("drawer-link")
         val icon = Icon(iconName)
         icon.setSize(".9em")
-        return HorizontalLayout(FlexComponent.Alignment.BASELINE, icon, link)
+        return HorizontalLayout(FlexComponent.Alignment.BASELINE, icon, link).apply {
+            setWidthFull()
+            style.setPadding("10px")
+        }
     }
 
 }

@@ -10,6 +10,7 @@ import br.com.clearcont.clearcontwebapp.repositories.EmpresaRepository
 import br.com.clearcont.clearcontwebapp.repositories.ResponsavelRepository
 import br.com.clearcont.clearcontwebapp.services.impl.BalanceteService
 import br.com.clearcont.clearcontwebapp.services.impl.ComposicaoLancamentosContabeisService
+import br.com.clearcont.clearcontwebapp.utils.helpers.verifySelectedCompanyAndMonthExistAndNavigate
 import br.com.clearcont.clearcontwebapp.utils.shared.RESPONSAVEL_ID
 import br.com.clearcont.clearcontwebapp.views.components.GridFornecedores
 import br.com.clearcont.clearcontwebapp.views.components.MainLayout
@@ -81,14 +82,4 @@ class FornecedoresView(
         }
     }
 
-    private fun verifySelectedCompanyAndMonthExistAndNavigate(empresa: Empresa?, month: String?) {
-        if (empresa == null || month == null || empresa.nomeEmpresa == null) {
-            Notification.show("Selecione uma empresa e periodo").apply {
-                addThemeVariants(NotificationVariant.LUMO_WARNING)
-                duration = 2000
-                position = Notification.Position.TOP_CENTER
-            }
-            UI.getCurrent().navigate("/")
-        }
-    }
 }

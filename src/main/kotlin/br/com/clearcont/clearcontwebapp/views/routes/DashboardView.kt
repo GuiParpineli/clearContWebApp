@@ -1,10 +1,11 @@
 package br.com.clearcont.clearcontwebapp.views.routes
 
-import br.com.clearcont.clearcontwebapp.utils.helpers.MonthAndCompany
 import br.com.clearcont.clearcontwebapp.models.Empresa
 import br.com.clearcont.clearcontwebapp.repositories.EmpresaRepository
 import br.com.clearcont.clearcontwebapp.repositories.ResponsavelRepository
 import br.com.clearcont.clearcontwebapp.services.impl.ComposicaoLancamentosContabeisService
+import br.com.clearcont.clearcontwebapp.utils.helpers.MonthAndCompany
+import br.com.clearcont.clearcontwebapp.views.components.Card
 import br.com.clearcont.clearcontwebapp.views.components.MainLayout
 import com.storedobject.chart.*
 import com.vaadin.flow.component.UI
@@ -14,12 +15,10 @@ import com.vaadin.flow.component.notification.Notification
 import com.vaadin.flow.component.notification.NotificationVariant
 import com.vaadin.flow.component.orderedlayout.FlexComponent
 import com.vaadin.flow.component.orderedlayout.FlexLayout
-import com.vaadin.flow.component.orderedlayout.VerticalLayout
 import com.vaadin.flow.router.PageTitle
 import com.vaadin.flow.router.Route
 import jakarta.annotation.security.RolesAllowed
 import java.util.logging.Logger
-
 
 @Route(value = "dashboard", layout = MainLayout::class)
 @PageTitle("Dashboard")
@@ -37,7 +36,7 @@ class DashboardView(
     var log: Logger = Logger.getLogger(javaClass.name)
 
     init {
-        getCompany(empresaRepository) { empresa: Empresa? ->
+        this.getCompany(empresaRepository) { empresa: Empresa? ->
             verifySelectedCompanyAndMonthExistAndNavigate(empresa)
             val responsaveisList = responsavelRepository.findResponsavelByEmpresa_Id(
                 empresa!!.id
@@ -68,14 +67,14 @@ class DashboardView(
             val nc = NightingaleRoseChart(labels, data)
             var p = Position()
             p.setTop(Size.percentage(50))
-            nc.setPosition(p) // Position it leaving 50% space at the top
+            nc.setPosition(p)
 
             val bc = BarChart(labels, data)
             val rc = RectangularCoordinate(XAxis(DataType.CATEGORY), YAxis(DataType.NUMBER))
             p = Position()
             p.setBottom(Size.percentage(55))
-            rc.setPosition(p) // Position it leaving 55% space at the bottom
-            bc.plotOn(rc) // Bar chart needs to be plotted on a coordinate system
+            rc.setPosition(p)
+            bc.plotOn(rc)
 
             val toolbox = Toolbox()
             toolbox.addButton(Toolbox.Download())
@@ -83,11 +82,12 @@ class DashboardView(
             soChart.add(nc, bc, toolbox)
 
             val div = Div(soChart)
-            val horizontalLayout = VerticalLayout(responsavelPicker, div)
-            horizontalLayout.alignItems = FlexComponent.Alignment.CENTER
-            horizontalLayout.setAlignSelf(FlexComponent.Alignment.CENTER)
-            horizontalLayout.setHorizontalComponentAlignment(FlexComponent.Alignment.CENTER)
-            horizontalLayout.style.setMargin("25px")
+            val card = Card()
+            card.add(responsavelPicker, div)
+            card.alignItems = FlexComponent.Alignment.CENTER
+            card.setAlignSelf(FlexComponent.Alignment.CENTER)
+            card.setHorizontalComponentAlignment(FlexComponent.Alignment.CENTER)
+            card.style.setMargin("25px")
             this.alignContent = ContentAlignment.CENTER
 
             responsavelPicker.addValueChangeListener {
@@ -111,7 +111,7 @@ class DashboardView(
                     throw RuntimeException(e)
                 }
             }
-            add(horizontalLayout)
+            add(card)
         }
     }
 
