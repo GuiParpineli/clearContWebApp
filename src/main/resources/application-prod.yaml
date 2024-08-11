@@ -1,11 +1,11 @@
 ## DO properties
 do:
   spaces:
-    key: DO009YTULPQF8ZYF68MX
-    secret: Z3iKX2vl8VI5fshIHj4C/BCUyoVst8Stjaf6mvnd9AY
-    endpoint: sfo3.digitaloceanspaces.com
-    region: US
-    bucket: clearcontbucket
+#    key: DO009YTULPQF8ZYF68MX
+#    secret: Z3iKX2vl8VI5fshIHj4C/BCUyoVst8Stjaf6mvnd9AY
+    endpoint: s3://arn:aws:s3:us-east-2:010526270156:accesspoint/clearcont
+    region: us-east-2
+    bucket: clearcont
 
 spring:
 #  flyway:

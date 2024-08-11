@@ -16,7 +16,7 @@ class Balancete(
     val id: Long? = null,
     @ManyToOne
     var empresa: Empresa? = null,
-    @Column(length = 30) var nomeConta: String = "",
+    @Column(length = 155) var nomeConta: String = "",
     var numeroConta: Int = 0,
     private var totalBalancete: Double = 0.0,
     @Enumerated(EnumType.STRING)
@@ -47,7 +47,8 @@ class Balancete(
     }
 
     override fun toString(): String {
-        return "Balancete{id=$id, empresa=$empresa, nomeConta='$nomeConta', numeroConta=$numeroConta, totalBalancete=$totalBalancete, classificacao='$classificacao', mes='$mes', ano=$ano}"
+        return "Balancete{id=$id, empresa=$empresa, nomeConta='$nomeConta', numeroConta=$numeroConta, " +
+                "totalBalancete=$totalBalancete, classificacao='$classificacao', mes='$mes', ano=$ano}"
     }
 
     fun getTotalBalancete(): String {

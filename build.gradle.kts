@@ -1,4 +1,6 @@
+import org.graalvm.buildtools.gradle.tasks.BuildNativeImageTask
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import org.springframework.core.env.PropertySource.named
 
 plugins {
     id("org.springframework.boot") version "3.2.5"
@@ -8,6 +10,7 @@ plugins {
     kotlin("jvm") version "1.9.23"
     kotlin("plugin.spring") version "1.9.23"
     kotlin("plugin.jpa") version "1.9.23"
+    application
 }
 
 group = "br.com.clearcont"
@@ -15,6 +18,10 @@ version = "0.9.8"
 
 java {
     sourceCompatibility = JavaVersion.VERSION_21
+}
+
+application {
+    mainClass.set("br.com.clearcont.clearcontwebapp.ClearContWebAppKtApplicationKt")
 }
 
 configurations {
@@ -65,11 +72,13 @@ dependencies {
     implementation("de.codecentric:spring-boot-admin-starter-client:3.2.3")
     implementation("commons-io:commons-io:2.16.1")
     implementation("org.jetbrains.kotlin:kotlin-reflect:2.0.0")
-    implementation("com.amazonaws:aws-java-sdk-s3:1.12.761")
+    implementation("software.amazon.awssdk:s3:2.25.60")
+    implementation("software.amazon.awssdk:auth:2.25.60")
+    implementation("software.amazon.awssdk:regions:2.26.25")
+    implementation("software.amazon.awssdk:utils:2.26.23")
 
-
-    implementation("org.flywaydb:flyway-core:10.15.2")
-    implementation("org.flywaydb:flyway-mysql:10.15.2")
+//    implementation("org.flywaydb:flyway-core:10.15.2")
+//    implementation("org.flywaydb:flyway-mysql:10.15.2")
 
     developmentOnly("org.springframework.boot:spring-boot-devtools:3.2.5")
     runtimeOnly("com.mysql:mysql-connector-j:8.3.0")
@@ -100,4 +109,11 @@ tasks.jar {
 
 tasks.withType<Test> {
     useJUnitPlatform()
+}
+graalvmNative {
+    binaries {
+        named("main") {
+            useFatJar.set(true)
+        }
+    }
 }

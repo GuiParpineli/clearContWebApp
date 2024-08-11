@@ -1,6 +1,6 @@
 package br.com.clearcont.clearcontwebapp.models
 
-import com.amazonaws.util.IOUtils
+import org.apache.poi.util.IOUtils
 import org.springframework.web.multipart.MultipartFile
 import java.io.File
 import java.io.FileOutputStream

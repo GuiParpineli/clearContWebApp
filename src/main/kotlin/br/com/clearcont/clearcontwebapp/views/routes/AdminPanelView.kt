@@ -5,7 +5,7 @@ import br.com.clearcont.clearcontwebapp.utils.helpers.MonthAndCompany
 import br.com.clearcont.clearcontwebapp.utils.helpers.createTitle
 import br.com.clearcont.clearcontwebapp.models.*
 import br.com.clearcont.clearcontwebapp.models.enums.Role
-import br.com.clearcont.clearcontwebapp.models.enums.StatusConciliacao
+import br.com.clearcont.clearcontwebapp.models.enums.StatusConciliacao.*
 import br.com.clearcont.clearcontwebapp.repositories.ResponsavelRepository
 import br.com.clearcont.clearcontwebapp.services.impl.*
 import br.com.clearcont.clearcontwebapp.utils.shared.COMPANY_GROUP_ID
@@ -102,18 +102,20 @@ class AdminPanelView(
             }
         }
 
-        grid.addComponentColumn { item ->
-            Button("Reabrir") {
-                item.status = StatusConciliacao.PROGRESS
-                balanceteService.update(item)
-                refreshGrid(grid)
-            }.apply { style.setColor("--lumo-primary-color") }
-        }.setHeader("Ações")
+        grid.addComponentColumn { getReopenButton(it, grid) }.setHeader("Ações")
 
         add(grid)
         grid.isVisible = false
         refreshGrid(grid)
         return grid
+    }
+
+    private fun getReopenButton(item: Balancete, grid: Grid<Balancete>): Component {
+        return Button("Reabrir") {
+            item.status = PROGRESS
+            balanceteService.update(item)
+            refreshGrid(grid)
+        }.apply { style.setColor("--lumo-primary-color") }
     }
 
     private fun updateGridVisibility(

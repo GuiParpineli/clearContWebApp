@@ -1,13 +1,15 @@
 package br.com.clearcont.clearcontwebapp.config
 
-import com.amazonaws.auth.AWSStaticCredentialsProvider
-import com.amazonaws.auth.BasicAWSCredentials
-import com.amazonaws.client.builder.AwsClientBuilder
-import com.amazonaws.services.s3.AmazonS3
-import com.amazonaws.services.s3.AmazonS3ClientBuilder
+import org.springframework.aot.hint.annotation.RegisterReflectionForBinding
+import software.amazon.awssdk.auth.credentials.AwsBasicCredentials
+import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider
+import software.amazon.awssdk.regions.Region
+import software.amazon.awssdk.services.s3.S3Client
+import software.amazon.awssdk.services.s3.S3Configuration
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import java.net.URI
 
 @Configuration
 class DoConfig {
@@ -25,10 +27,14 @@ class DoConfig {
     private lateinit var doSpaceRegion: String
 
     @Bean
-    fun getS3(): AmazonS3 {
-        val creds = BasicAWSCredentials(doSpaceKey, doSpaceSecret)
-        return AmazonS3ClientBuilder.standard()
-            .withEndpointConfiguration(AwsClientBuilder.EndpointConfiguration(doSpaceEndpoint, doSpaceRegion))
-            .withCredentials(AWSStaticCredentialsProvider(creds)).build()
+    fun getS3(): S3Client {
+        val creds = AwsBasicCredentials.create(doSpaceKey, doSpaceSecret)
+        val endpointUri = URI.create(doSpaceEndpoint)
+        return S3Client.builder()
+            .region(Region.of(doSpaceRegion))
+            .credentialsProvider(StaticCredentialsProvider.create(creds))
+            .endpointOverride(endpointUri)
+            .serviceConfiguration(S3Configuration.builder().pathStyleAccessEnabled(true).build())
+            .build()
     }
 }
