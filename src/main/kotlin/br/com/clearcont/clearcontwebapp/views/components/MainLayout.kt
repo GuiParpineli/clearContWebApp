@@ -68,7 +68,6 @@ class MainLayout(private val authenticatedUser: AuthenticatedUser) : AppLayout()
             width = "100%"
             isSpacing = true
         }
-        primarySection = Section.DRAWER;
         addToNavbar(DrawerToggle(), header)
     }
 
