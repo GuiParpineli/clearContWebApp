@@ -13,7 +13,7 @@ import java.util.*
 interface ComposicaoLancamentosContabeisRepository : JpaRepository<ComposicaoLancamentosContabeis, UUID> {
 
     @Query("SELECT c FROM ComposicaoLancamentosContabeis c WHERE c.balancete.id = ?1")
-    fun findByBalanceteId(id: Long?): List<ComposicaoLancamentosContabeis>
+    fun findCompisitonByBalanceteId(id: Long?): List<ComposicaoLancamentosContabeis>
 
     @Query("select c from ComposicaoLancamentosContabeis c where c.balancete.empresa.id = ?1")
     fun findallbybalanceteEmpresaId(id: Long?): List<ComposicaoLancamentosContabeis>

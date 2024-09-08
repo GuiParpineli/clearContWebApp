@@ -11,7 +11,6 @@ import java.util.logging.Logger
 
 open class ComposicaoLancamentos {
     var data: LocalDate = LocalDate.now()
-    var saldoContabil: Double = 0.0
     open var dataVencimento: LocalDate? = LocalDate.now()
     open var diasVencidos = 0
 
@@ -20,6 +19,7 @@ open class ComposicaoLancamentos {
             val formatador = DateTimeFormatter.ofPattern("dd/MM/yyyy").withLocale(Locale.of("pt", "BR"))
             return data.format(formatador)
         }
+
     private fun getFixedMonthValue(month: Int): Int = if (month in 1..12) month else 1
 
     open fun getDataVencimento(): String {

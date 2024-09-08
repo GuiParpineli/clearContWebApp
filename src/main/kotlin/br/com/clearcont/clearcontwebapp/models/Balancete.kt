@@ -18,7 +18,6 @@ class Balancete(
     var empresa: Empresa? = null,
     @Column(length = 155) var nomeConta: String = "",
     var numeroConta: Int = 0,
-    private var totalBalancete: Double = 0.0,
     @Enumerated(EnumType.STRING)
     var classificacao: TypeCount = TypeCount.ATIVO,
     @Column(length = 30)
@@ -31,6 +30,7 @@ class Balancete(
         orphanRemoval = true
     )
     val lancamentosContabeisList: MutableList<ComposicaoLancamentosContabeis> = mutableListOf(),
+
     @Enumerated(EnumType.ORDINAL)
     @Column(length = 2)
     var status: StatusConciliacao = StatusConciliacao.OPEN,
@@ -48,14 +48,16 @@ class Balancete(
 
     override fun toString(): String {
         return "Balancete{id=$id, empresa=$empresa, nomeConta='$nomeConta', numeroConta=$numeroConta, " +
-                "totalBalancete=$totalBalancete, classificacao='$classificacao', mes='$mes', ano=$ano}"
+                "totalBalancete=${getTotalBalancete()}, classificacao='$classificacao', mes='$mes', ano=$ano}"
     }
 
     fun getTotalBalancete(): String {
-        return formatCurrencyBR(totalBalancete)
+        val total = this.lancamentosContabeisList.stream().mapToDouble { it.debito- it.credito}.sum()
+        return formatCurrencyBR(total)
     }
 
     fun getTotalBalanceteDouble(): Double {
-        return totalBalancete
+        val total = this.lancamentosContabeisList.stream().mapToDouble { it.debito- it.credito}.sum()
+        return total
     }
 }

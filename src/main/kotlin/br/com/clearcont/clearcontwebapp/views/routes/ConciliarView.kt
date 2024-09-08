@@ -2,8 +2,6 @@ package br.com.clearcont.clearcontwebapp.views.routes
 
 
 import br.com.clearcont.clearcontwebapp.config.security.AuthenticatedUser
-import br.com.clearcont.clearcontwebapp.utils.helpers.CookieFactory
-import br.com.clearcont.clearcontwebapp.utils.helpers.generateExcelDownloadLink
 import br.com.clearcont.clearcontwebapp.models.Balancete
 import br.com.clearcont.clearcontwebapp.models.ComposicaoLancamentosContabeisDTO
 import br.com.clearcont.clearcontwebapp.models.enums.Role
@@ -15,6 +13,8 @@ import br.com.clearcont.clearcontwebapp.repositories.ResponsavelRepository
 import br.com.clearcont.clearcontwebapp.services.impl.BalanceteService
 import br.com.clearcont.clearcontwebapp.services.impl.ComposicaoLancamentosContabeisService
 import br.com.clearcont.clearcontwebapp.services.impl.FileUploadServiceImplement
+import br.com.clearcont.clearcontwebapp.utils.helpers.CookieFactory
+import br.com.clearcont.clearcontwebapp.utils.helpers.generateExcelDownloadLink
 import br.com.clearcont.clearcontwebapp.utils.shared.RESPONSAVEL_ID
 import br.com.clearcont.clearcontwebapp.views.components.GridConciliar
 import br.com.clearcont.clearcontwebapp.views.components.MainLayout
@@ -36,6 +36,7 @@ import com.vaadin.flow.router.Route
 import com.vaadin.flow.server.InputStreamFactory
 import com.vaadin.flow.server.StreamResource
 import com.vaadin.flow.server.VaadinResponse
+import com.vaadin.flow.spring.annotation.UIScope
 import jakarta.annotation.security.PermitAll
 import java.util.logging.Logger
 
@@ -48,6 +49,7 @@ private const val WAITING_REOPEN = "Aguardando Reabertura"
 @Route(value = "conciliar", layout = MainLayout::class)
 @PermitAll
 @PageTitle("Conciliar")
+@UIScope
 class ConciliarView(
     private val service: BalanceteService,
     private val contabeisService: ComposicaoLancamentosContabeisService,
@@ -80,14 +82,14 @@ class ConciliarView(
         } else {
             conciliacaoList.last()
         }
-        val infoCards = BalanceteDetailsLayout(balancete!!, conciliacao.toEntity(), saldoContabil, anexoStorageService)
+        val infoCards = BalanceteDetailsLayout(balancete!!, conciliacao.toEntity(), saldoContabil, anexoStorageService, UI.getCurrent())
 
         val crud = GridConciliar(
             balancete,
             contabeisService,
             balanceteId,
             responsavelRepository,
-            infoCards,
+            listOf(infoCards),
             empresaRepository
         ).also {
             it.isEnabled =

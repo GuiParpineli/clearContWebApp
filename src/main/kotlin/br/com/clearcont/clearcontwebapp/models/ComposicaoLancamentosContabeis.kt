@@ -49,7 +49,10 @@ class ComposicaoLancamentosContabeis() : ComposicaoLancamentos() {
     @PostLoad
     fun onLoad() {
         status = balancete?.status ?: StatusConciliacao.OPEN
-        saldoContabil = debito - credito
+    }
+
+    fun getSaldoContabil(): Double {
+        return this.debito - this.credito
     }
 
     init {
@@ -194,7 +197,6 @@ class ComposicaoLancamentosContabeis() : ComposicaoLancamentos() {
         this.balancete = balancete
         this.responsavel = responsavel!!
     }
-
 
 
 }

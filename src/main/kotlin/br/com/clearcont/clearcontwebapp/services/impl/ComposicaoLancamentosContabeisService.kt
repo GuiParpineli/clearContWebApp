@@ -8,6 +8,7 @@ import br.com.clearcont.clearcontwebapp.models.toDTO
 import br.com.clearcont.clearcontwebapp.repositories.BalanceteRepository
 import br.com.clearcont.clearcontwebapp.repositories.ComposicaoLancamentosContabeisRepository
 import br.com.clearcont.clearcontwebapp.repositories.ResponsavelRepository
+import com.vaadin.flow.component.Synchronize
 import jakarta.transaction.Transactional
 import org.jboss.logging.Logger
 import org.springframework.stereotype.Service
@@ -60,7 +61,7 @@ class ComposicaoLancamentosContabeisService(
 
     fun getByBalanceteID(id: Long?): List<ComposicaoLancamentosContabeis> {
         log.info("obtendo balancete da composicao, balancete id: $id")
-        return repository.findByBalanceteId(id)
+        return repository.findCompisitonByBalanceteId(id)
     }
 
     fun <T> getByYearMonthAndCnpj(cnpj: String?, year: Int?, month: String?, output: Class<T>): List<T> {
@@ -77,14 +78,14 @@ class ComposicaoLancamentosContabeisService(
     }
 
     fun getSaldoContabil(balanceteId: Long?): Double {
-        return repository.findByBalanceteId(balanceteId).stream()
-            .mapToDouble((ComposicaoLancamentosContabeis::saldoContabil)).sum()
+        return repository.findCompisitonByBalanceteId(balanceteId).stream()
+            .mapToDouble((ComposicaoLancamentosContabeis::getSaldoContabil)).sum()
     }
 
     fun atualizarSaldoContabil(balanceteId: Long?, crud: GridCrud<*>) {
         val saldoContabil = getSaldoContabil(balanceteId)
         crud.grid.getColumnByKey("saldoContabil")
-            .setFooter("TOTAL SALDO: R$" + formatCurrencyBR(saldoContabil))
+            .setFooter("TOTAL: R$" + formatCurrencyBR(saldoContabil)).isAutoWidth = true
     }
 
     fun getTotalOpen(responsavelID: Long?): Int {
@@ -130,7 +131,7 @@ class ComposicaoLancamentosContabeisService(
     }
 
     fun findByBalanceteID(balanceteID: Long): List<ComposicaoLancamentosContabeis> {
-        return repository.findByBalanceteId(balanceteID)
+        return repository.findCompisitonByBalanceteId(balanceteID)
     }
 
     @Transactional

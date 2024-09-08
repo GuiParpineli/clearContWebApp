@@ -112,7 +112,6 @@ private fun getUpload(
                             empresa = empresa,
                             nomeConta = nomeConta,
                             numeroConta = numeroConta,
-                            totalBalancete = totalBalancete,
                             classificacao = classificacao,
                             mes = month,
                             ano = LocalDate.now().year,

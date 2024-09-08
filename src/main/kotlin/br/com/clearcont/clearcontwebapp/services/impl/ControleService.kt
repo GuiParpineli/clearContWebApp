@@ -24,9 +24,9 @@ class ControleService(private val balanceteService: BalanceteService) {
                         balancete.nomeConta,
                         balancete.getTotalBalanceteDouble(),
                         balancete.lancamentosContabeisList.stream().mapToDouble(
-                            ComposicaoLancamentosContabeis::saldoContabil).sum(),
+                            ComposicaoLancamentosContabeis::getSaldoContabil).sum(),
                         balancete.lancamentosContabeisList.stream()
-                            .mapToDouble(ComposicaoLancamentosContabeis::saldoContabil)
+                            .mapToDouble(ComposicaoLancamentosContabeis::getSaldoContabil)
                             .sum() - balancete.getTotalBalanceteDouble(),
                         "ABERTO",
                         "",

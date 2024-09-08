@@ -9,8 +9,8 @@ fun ComposicaoLancamentosContabeis.toDTO(): ComposicaoLancamentosContabeisDTO {
         this.id,
         this.data,
         this.historico ?: "",
-        formatCurrencyBR(this.debito),
-        formatCurrencyBR(this.credito),
+        this.debito,
+        this.credito,
         this.balancete,
         this.responsavel,
         this.status ?: StatusConciliacao.OPEN
@@ -21,8 +21,8 @@ fun ComposicaoLancamentosContabeisDTO.toEntity(): ComposicaoLancamentosContabeis
     return ComposicaoLancamentosContabeis(
         this.id,
         this.historico ?: "",
-        unformatCurrencyBR(this.debito),
-        unformatCurrencyBR(this.credito),
+        this.debito,
+        this.credito,
         this.balancete,
         this.responsavel!!,
         this.status

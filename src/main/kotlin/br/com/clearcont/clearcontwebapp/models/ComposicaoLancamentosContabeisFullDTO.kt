@@ -50,7 +50,6 @@ data class ComposicaoLancamentosContabeisFullDTO(
         this.historico = historico
         this.debito = debito
         this.credito = credito
-        super.saldoContabil = unformatCurrencyBR(debito) - unformatCurrencyBR(credito)
         this.ISS = ISS
         this.INSS = INSS
         this.IRRF = IRRF

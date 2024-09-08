@@ -14,8 +14,8 @@ data class ComposicaoLancamentosContabeisDTO(
     var id: UUID? = null,
     var historico: String? = "",
     var balancete: Balancete? = null,
-    var debito: String = formatCurrencyBR(0.0),
-    var credito: String = formatCurrencyBR(0.0),
+    var debito: Double = 0.0,
+    var credito: Double = 0.0,
     var responsavel: Responsavel? = null,
     var status: StatusConciliacao = StatusConciliacao.OPEN
 ) : ComposicaoLancamentos() {
@@ -23,8 +23,8 @@ data class ComposicaoLancamentosContabeisDTO(
         id: UUID?,
         data: LocalDate,
         historico: String,
-        debito: String,
-        credito: String,
+        debito: Double,
+        credito: Double,
         balancete: Balancete?,
         responsavel: Responsavel,
         status: StatusConciliacao
@@ -34,7 +34,6 @@ data class ComposicaoLancamentosContabeisDTO(
         this.historico = historico
         this.debito = debito
         this.credito = credito
-        super.saldoContabil = unformatCurrencyBR(debito) - unformatCurrencyBR(credito)
         this.balancete = balancete
         this.responsavel = responsavel
         this.status = status
@@ -44,4 +43,11 @@ data class ComposicaoLancamentosContabeisDTO(
         this.balancete = balancete
         this.responsavel = responsavel
     }
+
+    fun getSaldoContabil(): Double {
+        return this.debito - this.credito
+    }
+
+    fun getCredito(): String = formatCurrencyBR(this.credito)
+    fun getDebito(): String = formatCurrencyBR(this.debito)
 }
